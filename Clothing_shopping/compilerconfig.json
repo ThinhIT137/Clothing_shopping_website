@@ -1,0 +1,20 @@
+[
+  {
+    "outputFile": "wwwroot/scss/_admin/site.css",
+    "inputFile": "wwwroot/scss/_admin/site.scss",
+    "sourceMap": false,
+    "outputUTF8Identifier": true
+  },
+  {
+    "outputFile": "wwwroot/scss/_admin/root.css",
+    "inputFile": "wwwroot/scss/_admin/root.scss",
+    "sourceMap": false,
+    "outputUTF8Identifier": true
+  },
+  {
+    "outputFile": "wwwroot/scss/site.css",
+    "inputFile": "wwwroot/scss/site.scss",
+    "sourceMap": false,
+    "outputUTF8Identifier": true
+  }
+]

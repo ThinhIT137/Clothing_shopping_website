@@ -1,0 +1,43 @@
+﻿@{
+    var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
+    var CurrentAction = ViewContext.RouteData.Values["action"].ToString();
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Clothing_shopping</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/scss/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Clothing_shopping.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body>
+    <partial name="_header" />
+
+    @* <main role="main"> *@
+        <div class="main"> 
+            @RenderBody()
+        </div> 
+    @* </main> *@
+
+    <footer class="border-top footer text-muted" style="@(CurrentController == "Login" ? "display: none;" : "")">
+        <div class="container">
+            &copy; 2025 - Clothing_shopping - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script>
+        var Controller = "@ViewContext.RouteData.Values["controller"].ToString()";
+        var Action = "@ViewContext.RouteData.Values["action"].ToString()";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

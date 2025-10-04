@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+    var login = true;
+}
+
+<div class="login">
+
+    @* <div class="login_container">
+        
+    </div> *@
+
+    <form>
+        <h3>Login</h3>
+        <div class="input_form">
+            <input id="Email_login" type="email" placeholder=" " />
+            <label for="Email_login">Email</label>
+        </div>
+        <div class="input_form">
+            <input id="Password_login" type="password" placeholder=" " />
+            <label for="Password_login">Mật khẩu</label>
+            <i class="fa-solid fa-lock login_lock"></i>
+        </div>
+        <div>
+            <button>Đăng nhập</button>
+        </div>
+        <div class="auth-links">
+            <a href="">Quên mật khẩu</a>
+            <span>or</span>
+            <a asp-controller="Login" asp-action="Register">Đăng ký</a>
+        </div>
+    </form>
+</div>
+

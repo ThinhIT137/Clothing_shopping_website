@@ -1,0 +1,68 @@
+﻿@page
+@model Clothing_shopping.Views.Shared._HeaderModel
+@{
+    var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
+}
+<header>
+    <div class="header_container">
+        <div class="logo">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="/images/logo.svg" alt="" />
+            </a>
+        </div>
+        <nav>
+            <div>
+                <span>Nam</span>
+            </div>
+            <div>
+                <span>Nữ</span>
+            </div>
+            <div>
+                <span>Trẻ em</span>
+            </div>
+        </nav>
+        <div class="user">
+            <div>
+                <a asp-controller="Login" asp-action="Login">
+                    <i class="fa-solid fa-user"></i>
+                </a>
+            </div>
+            <div>
+                <i class="fa-regular fa-heart"></i>
+            </div>
+            <div>
+                <i class="fa-solid fa-bell"></i>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="btn_use" style="@(CurrentController=="Login" ? "display:none;" : "")">
+    <div class="search">
+        <form action="/" method="post">
+            <div>
+                <input type="" value="" />
+            </div>
+            <button>
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </form>
+    </div>
+    <div class="btn_use_container">
+        <div>
+            <a asp-controller="Home" asp-action="Index">
+                <i class="fa-solid fa-house"></i>
+            </a>
+        </div>
+        <div>
+            <a>
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+        </div>
+        <div>
+            <a>
+                <i class="fa-solid fa-cart-shopping"></i>
+            </a>
+        </div>
+    </div>
+</div>

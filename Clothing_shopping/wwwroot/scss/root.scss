@@ -1,0 +1,35 @@
+$bgr: linear-gradient(135deg, #FAF6EB, #EDEDED, #DCDCDC); 
+$bgr_navbar: #FAF6EB;
+$bgr_hover: #C59D5F;
+$bgr_btn: #C19A6B;
+$bgr_btn_hover: #A47148;
+$color_login_label: #5C5470;
+$color_login_label_focus: #8B5E3C;
+
+@mixin flex_center_1 {
+    display: flex;
+    justify-content: center;
+}
+
+@mixin flex_center_2 {
+    display: flex;
+    align-items: center;
+}   
+
+@mixin flex_center_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin flex_space-around_center {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+@mixin flex_space-between_center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

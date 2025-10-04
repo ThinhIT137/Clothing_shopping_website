@@ -1,0 +1,31 @@
+@use "root.scss" as *;
+@use "_header.scss";
+@use "_Login.scss";
+@use "_register.scss";
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html, body {
+    position: relative;
+    height: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    color: black;
+}
+
+.main {
+    padding-top: 70px;
+    position: relative;
+    height: 100%;
+}

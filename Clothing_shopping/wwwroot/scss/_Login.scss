@@ -1,0 +1,88 @@
+﻿@use "root.scss" as *;
+
+
+.login {
+    height: calc(100vh - 70px);
+    @include flex_center_center;
+    background: url("/images/bgr_login.png") no-repeat center center;
+    form {
+        @include flex_center_center;
+        flex-direction: column;
+        gap: 35px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 10px;
+        width: 400px;
+        height: 400px;
+        background-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+
+        .input_form {
+            position: relative;
+            height: 25px;
+
+            label {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                z-index: 2;
+                transition: 0.3s;
+                color: $color_login_label;
+            }
+
+            i {
+                position: absolute;
+                bottom: 2px;
+                right: 0;
+                cursor: pointer;
+                z-index: 3;
+            }
+
+            input {
+                width: 250px;
+                border: none;
+                border-bottom: 1px solid black;
+                position: relative;
+                z-index: 1;
+                background: none;
+                padding-right: 40px;
+            }
+
+            input:focus {
+                border-bottom: 2px solid blue;
+                outline: none;
+            }
+
+            input:focus + label, input:not(:placeholder-shown) + label {
+                bottom: 30px;
+                color: $color_login_label_focus;
+            }
+        }
+
+        button {
+            color: white;
+            background: $bgr_btn;
+            border-radius: 20px;
+            width: 250px;
+            height: 40px;
+        }
+
+        button:hover {
+            background: $bgr_btn_hover;
+        }
+
+        .auth-links {
+            @include flex_space-between_center;
+            width: 200px;
+
+            a {
+                color: #0D94B2;
+            }
+
+            a:hover {
+                color: #17629A;
+            }
+        }
+    }
+}

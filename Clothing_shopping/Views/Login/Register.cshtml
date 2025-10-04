@@ -1,0 +1,132 @@
+﻿@model Clothing_shopping.Models.User
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="register">
+    <form asp-action="Register">
+        <h3>Register</h3>
+        <div class="row_register">
+            <div class="input_form">
+                <input id="first_name_register" type="text" placeholder=""/>
+                <label for="first_name_register">Họ</label>
+            </div>
+            <div class="input_form">
+                <input id="second_name_register" type="text" placeholder="" />
+                <label for="second_name_register">Tên</label>
+            </div>
+        </div>
+        <div class="row_register">
+            <div class="column">
+                <label for="day">Ngày sinh</label>
+                <select id="day"></select>
+            </div>
+            <div class ="column">
+                <label for="month">Tháng sinh</label>
+                <select id="month"></select>
+            </div>
+            <div class="column">
+                <label for="year">Năm sinh</label>
+                <select id="year"></select>
+            </div>
+        </div>
+        <div class="row_register row_gender">
+            <div class="gender">
+                <label for="male_register">Nam</label>
+                <input id="male_register" name="gender" type="radio" checked placeholder="" />
+            </div>
+            <div class="gender">
+                <label for="female_register">Nữ</label>
+                <input id="female_register" name="gender" type="radio" placeholder="" />
+            </div>
+        </div>
+        <div class="input_form">
+            <input id="email_register" type="email" placeholder="" />
+            <label for="email_register">Email</label>
+        </div>
+        <div class="input_form">
+            <input id="password_register" type="password" placeholder="" />
+            <label for="password_register">Mật khẩu</label>
+            <i class="fa-solid fa-lock register_lock"></i>
+        </div>
+        <div class="input_form">
+            <input id="check_password_register" type="password" placeholder="" />
+            <label for="check_password_register"> Nhập lại mật khẩu</label>
+            <i class="fa-solid fa-lock check_register_lock"></i>
+        </div>
+        <div class="btn_register">
+            <div>
+                <button>Đăng ký</button>
+            </div>
+            <div>
+                <button asp-controller="Login" asp-action="Login">Đã có tài khoản</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@* <h1>Register</h1>
+
+<h4>User</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="id_user" class="control-label"></label>
+                <input asp-for="id_user" class="form-control" />
+                <span asp-validation-for="id_user" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fullname" class="control-label"></label>
+                <input asp-for="fullname" class="form-control" />
+                <span asp-validation-for="fullname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="email" class="control-label"></label>
+                <input asp-for="email" class="form-control" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="password" class="control-label"></label>
+                <input asp-for="password" class="form-control" />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="phone" class="control-label"></label>
+                <input asp-for="phone" class="form-control" />
+                <span asp-validation-for="phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="address" class="control-label"></label>
+                <input asp-for="address" class="form-control" />
+                <span asp-validation-for="address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role" class="control-label"></label>
+                <input asp-for="Role" class="form-control" />
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="created_at" class="control-label"></label>
+                <input asp-for="created_at" class="form-control" />
+                <span asp-validation-for="created_at" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="updated_at" class="control-label"></label>
+                <input asp-for="updated_at" class="form-control" />
+                <span asp-validation-for="updated_at" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+ *@
