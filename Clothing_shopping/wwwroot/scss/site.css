@@ -1,4 +1,38 @@
-﻿header {
+﻿.Loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+}
+.Loading .Loading_container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.Loading .Loading_container i {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 50px;
+  color: black;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+header {
   position: fixed;
   width: 100%;
   height: 70px;
@@ -62,6 +96,59 @@ header .header_container .user div i {
   width: 40px;
   height: 40px;
   cursor: pointer;
+}
+header .header_container .user div .fa-angle-down {
+  position: absolute;
+  background: white;
+  top: 60%;
+  right: 0;
+  font-size: 15px;
+  width: 20px;
+  height: 20px;
+}
+header .header_container .user div:nth-child(1) {
+  position: relative;
+}
+header .header_container .user div:nth-child(1) .profile {
+  display: none;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 55px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+}
+header .header_container .user div:nth-child(1) .profile .cloumn {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 40px;
+  padding: 10px;
+}
+header .header_container .user div:nth-child(1) .profile .cloumn a {
+  color: white;
+}
+header .header_container .user div:nth-child(1) .profile .cloumn .fa-angle-right {
+  right: 0;
+  border: none;
+  width: fit-content;
+  height: fit-content;
+  color: white;
+  position: absolute;
+}
+header .header_container .user div:nth-child(1) .profile .column_profile {
+  border-bottom: 1px solid white;
+}
+header .header_container .user div:nth-child(1) .profile .column_logOut {
+  border-top: 1px solid white;
+}
+header .header_container .user div:nth-child(1) .profile .cloumn:hover {
+  background: red;
+}
+
+.profile.ac {
+  display: block !important;
 }
 
 .btn_use {
@@ -142,7 +229,7 @@ header .header_container .user div i {
 .swiper-slide video {
   display: block;
   width: 100%;
-  height: fit-content;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -354,15 +441,22 @@ header .header_container .user div i {
   align-items: center;
   width: 100%;
 }
-.register form .btn_register button {
+.register form .btn_register button, .register form .btn_register a {
   color: white;
   background: #C19A6B;
   border-radius: 20px;
   width: 150px;
   height: 40px;
 }
-.register form .btn_register button:hover {
+.register form .btn_register button:hover, .register form .btn_register a:hover {
   background: #A47148;
+}
+.register form .btn_register button {
+  border: 1px solid black;
+}
+.register form .btn_register a {
+  padding: 8.5px 19px;
+  border: 1px solid black;
 }
 .register form .auth-links {
   display: flex;

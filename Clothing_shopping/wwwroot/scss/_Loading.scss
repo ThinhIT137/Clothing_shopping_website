@@ -1,0 +1,35 @@
+@use "root" as *;
+
+.Loading {
+    @include flex_center_center;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    background: $bgr_night;
+    top: 0;
+    left: 0;
+
+    .Loading_container {
+        width: 100%;
+        height: 100%;
+        @include flex_center_center;
+
+        i {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            font-size: 50px;
+            color: black;
+        }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

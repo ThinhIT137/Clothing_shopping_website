@@ -13,18 +13,31 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
+    <PackageReference Include="X.PagedList" Version="10.5.9" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.9" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Controllers\" />
     <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="wwwroot\images\Products\" />
+    <Folder Include="Areas\Shipper\Controllers\" />
+    <Folder Include="Areas\Shipper\Data\" />
+    <Folder Include="Areas\Shipper\Models\" />
+    <Folder Include="Areas\Shipper\Views\" />
+    <Folder Include="wwwroot\images\Products\Nam\" />
+    <Folder Include="wwwroot\images\Products\TreEm\" />
+    <Folder Include="wwwroot\images\Products\Nu\" />
     <Folder Include="wwwroot\js\Admin\demo\" />
     <Folder Include="wwwroot\videos\Products\" />
   </ItemGroup>

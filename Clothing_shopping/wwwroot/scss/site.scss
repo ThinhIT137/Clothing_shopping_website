@@ -1,7 +1,11 @@
 @use "root.scss" as *;
+@use "_Loading";
 @use "_header.scss";
+@use "_footer.scss";
 @use "_Login.scss";
 @use "_register.scss";
+@use "_Product.scss";
+@use "_Notification.scss";
 
 * {
     box-sizing: border-box;

@@ -1,10 +1,12 @@
-$bgr: linear-gradient(135deg, #FAF6EB, #EDEDED, #DCDCDC); 
+$bgr: linear-gradient(135deg, #FAF6EB, #EDEDED, #DCDCDC);
+$bgr_night: rgba(0, 0, 0, 0.5);
 $bgr_navbar: #FAF6EB;
 $bgr_hover: #C59D5F;
 $bgr_btn: #C19A6B;
 $bgr_btn_hover: #A47148;
 $color_login_label: #5C5470;
 $color_login_label_focus: #8B5E3C;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 @mixin flex_center_1 {
     display: flex;
@@ -14,7 +16,7 @@ $color_login_label_focus: #8B5E3C;
 @mixin flex_center_2 {
     display: flex;
     align-items: center;
-}   
+}
 
 @mixin flex_center_center {
     display: flex;

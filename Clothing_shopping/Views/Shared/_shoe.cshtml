@@ -1,0 +1,84 @@
+﻿@model Clothing_shopping.models.Product
+@using Newtonsoft.Json
+
+@{
+    string imgUrl = "/images/Products/Degbug.png";
+
+    if (!string.IsNullOrEmpty(Model.Images))
+    {
+        try
+        {
+            var listImg = JsonConvert.DeserializeObject<List<string>>(Model.Images);
+
+            imgUrl = listImg.FirstOrDefault() ?? imgUrl;
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception (e.g., log it)
+            var errorMessage = ex.Message;
+            Console.WriteLine($"Error deserializing JSON: {errorMessage}");
+        }
+    }
+
+    var firstVariant = Model.ProductVariants.FirstOrDefault();
+}
+
+<div class="shoe">
+    <div>
+        <div class="like">
+            <a><i class="fa-regular fa-heart"></i></a>
+        </div>
+        <div class="cart">
+            <a><i class="fa-solid fa-cart-shopping"></i></a>
+        </div>
+    </div>
+    <div><img src="@imgUrl" alt="" /></div>
+    <div>
+        <span class="shoe_name">@Model.Name</span>
+
+        @if (firstVariant != null)
+        {
+            if (firstVariant.Stock >0)
+            {
+                @if (firstVariant.SalePrice == 0)
+                {
+                    <span id="display_price" class="shoe_price">@firstVariant.Price.Value.ToString("C0")</span>
+                    <span id="display_salePrice" class="shoe_salePrice" style="display: none">@firstVariant.SalePrice.Value.ToString("C0")</span>
+                }
+                else
+                {
+                    <span id="display_price" class="shoe_price">@firstVariant.Price.Value.ToString("C0")</span>
+                    <span id="display_salePrice" class="shoe_salePrice">@firstVariant.SalePrice.Value.ToString("C0")</span>
+                }
+            }
+            else
+            {
+                <span class="no_sell">Size @firstVariant.Size này không còn được bán nữa</span>
+            }
+        }
+        else
+        {
+            <span class="shoe_price"> N / A </span>
+        }
+    </div>
+    <div class="color">
+        <span>Color:</span>
+
+        @foreach(var product in @Model.ProductVariants){
+            <span class="bgr-product"></span>
+        }
+    </div>
+    <div class="size_option">
+        <span>Size: </span>
+        
+        @foreach(var variant in @Model.ProductVariants)
+        {
+            <span class="size-item"
+                data-price="@variant.Price"
+                data-salePrice="@variant.SalePrice"
+            >@variant.Size</span>
+        }
+    </div>
+    <button>Buy</button>
+    <button>Cart</button>
+</div>

@@ -2,12 +2,14 @@ wwwroot\css\site.css
 wwwroot\favicon.ico
 wwwroot\images\bgr_login.png
 wwwroot\images\logo.svg
+wwwroot\images\Products\Degbug.png
 wwwroot\js\Admin\datatables-simple-demo.js
 wwwroot\js\Admin\demo\chart-area-demo.js
 wwwroot\js\Admin\demo\chart-bar-demo.js
 wwwroot\js\Admin\demo\chart-pie-demo.js
 wwwroot\js\Admin\demo\datatables-demo.js
 wwwroot\js\Admin\scripts.js
+wwwroot\js\hub.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -71,8 +73,12 @@ wwwroot\scss\site.css
 wwwroot\scss\site.min.css
 wwwroot\scss\site.scss
 wwwroot\scss\_admin\styles.css
+wwwroot\scss\_footer.scss
 wwwroot\scss\_header.scss
+wwwroot\scss\_Loading.scss
 wwwroot\scss\_Login.scss
+wwwroot\scss\_Notification.scss
+wwwroot\scss\_Product.scss
 wwwroot\scss\_register.scss
 wwwroot\videos\VD_1.mp4
 wwwroot\videos\VD_2.mp4

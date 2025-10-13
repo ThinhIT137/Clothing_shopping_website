@@ -19,6 +19,20 @@ var swiper = new Swiper(".mySwiper", {
     },
 });
 
+// loading
+window.addEventListener("beforeunload", () => {
+    document.querySelector(".Loading").style.display = "flex";
+});
+
+window.addEventListener("load", () => {
+    document.querySelector(".Loading").style.display = "none";
+});
+
+// user drop down
+document.getElementById("user_drop_down").addEventListener("click", () => {
+    document.getElementById("user_profile").classList.toggle("ac");
+})
+
 function lock_password(Element, class_input) {
     if (!Element || !class_input) return;
 
@@ -56,25 +70,25 @@ if (Controller === "Login" && Action === "Register") {
     const month = document.getElementById("month");
     const year = document.getElementById("year");
 
-    const startYear = 1900;
-    const currentYear = new Date().getFullYear();
-    for (let yr = startYear; yr <= currentYear; yr++) {
-        let option = document.createElement("option");
-        option.value = yr;
-        option.textContent = yr;
-        year.appendChild(option);
-    }
-    for (let m = 1; m <= 12; m++) {
-        let option = document.createElement("option");
-        option.value = m;
-        option.textContent = m;
-        month.appendChild(option);
-    }
-    for (let d = 1; d <= 31; d++) {
-        let option = document.createElement("option");
-        option.value = d;
-        option.textContent = d;
-        day.appendChild(option);
-    }
+    //const startYear = 1900;
+    //const currentYear = new Date().getFullYear();
+    //for (let yr = startYear; yr <= currentYear; yr++) {
+    //    let option = document.createElement("option");
+    //    option.value = yr;
+    //    option.textContent = yr;
+    //    year.appendChild(option);
+    //}
+    //for (let m = 1; m <= 12; m++) {
+    //    let option = document.createElement("option");
+    //    option.value = m;
+    //    option.textContent = m;
+    //    month.appendChild(option);
+    //}
+    //for (let d = 1; d <= 31; d++) {
+    //    let option = document.createElement("option");
+    //    option.value = d;
+    //    option.textContent = d;
+    //    day.appendChild(option);
+    //}
 
 }

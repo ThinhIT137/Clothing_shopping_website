@@ -1,7 +1,11 @@
-﻿@page
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 @model Clothing_shopping.Views.Shared._HeaderModel
 @{
     var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
+    var userID = HttpContextAccessor.HttpContext.Session.GetString("UserId");
+    var FullName = HttpContextAccessor.HttpContext.Session.GetString("FullName");
 }
 <header>
     <div class="header_container">
@@ -12,20 +16,49 @@
         </div>
         <nav>
             <div>
-                <span>Nam</span>
+                <a><span>Nam</span></a>
             </div>
             <div>
-                <span>Nữ</span>
+                <a><span>Nữ</span></a>
             </div>
             <div>
-                <span>Trẻ em</span>
+                <a><span>Trẻ em</span></a>
             </div>
         </nav>
         <div class="user">
             <div>
-                <a asp-controller="Login" asp-action="Login">
-                    <i class="fa-solid fa-user"></i>
-                </a>
+                @if (userID == null)
+                {
+                    <a asp-controller="Login" asp-action="Login">
+                        <i class="fa-solid fa-user"></i>
+                    </a>
+                }
+                else
+                {
+                    <div id="user_drop_down">
+                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-angle-down"></i>
+                    </div>
+
+                    <div class="profile" id="user_profile">
+                        <div class="cloumn column_profile">
+                            <a asp-controller="Login" asp-action="Profile">
+                                <span>@FullName</span>
+                            </a>
+                        </div>
+                        <div class="cloumn">
+                            <a>Hộ trợ và trợ giúp</a>
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                        <div class="cloumn">
+                            <a>Settings</a>
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                        <div class="cloumn column_logOut">
+                            <a asp-controller="Login" asp-action="LogOut">Đăng xuất</a>
+                        </div>
+                    </div>
+                }
             </div>
             <div>
                 <i class="fa-regular fa-heart"></i>
@@ -50,9 +83,7 @@
     </div>
     <div class="btn_use_container">
         <div>
-            <a asp-controller="Home" asp-action="Index">
-                <i class="fa-solid fa-house"></i>
-            </a>
+            <i class="fa-solid fa-house"></i>
         </div>
         <div>
             <a>

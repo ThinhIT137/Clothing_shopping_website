@@ -56,6 +56,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Login/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cUHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Login/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cUmVnaXN0ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,6 +70,22 @@ build_metadata.AdditionalFiles.CssScope =
 
 [E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_Loading.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2FkaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_Notification.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ob3RpZmljYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_Product.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qcm9kdWN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_shoe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9zaG9lLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/FullStack_developer/Clothing_shopping_website/Clothing_shopping/Views/Shared/_ValidationScriptsPartial.cshtml]

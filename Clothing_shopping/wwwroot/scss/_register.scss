@@ -103,7 +103,6 @@
                 }
 
                 input {
-
                 }
             }
         }
@@ -119,7 +118,7 @@
             width: 100%;
             //justify-content: space-around;
 
-            button {
+            button, a {
                 color: white;
                 background: $bgr_btn;
                 border-radius: 20px;
@@ -127,8 +126,17 @@
                 height: 40px;
             }
 
-            button:hover {
+            button:hover, a:hover {
                 background: $bgr_btn_hover;
+            }
+
+            button {
+                border: 1px solid black;
+            }
+
+            a {
+                padding: 8.5px 19px;
+                border: 1px solid black;
             }
         }
 
