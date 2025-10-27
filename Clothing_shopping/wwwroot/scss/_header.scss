@@ -47,12 +47,131 @@ header {
                     height: 23px;
                 }
 
-                span:hover {
-                    border-bottom: 2px solid black;
+                .click_product::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 40px;
+                    height: 50px;
+                    //background: black;
+                    transition: width 0.4s ease;
                 }
 
-                span.ac {
-                    border-bottom: 2px solid black;
+                a {
+                    position: relative;
+                    transition: border-bottom 0.3s ease;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        bottom: -2px;
+                        left: 0;
+                        width: 0;
+                        height: 2px;
+                        background: black;
+                        transition: width 0.4s ease;
+                    }
+                    //a::after:hover,
+                    //a.ac::after {
+                    //    border-bottom: 2px solid black;
+                    //}
+
+                    &:hover::after,
+                    &.ac::after {
+                        width: 100%;
+                    }
+                }
+            }
+
+            .Nam, .Nu, .TreEm {
+                position: relative;
+
+                .Product {
+                    @include flex_space-around;
+                    border-radius: 20px;
+                    max-height: 200px;
+                    opacity: 0;
+                    visibility: hidden;
+                    padding: 20px;
+                    overflow: hidden;
+                    position: absolute;
+                    top: 180%;
+                    width: 1000px;
+                    transform: translateY(5px);
+                    background: $bgr_navbar;
+                    box-shadow: $box-shadow;
+                    transition: all 0.5s ease;
+
+                    .Product_column {
+                        display: flex;
+                        flex-direction: column;
+                        line-height: 50px;
+
+                        .items {
+                            @include flex_center_center;
+                            //width: 10px;;
+                            img {
+                                width: 25px;
+                                height: fit-content;
+                            }
+
+                            span {
+                                margin-bottom: 24px;
+                                padding-left: 5px;
+                                width: 100px;
+                            }
+                        }
+                    }
+                }
+
+                .Nam_Product {
+                    left: -400px;
+                }
+
+                .Nu_Product {
+                    left: -489px;
+                }
+
+                .TreEm_Product {
+                    left: -565px;
+                    opacity: 0;
+                }
+
+                .nam_click_product:hover + .Nam_Product {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
+                }
+
+                .Nam_Product:hover {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
+                }
+
+                .nu_click_product:hover + .Nu_Product {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
+                }
+
+                .Nu_Product:hover {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
+                }
+
+                .treEm_click_product:hover + .TreEm_Product {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
+                }
+
+                .TreEm_Product:hover {
+                    opacity: 1;
+                    max-height: 300px;
+                    visibility: visible;
                 }
             }
         }
@@ -87,60 +206,122 @@ header {
 
             div:nth-child(1) {
                 position: relative;
-                //background: blue;
 
                 .profile {
-                    display: none;
-                    width: 200px;
-                    background: $bgr_night;
+                    max-height: 0;
+                    opacity: 0;
+                    overflow: hidden;
+                    transition: all 0.4s ease;
+                    background: $bgr_navbar;
                     position: absolute;
                     top: 55px;
                     border-radius: 20px;
                     box-shadow: $box-shadow;
                     padding: 10px 20px;
+                    z-index: 2;
+
+                    i {
+                        width: 25px;
+                        height: 25px;
+                        color: white;
+                        background: black;
+                    }
 
                     .cloumn {
                         @include flex_center_2;
-                        position: relative;
-                        //border: 1px solid black;
                         height: 40px;
-                        padding: 10px;
+                        width: 210px;
 
                         a {
-                            color: white;
+                            @include flex_center_2;
+                            transition: background 0.3s ease, border-radius 0.3s ease;
+                            width: 100%;
+                            height: 40px;
+                            position: relative;
+                            padding: 10px;
+
+                            span {
+                                padding-left: 10px;
+                            }
                         }
 
                         .fa-angle-right {
-                            //position: static;
-                            right: 0;
-                            //top: 50%;
+                            right: 10px;
                             border: none;
                             width: fit-content;
                             height: fit-content;
-                            color: white;
                             position: absolute;
+                            color: black;
+                            background: none;
                         }
                     }
 
-                    .column_profile {
-                        border-bottom: 1px solid white;
+                    hr {
+                        margin: 5px 0;
                     }
 
-                    .column_logOut {
-                        border-top: 1px solid white;
+                    .cloumn a:hover {
+                        background: $bgr_hover;
+                        border-radius: 10px;
                     }
+                }
 
-                    .cloumn:hover {
-                        background: red;
-                    }
+                .profile.ac {
+                    opacity: 1;
+                    visibility: visible;
+                    max-height: 250px;
                 }
             }
         }
-    }
-}
 
-.profile.ac {
-    display: block !important;
+        .Notification {
+            position: relative;
+
+            .Notification_Notification {
+                opacity: 0;
+                visibility: hidden;
+                position: absolute;
+                width: 360px;
+                right: 0;
+                top: 55px;
+                overflow-y: hidden;
+                max-height: 0;
+                background: $bgr_navbar;
+                transition: all 0.4s ease;
+                box-shadow: $box-shadow;
+                padding: 10px 8px;
+                border-radius: 20px;
+                z-index: 1;
+
+                .Notification_contaier {
+                    border: 1px solid black;
+                    padding: 5px;
+                    border-radius: 20px;
+
+                    .Notification_Header {
+                        display: flex;
+
+                        span {
+                            padding: 0 5px;
+                        }
+                    }
+
+                    hr {
+                        padding: 0;
+                        margin: 0;
+                    }
+                }
+            }
+
+            .Notification_Notification.ac {
+                max-height: 500px;
+                height: fit-content;
+                opacity: 1;
+                visibility: visible;
+                //overflow-y: auto;
+            }
+        }
+    }
 }
 
 .btn_use {
@@ -203,6 +384,10 @@ header {
             }
         }
     }
+}
+
+.icon:hover {
+    background: $bgr_hover;
 }
 
 

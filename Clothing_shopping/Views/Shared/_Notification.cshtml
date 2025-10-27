@@ -1,5 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model dynamic
 @{
 }
+
+<div class="Notification_contaier">
+    <div class="Notification_Header">
+        <div class="Title">@Model.Title</div>
+    </div>
+    <hr />
+    <div class="Notification_Body">
+        <div class="Content">@Model.Content</div>
+    </div>
+    <div class="Notification_Footer">
+        <div class="Time">@Model.CreatedAt</div>
+    </div>
+</div>

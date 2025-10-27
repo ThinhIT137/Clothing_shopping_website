@@ -1,0 +1,99 @@
+@use "root.scss" as *;
+
+.LIST {
+    position: relative;
+    //background: red;
+    transition: 0.5s;
+
+    .btn_list {
+        display: flex;
+        justify-content: end;
+        i {
+            @include flex_center_center;
+            font-size: 30px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background: blue;
+            //position: absolute;
+            z-index: 100;
+            left: 100%;
+        }
+    }
+
+
+
+    h2 {
+        font-size: 25px;
+    }
+
+    h3, h2 {
+        width: 200px;
+        border: 1px solid black;
+    }
+
+    h3 {
+        font-size: 20px;
+        width: 180px;
+    }
+
+    .list_menu {
+        font-size: $font-family;
+        overflow: visible;
+        transition: 0.5s;
+        max-width: 0;
+        opacity: 0;
+        visibility: hidden;
+        height: calc(100vh - 70px);
+        //overflow-y: auto;
+        overflow-y: auto;
+
+        .column {
+            display: flex;
+            flex-direction: column;
+
+            a {
+                width: 150px;
+                border: 1px solid black;
+                font-size: 15px;
+            }
+        }
+
+        .categoryName {
+            padding-left: 20px;
+        }
+
+        .group {
+            font-size: 30px;
+
+            .category {
+                padding-left: 20px !important;
+                opacity: 0;
+                visibility: hidden;
+                max-height: 0;
+                //display: none;
+
+                .categoryName {
+                    padding-left: 40px;
+                    opacity: 0;
+                    max-height: 0;
+                    //display: none;
+                    //max-height: 0;
+                }
+            }
+        }
+    }
+}
+
+.list_menu.ac {
+    max-width: 300px;
+    opacity: 1;
+    visibility: visible;
+}
+
+// reponsive phone
+@include media-phone {
+    .LIST {
+        display: none;
+    }
+}

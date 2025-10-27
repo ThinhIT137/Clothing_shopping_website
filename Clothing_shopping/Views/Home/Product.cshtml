@@ -1,0 +1,66 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<Clothing_shopping.Models.Product>
+
+
+<div class="Product_container">
+    <div>
+        <partial name="_list_menu"/>
+    </div>
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@ViewBag.TargetGroup">
+                        @if(@ViewBag.TargetGroup == 0)
+                        {
+                            @("Đồ Nam")
+                        }
+                        else if (@ViewBag.TargetGroup == 1)
+                        {
+                           @("Đồ Nữ")               
+                        }
+                        else
+                        {
+                           @("Đồ Trẻ Em")
+                        }
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    @ViewBag.CatagoryName
+                </li>
+            </ol>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="product-list row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-3 col-sm-6 mb-4">
+                    @await Html.PartialAsync("_shoe", product)
+                </div>
+            }
+            </div>
+        </div>
+    
+        <div class="d-flex justify-content-center mt-4">
+            @Html.PagedListPager(
+                Model,
+                page => Url.Action("Product", new {
+                    Page = page,
+                    TargetGroup = ViewContext.HttpContext.Request.Query["TargetGroup"],
+                    CategoryId = ViewContext.HttpContext.Request.Query["CategoryId"]
+                }),
+                new PagedListRenderOptions
+                {
+                    UlElementClasses = new[] { "pagination" },
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" }
+                }
+            )
+        </div>
+    </div>
+</div>

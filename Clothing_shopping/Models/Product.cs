@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clothing_shopping.models;
+namespace Clothing_shopping.Models;
 
 public partial class Product
 {
@@ -28,6 +28,8 @@ public partial class Product
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
+
+    public int? TargetGroup { get; set; }
 
     public virtual Category Category { get; set; } = null!;
 

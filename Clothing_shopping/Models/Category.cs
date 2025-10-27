@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clothing_shopping.models;
+namespace Clothing_shopping.Models;
 
 public partial class Category
 {

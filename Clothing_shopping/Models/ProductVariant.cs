@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clothing_shopping.models;
+namespace Clothing_shopping.Models;
 
 public partial class ProductVariant
 {
@@ -28,6 +28,8 @@ public partial class ProductVariant
     public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+
+    public virtual ICollection<FavoriteItem> FavoriteItems { get; set; } = new List<FavoriteItem>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clothing_shopping.models;
+namespace Clothing_shopping.Models;
 
 public partial class News
 {
@@ -9,15 +9,9 @@ public partial class News
 
     public string Title { get; set; } = null!;
 
-    public string Slug { get; set; } = null!;
-
     public string? ShortDesc { get; set; }
 
     public string? Content { get; set; }
-
-    public Guid? AuthorId { get; set; }
-
-    public bool IsHidden { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -25,5 +19,5 @@ public partial class News
 
     public DateTime? DeletedAt { get; set; }
 
-    public virtual User? Author { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 }

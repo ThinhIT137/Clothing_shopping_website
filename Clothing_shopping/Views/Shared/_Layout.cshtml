@@ -1,6 +1,7 @@
-﻿@{
-    var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
-    var CurrentAction = ViewContext.RouteData.Values["action"].ToString();
+﻿@inject IHttpContextAccessor httpContextAccessor
+@{
+    // var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
+    // var CurrentAction = ViewContext.RouteData.Values["action"].ToString();
 }
 
 
@@ -21,26 +22,24 @@
 
     @* <main role="main"> *@
         <div class="main"> 
-            <partial name="_Loading"/>
+            <partial name="_Loading"/>          
             @RenderBody()
         </div> 
     @* </main> *@
+    
+    @* <partial name="_Footer" /> *@
 
-    <footer class="border-top footer text-muted" style="@(CurrentController == "Login" ? "display: none;" : "")">
-        <div class="container">
-            &copy; 2025 - Clothing_shopping - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script>
         var Controller = "@ViewContext.RouteData.Values["controller"].ToString()";
         var Action = "@ViewContext.RouteData.Values["action"].ToString()";
+        var IsLoggedIn = @(httpContextAccessor.HttpContext.Session.GetString("UserId") != null ? "true" : "false");
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/hub.js"></script>
+    <script src="~/js/Real-Time.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

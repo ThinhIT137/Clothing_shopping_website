@@ -1,0 +1,74 @@
+﻿@using Newtonsoft.Json
+@* @model Clothing_shopping.models.Category *@
+
+@{
+    var TargetGroup = ViewContext.HttpContext.Request.Query["TargetGroup"].ToString();
+    // List<string> Product_Catagory_Nam = new List<string>{ "Áo", "Quần", "Giày", "Dép" };
+    // List<string> Product_Catagory_Nu = new List<string>{"Áo", "Quần", "Váy", "Giày", "Dép"};
+    var categoryNames = (Dictionary<int, string>)ViewBag.AllCategories;
+    Dictionary<string, List<int>> jsonDataFlat = null;
+    Dictionary<string, Dictionary<string, List<int>>> jsonDataNested = null;
+    if (TargetGroup == "0" || TargetGroup == "1")
+    {
+       jsonDataFlat = (Dictionary<string, List<int>>)ViewBag.JsonInt;
+    }
+    else if (TargetGroup == "2")
+    {
+        jsonDataNested = (Dictionary<string, Dictionary<string, List<int>>>)ViewBag.JsonInt;
+    }
+
+}
+<div class="LIST" id="LIST">
+    <div class="btn_list"><i id="list_menu_btn" class="fa-solid fa-bars"></i></div>
+    
+    <nav class="list_menu" id="list_menu">
+        @if (@ViewBag.TargetGroup == 0 || @ViewBag.TargetGroup == 1){
+           <div class="column Catagory">
+                @foreach (var Catagory in jsonDataFlat)
+                {
+                    <h3 id="list_menu_Catagory">
+                        <span>@Catagory.Key </span>
+                        <i class="fa-solid fa-caret-down"></i>
+                    </h3>
+                    <div class="column categoryName">
+                        @foreach (var i in Catagory.Value)
+                        {
+                            string name = categoryNames.ContainsKey(i) ? categoryNames[i] : "Unknown";
+                            <a asp-controller="Home" asp-action="Product" asp-route-CategoryId=@i asp-route-TargetGroup="@TargetGroup">@name</a>
+                        }
+                    </div>
+                }
+           </div>
+        }
+        else
+        {
+            <div class="column group">
+                @foreach (var group in jsonDataNested)
+                {
+                    <h2 id="list_menu_group">
+                        @group.Key
+                        <i class="fa-solid fa-caret-down"></i>    
+                    </h2> <!-- Nam / Nu -->
+                    <div class="column category">
+                        @foreach (var category in group.Value)
+                        {
+                            <h3 id="list_menu_Catagory">
+                                @category.Key
+                                <i class="fa-solid fa-caret-down"></i>    
+                            </h3> <!-- Ao / Quan / Giay / Dep -->
+                            <div class="column categoryName">
+                                @foreach (var id in category.Value)
+                                {
+                                    string name = categoryNames.ContainsKey(id) ? categoryNames[id] : "Unknown";
+                                    <a asp-controller="Home" asp-action="Product" asp-route-CategoryId="@id" asp-route-TargetGroup="@TargetGroup">@name</a>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </nav>
+</div>
+
+

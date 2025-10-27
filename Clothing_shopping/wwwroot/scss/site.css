@@ -1,4 +1,8 @@
-﻿.Loading {
+﻿@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+/*
+    User
+*/
+.Loading {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,11 +79,110 @@ header .header_container nav div span {
   width: 36px;
   height: 23px;
 }
-header .header_container nav div span:hover {
-  border-bottom: 2px solid black;
+header .header_container nav div .click_product::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 50px;
+  transition: width 0.4s ease;
 }
-header .header_container nav div span.ac {
-  border-bottom: 2px solid black;
+header .header_container nav div a {
+  position: relative;
+  transition: border-bottom 0.3s ease;
+}
+header .header_container nav div a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: black;
+  transition: width 0.4s ease;
+}
+header .header_container nav div a:hover::after, header .header_container nav div a.ac::after {
+  width: 100%;
+}
+header .header_container nav .Nam, header .header_container nav .Nu, header .header_container nav .TreEm {
+  position: relative;
+}
+header .header_container nav .Nam .Product, header .header_container nav .Nu .Product, header .header_container nav .TreEm .Product {
+  display: flex;
+  justify-content: space-around;
+  border-radius: 20px;
+  max-height: 200px;
+  opacity: 0;
+  visibility: hidden;
+  padding: 20px;
+  overflow: hidden;
+  position: absolute;
+  top: 180%;
+  width: 1000px;
+  transform: translateY(5px);
+  background: #FAF6EB;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+}
+header .header_container nav .Nam .Product .Product_column, header .header_container nav .Nu .Product .Product_column, header .header_container nav .TreEm .Product .Product_column {
+  display: flex;
+  flex-direction: column;
+  line-height: 50px;
+}
+header .header_container nav .Nam .Product .Product_column .items, header .header_container nav .Nu .Product .Product_column .items, header .header_container nav .TreEm .Product .Product_column .items {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+header .header_container nav .Nam .Product .Product_column .items img, header .header_container nav .Nu .Product .Product_column .items img, header .header_container nav .TreEm .Product .Product_column .items img {
+  width: 25px;
+  height: fit-content;
+}
+header .header_container nav .Nam .Product .Product_column .items span, header .header_container nav .Nu .Product .Product_column .items span, header .header_container nav .TreEm .Product .Product_column .items span {
+  margin-bottom: 24px;
+  padding-left: 5px;
+  width: 100px;
+}
+header .header_container nav .Nam .Nam_Product, header .header_container nav .Nu .Nam_Product, header .header_container nav .TreEm .Nam_Product {
+  left: -400px;
+}
+header .header_container nav .Nam .Nu_Product, header .header_container nav .Nu .Nu_Product, header .header_container nav .TreEm .Nu_Product {
+  left: -489px;
+}
+header .header_container nav .Nam .TreEm_Product, header .header_container nav .Nu .TreEm_Product, header .header_container nav .TreEm .TreEm_Product {
+  left: -565px;
+  opacity: 0;
+}
+header .header_container nav .Nam .nam_click_product:hover + .Nam_Product, header .header_container nav .Nu .nam_click_product:hover + .Nam_Product, header .header_container nav .TreEm .nam_click_product:hover + .Nam_Product {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
+}
+header .header_container nav .Nam .Nam_Product:hover, header .header_container nav .Nu .Nam_Product:hover, header .header_container nav .TreEm .Nam_Product:hover {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
+}
+header .header_container nav .Nam .nu_click_product:hover + .Nu_Product, header .header_container nav .Nu .nu_click_product:hover + .Nu_Product, header .header_container nav .TreEm .nu_click_product:hover + .Nu_Product {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
+}
+header .header_container nav .Nam .Nu_Product:hover, header .header_container nav .Nu .Nu_Product:hover, header .header_container nav .TreEm .Nu_Product:hover {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
+}
+header .header_container nav .Nam .treEm_click_product:hover + .TreEm_Product, header .header_container nav .Nu .treEm_click_product:hover + .TreEm_Product, header .header_container nav .TreEm .treEm_click_product:hover + .TreEm_Product {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
+}
+header .header_container nav .Nam .TreEm_Product:hover, header .header_container nav .Nu .TreEm_Product:hover, header .header_container nav .TreEm .TreEm_Product:hover {
+  opacity: 1;
+  max-height: 300px;
+  visibility: visible;
 }
 header .header_container .user {
   display: flex;
@@ -110,45 +213,102 @@ header .header_container .user div:nth-child(1) {
   position: relative;
 }
 header .header_container .user div:nth-child(1) .profile {
-  display: none;
-  width: 200px;
-  background: rgba(0, 0, 0, 0.5);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  background: #FAF6EB;
   position: absolute;
   top: 55px;
   border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px 20px;
+  z-index: 2;
+}
+header .header_container .user div:nth-child(1) .profile i {
+  width: 25px;
+  height: 25px;
+  color: white;
+  background: black;
 }
 header .header_container .user div:nth-child(1) .profile .cloumn {
   display: flex;
   align-items: center;
-  position: relative;
   height: 40px;
-  padding: 10px;
+  width: 210px;
 }
 header .header_container .user div:nth-child(1) .profile .cloumn a {
-  color: white;
+  display: flex;
+  align-items: center;
+  transition: background 0.3s ease, border-radius 0.3s ease;
+  width: 100%;
+  height: 40px;
+  position: relative;
+  padding: 10px;
+}
+header .header_container .user div:nth-child(1) .profile .cloumn a span {
+  padding-left: 10px;
 }
 header .header_container .user div:nth-child(1) .profile .cloumn .fa-angle-right {
-  right: 0;
+  right: 10px;
   border: none;
   width: fit-content;
   height: fit-content;
-  color: white;
   position: absolute;
+  color: black;
+  background: none;
 }
-header .header_container .user div:nth-child(1) .profile .column_profile {
-  border-bottom: 1px solid white;
+header .header_container .user div:nth-child(1) .profile hr {
+  margin: 5px 0;
 }
-header .header_container .user div:nth-child(1) .profile .column_logOut {
-  border-top: 1px solid white;
+header .header_container .user div:nth-child(1) .profile .cloumn a:hover {
+  background: #C59D5F;
+  border-radius: 10px;
 }
-header .header_container .user div:nth-child(1) .profile .cloumn:hover {
-  background: red;
+header .header_container .user div:nth-child(1) .profile.ac {
+  opacity: 1;
+  visibility: visible;
+  max-height: 250px;
 }
-
-.profile.ac {
-  display: block !important;
+header .header_container .Notification {
+  position: relative;
+}
+header .header_container .Notification .Notification_Notification {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  width: 360px;
+  right: 0;
+  top: 55px;
+  overflow-y: hidden;
+  max-height: 0;
+  background: #FAF6EB;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px 8px;
+  border-radius: 20px;
+  z-index: 1;
+}
+header .header_container .Notification .Notification_Notification .Notification_contaier {
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 20px;
+}
+header .header_container .Notification .Notification_Notification .Notification_contaier .Notification_Header {
+  display: flex;
+}
+header .header_container .Notification .Notification_Notification .Notification_contaier .Notification_Header span {
+  padding: 0 5px;
+}
+header .header_container .Notification .Notification_Notification .Notification_contaier hr {
+  padding: 0;
+  margin: 0;
+}
+header .header_container .Notification .Notification_Notification.ac {
+  max-height: 500px;
+  height: fit-content;
+  opacity: 1;
+  visibility: visible;
 }
 
 .btn_use {
@@ -210,6 +370,10 @@ header .header_container .user div:nth-child(1) .profile .cloumn:hover {
   height: 50px;
 }
 
+.icon:hover {
+  background: #C59D5F;
+}
+
 .swiper {
   width: 100%;
   height: 100%;
@@ -253,6 +417,12 @@ header .header_container .user div:nth-child(1) .profile .cloumn:hover {
   height: 20px !important;
   border-radius: 10px !important;
   color: green;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .login {
@@ -471,6 +641,217 @@ header .header_container .user div:nth-child(1) .profile .cloumn:hover {
   color: #17629A;
 }
 
+.Product_container {
+  display: flex;
+}
+.Product_container .container {
+  border: 1px solid black;
+  margin-right: 0;
+}
+
+.shoe {
+  width: 320px;
+  height: 400px;
+  padding: 20px;
+  position: relative;
+  background: #272d40;
+  border-radius: 15px;
+  color: white;
+}
+.shoe a {
+  cursor: pointer;
+}
+.shoe .shoe_like, .shoe .shoe_cart x {
+  font-size: 25px;
+  position: absolute;
+  left: 20px;
+  top: 15px;
+}
+.shoe .shoe_cart {
+  left: unset;
+  right: 20px;
+}
+.shoe .shoe_img {
+  width: 90%;
+  transition: 0.5s;
+}
+.shoe .shoe_img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.shoe .shoe_name, .shoe .shoe_moeny {
+  font-family: Poppins;
+  font-weight: bold;
+  text-align: center;
+  font-size: 20px;
+  transition: 0.5s;
+}
+.shoe .shoe_moeny {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 25px;
+}
+.shoe .shoe_name {
+  color: #4daf54;
+}
+.shoe .size_option, .shoe .color_option {
+  display: flex;
+  margin: 2px 0;
+}
+.shoe .size_option h3, .shoe .color_option h3 {
+  font-size: 20px;
+}
+.shoe .size_option .Size_product {
+  padding-left: 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.shoe .size_option .Size_product .size-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px 5px;
+  background: #dadada;
+  color: black;
+  border-radius: 5px;
+  margin: 2px 2px;
+}
+.shoe .color_option {
+  margin-bottom: 15px;
+}
+.shoe .color_option .Color_product {
+  padding-left: 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.shoe .color_option .Color_product .bgr-product {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 2px 2px;
+}
+.shoe .Shoe_buy a {
+  background: #4daf54;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.shoe .Shoe_buy a:hover {
+  background: green;
+}
+.shoe .shoe_bottom {
+  position: absolute;
+  width: 280px;
+  bottom: -50px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.5s;
+}
+
+.shoe:hover .shoe_img {
+  transform: translateY(-90px) rotate(-20deg);
+}
+.shoe:hover .shoe_name, .shoe:hover .shoe_moeny {
+  transform: translateY(-72px);
+}
+.shoe:hover .shoe_bottom {
+  bottom: 25px;
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 765px) {
+  .Product_container .container {
+    margin: 0;
+    padding: 0;
+  }
+  .shoe {
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+}
+.LIST {
+  position: relative;
+  transition: 0.5s;
+}
+.LIST .btn_list {
+  display: flex;
+  justify-content: end;
+}
+.LIST .btn_list i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background: blue;
+  z-index: 100;
+  left: 100%;
+}
+.LIST h2 {
+  font-size: 25px;
+}
+.LIST h3, .LIST h2 {
+  width: 200px;
+  border: 1px solid black;
+}
+.LIST h3 {
+  font-size: 20px;
+  width: 180px;
+}
+.LIST .list_menu {
+  font-size: Poppins;
+  overflow: visible;
+  transition: 0.5s;
+  max-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+}
+.LIST .list_menu .column {
+  display: flex;
+  flex-direction: column;
+}
+.LIST .list_menu .column a {
+  width: 150px;
+  border: 1px solid black;
+  font-size: 15px;
+}
+.LIST .list_menu .categoryName {
+  padding-left: 20px;
+}
+.LIST .list_menu .group {
+  font-size: 30px;
+}
+.LIST .list_menu .group .category {
+  padding-left: 20px !important;
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+}
+.LIST .list_menu .group .category .categoryName {
+  padding-left: 40px;
+  opacity: 0;
+  max-height: 0;
+}
+
+.list_menu.ac {
+  max-width: 300px;
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 765px) {
+  .LIST {
+    display: none;
+  }
+}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -481,6 +862,7 @@ header .header_container .user div:nth-child(1) .profile .cloumn:hover {
 html, body {
   position: relative;
   height: 100%;
+  max-width: 100vw;
 }
 
 a {

@@ -1,5 +1,4 @@
 using Clothing_shopping.Hubs;
-using Clothing_shopping.models;
 using Clothing_shopping.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +74,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.MapHub<AppHub>("/appHub");
+//app.MapHub<AppHub>("/appHub");
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

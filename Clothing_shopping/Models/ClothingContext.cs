@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Clothing_shopping.models;
+namespace Clothing_shopping.Models;
 
 public partial class ClothingContext : DbContext
 {
@@ -19,7 +19,11 @@ public partial class ClothingContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<FavoriteItem> FavoriteItems { get; set; }
+
     public virtual DbSet<News> News { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -33,6 +37,10 @@ public partial class ClothingContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Voucher> Vouchers { get; set; }
+
+    public virtual DbSet<Voucheruser> Voucherusers { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=TRANDUCTHINH\\SQLEXPRESS;Initial Catalog=Clothing_Shopping;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
@@ -42,6 +50,10 @@ public partial class ClothingContext : DbContext
         modelBuilder.Entity<CartItem>(entity =>
         {
             entity.HasKey(e => e.CartItemId).HasName("PK__CartItem__488B0B0A910DD251");
+
+            entity.HasIndex(e => e.UserId, "IX_CartItems_UserId");
+
+            entity.HasIndex(e => new { e.UserId, e.ProductVariantId }, "IX_CartItems_User_Variant");
 
             entity.Property(e => e.AddedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Quantity).HasDefaultValue(1);
@@ -69,25 +81,60 @@ public partial class ClothingContext : DbContext
             entity.Property(e => e.Slug).HasMaxLength(200);
         });
 
+        modelBuilder.Entity<FavoriteItem>(entity =>
+        {
+            entity.HasKey(e => e.FavoriteItemsId).HasName("PK__Favorite__52A8EB5318F8C0E5");
+
+            entity.Property(e => e.AddedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+            entity.HasOne(d => d.ProductVariant).WithMany(p => p.FavoriteItems)
+                .HasForeignKey(d => d.ProductVariantId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FavoriteItems_Variant");
+
+            entity.HasOne(d => d.User).WithMany(p => p.FavoriteItems)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FavoriteItems_User");
+        });
+
         modelBuilder.Entity<News>(entity =>
         {
-            entity.HasKey(e => e.NewsId).HasName("PK__News__954EBDF3091AC782");
-
-            entity.HasIndex(e => e.Slug, "UQ__News__BC7B5FB6D7585061").IsUnique();
+            entity.HasKey(e => e.NewsId).HasName("PK__News__954EBDF325FFECDF");
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ShortDesc).HasMaxLength(500);
-            entity.Property(e => e.Slug).HasMaxLength(350);
             entity.Property(e => e.Title).HasMaxLength(300);
+        });
 
-            entity.HasOne(d => d.Author).WithMany(p => p.News)
-                .HasForeignKey(d => d.AuthorId)
-                .HasConstraintName("FK_News_Author");
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E12328E4179");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.IsRead).HasDefaultValue(false);
+
+            entity.HasOne(d => d.News).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.NewsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserNews_News");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_UserNews_OrderId");
+
+            entity.HasOne(d => d.Receiver).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.ReceiverId)
+                .HasConstraintName("FK_UserNews_Receiver");
         });
 
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCFEC39C5AD");
+
+            entity.HasIndex(e => e.OrderStatus, "IX_Orders_OrderStatus");
+
+            entity.HasIndex(e => e.UserId, "IX_Orders_UserId");
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Email).HasMaxLength(255);
@@ -108,6 +155,8 @@ public partial class ClothingContext : DbContext
         {
             entity.HasKey(e => e.OrderItemId).HasName("PK__OrderIte__57ED0681E2199891");
 
+            entity.HasIndex(e => e.OrderId, "IX_OrderItems_OrderId");
+
             entity.Property(e => e.TotalMoney)
                 .HasComputedColumnSql("([UnitPrice]*[Quantity])", true)
                 .HasColumnType("decimal(23, 2)");
@@ -127,6 +176,10 @@ public partial class ClothingContext : DbContext
         {
             entity.HasKey(e => e.ProductId).HasName("PK__Products__B40CC6CDDCF6AB7E");
 
+            entity.HasIndex(e => e.CategoryId, "IX_Products_CategoryId");
+
+            entity.HasIndex(e => e.Slug, "IX_Products_Slug");
+
             entity.HasIndex(e => e.Slug, "UQ__Products__BC7B5FB6D4702AEC").IsUnique();
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
@@ -143,6 +196,8 @@ public partial class ClothingContext : DbContext
         modelBuilder.Entity<ProductVariant>(entity =>
         {
             entity.HasKey(e => e.ProductVariantId).HasName("PK__ProductV__E4D667457FD95943");
+
+            entity.HasIndex(e => e.ProductId, "IX_ProductVariants_ProductId");
 
             entity.Property(e => e.Color).HasMaxLength(100);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
@@ -177,6 +232,8 @@ public partial class ClothingContext : DbContext
         {
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C0DCB922F");
 
+            entity.HasIndex(e => e.Email, "IX_Users_Email").IsUnique();
+
             entity.HasIndex(e => e.Email, "UQ__Users__A9D10534B1082736").IsUnique();
 
             entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
@@ -192,6 +249,37 @@ public partial class ClothingContext : DbContext
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasDefaultValue("Customer");
+        });
+
+        modelBuilder.Entity<Voucher>(entity =>
+        {
+            entity.HasKey(e => e.VoucherId).HasName("PK__VOUCHERS__3AEE7921C0EA5AE7");
+
+            entity.ToTable("VOUCHERS");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.StartDate).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.VoucherType).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<Voucheruser>(entity =>
+        {
+            entity.HasKey(e => new { e.VoucherId, e.UserId }).HasName("PK__VOUCHERU__EB96F5E584C52E1F");
+
+            entity.ToTable("VOUCHERUSERS");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Voucherusers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_VoucherUsers_User");
+
+            entity.HasOne(d => d.Voucher).WithMany(p => p.Voucherusers)
+                .HasForeignKey(d => d.VoucherId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_VoucherUsers_Voucher");
         });
 
         OnModelCreatingPartial(modelBuilder);

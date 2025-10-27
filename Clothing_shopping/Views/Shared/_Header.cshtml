@@ -1,70 +1,211 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
 @inject IHttpContextAccessor HttpContextAccessor
 
-@model Clothing_shopping.Views.Shared._HeaderModel
+@* @model Clothing_shopping.Views.Shared._HeaderModel *@
 @{
     var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
     var userID = HttpContextAccessor.HttpContext.Session.GetString("UserId");
     var FullName = HttpContextAccessor.HttpContext.Session.GetString("FullName");
+    var json = HttpContextAccessor.HttpContext.Session.GetString("Notification");
+    var Notification = string.IsNullOrEmpty(json)
+    ? new List<News>()
+    : JsonConvert.DeserializeObject<List<News>>(json); ;
 }
 <header>
     <div class="header_container">
         <div class="logo">
             <a asp-controller="Home" asp-action="Index">
-                <img src="/images/logo.svg" alt="" />
+                <img loading="lazy" src="/images/logo.svg" alt="" />
             </a>
         </div>
         <nav>
-            <div>
-                <a><span>Nam</span></a>
+            <div class="Nam">
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" class="nam_click_product click_product @(Context.Request.Query["TargetGroup"] == "0" ? "ac" : "")"><span>Nam</span></a>
+
+                <div class="Nam_Product Product">
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
+                                <span>Áo phông</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
+                            <div class="items">
+                                <img loading="lazy" src="" alt="" />
+                                <span>Áo sơ mi</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
+                    </div>
+                </div>
             </div>
-            <div>
-                <a><span>Nữ</span></a>
+            <div class="Nu">
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="1" class="nu_click_product @(Context.Request.Query["TargetGroup"] == "1" ? "ac" : "")"><span>Nữ</span></a>
+                
+                <div class="Nu_Product Product">
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
+                                <span>Áo phông</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
+                            <div class="items">
+                                <img loading="lazy" src="" alt="" />
+                                <span>Áo sơ mi</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
+                    </div>
+                </div>
             </div>
-            <div>
-                <a><span>Trẻ em</span></a>
+            <div class="TreEm">
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="2" class="treEm_click_product @(Context.Request.Query["TargetGroup"] == "3" ? "ac" : "")"><span>Trẻ em</span></a>
+                
+                <div class="TreEm_Product Product">
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
+                                <span>Áo phông</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
+                            <div class="items">
+                                <img loading="lazy" src="" alt="" />
+                                <span>Áo sơ mi</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
+                    </div>
+                    <div class="Product_column">
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
+                    </div>
+                </div>
             </div>
         </nav>
         <div class="user">
             <div>
                 @if (userID == null)
                 {
-                    <a asp-controller="Login" asp-action="Login">
+                    <a asp-controller="User" asp-action="Login">
                         <i class="fa-solid fa-user"></i>
                     </a>
                 }
                 else
                 {
                     <div id="user_drop_down">
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-user icon"></i>
                         <i class="fa-solid fa-angle-down"></i>
                     </div>
 
                     <div class="profile" id="user_profile">
                         <div class="cloumn column_profile">
-                            <a asp-controller="Login" asp-action="Profile">
+                            <a asp-controller="User" asp-action="Profile">
                                 <span>@FullName</span>
                             </a>
                         </div>
+                        <hr />
                         <div class="cloumn">
-                            <a>Hộ trợ và trợ giúp</a>
-                            <i class="fa-solid fa-angle-right"></i>
+                            <a asp-controller="User" asp-action="Profile">
+                                <i class="fa-solid fa-question"></i>
+                                <span>Hỗ trợ và trợ giúp</span>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
                         </div>
                         <div class="cloumn">
-                            <a>Settings</a>
-                            <i class="fa-solid fa-angle-right"></i>
+                            <a asp-controller="User" asp-action="Profile">
+                                <i class="fa-solid fa-gear"></i>
+                                <span>Settings</span>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
                         </div>
+                        <hr />
                         <div class="cloumn column_logOut">
-                            <a asp-controller="Login" asp-action="LogOut">Đăng xuất</a>
+                            <a asp-controller="User" asp-action="LogOut">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <span>Đăng xuất</span>
+                            </a>
                         </div>
                     </div>
                 }
             </div>
             <div>
-                <i class="fa-regular fa-heart"></i>
+                <i class="fa-regular fa-heart icon"></i>
             </div>
-            <div>
-                <i class="fa-solid fa-bell"></i>
+            <div class="Notification">
+                @if (userID == null)
+                {
+                    <a asp-controller="User" asp-action="Login">
+                        <i class="fa-solid fa-bell icon"></i>
+                    </a>
+                }
+                else
+                {
+                    <div id="btn_Notification">
+                        <i class="fa-solid fa-bell icon"></i>
+                    </div>
+                    <div id="Notification" class="Notification_Notification">
+                        @if (Notification == null)
+                        {
+                            <div>Bạn không có thông báo</div>
+                        }
+                        else {
+                            @foreach(var notify in Notification)
+                            {
+                                @await Html.PartialAsync("_notification", notify)
+                            }
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -83,17 +224,26 @@
     </div>
     <div class="btn_use_container">
         <div>
-            <i class="fa-solid fa-house"></i>
+            <i class="fa-solid fa-house icon"></i>
         </div>
         <div>
             <a>
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-solid fa-magnifying-glass icon"></i>
             </a>
         </div>
         <div>
-            <a>
-                <i class="fa-solid fa-cart-shopping"></i>
-            </a>
+            @if (userID == null)
+            {
+                <a asp-controller="User" asp-action="Login">
+                    <i class="fa-solid fa-cart-shopping icon"></i>
+                </a>
+            }
+            else
+            {
+                <a>
+                    <i class="fa-solid fa-cart-shopping icon"></i>
+                </a>
+            }
         </div>
     </div>
 </div>

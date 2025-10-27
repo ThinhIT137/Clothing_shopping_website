@@ -1,11 +1,16 @@
 ﻿// index
 var swiper = new Swiper(".mySwiper", {
     direction: "vertical",
+    loop: true,
     pagination: {
         el: ".swiper-pagination",
         clickable: true,
     },
     mousewheel: true,
+    keyboard: {
+        enabled: true,
+        onlyInViewport: true,
+    },
     resistanceRatio: 0,
     on: {
         slideChangeTransitionStart: function () {
@@ -27,11 +32,6 @@ window.addEventListener("beforeunload", () => {
 window.addEventListener("load", () => {
     document.querySelector(".Loading").style.display = "none";
 });
-
-// user drop down
-document.getElementById("user_drop_down").addEventListener("click", () => {
-    document.getElementById("user_profile").classList.toggle("ac");
-})
 
 function lock_password(Element, class_input) {
     if (!Element || !class_input) return;
@@ -69,26 +69,38 @@ if (Controller === "Login" && Action === "Register") {
     const day = document.getElementById("day");
     const month = document.getElementById("month");
     const year = document.getElementById("year");
+}
 
-    //const startYear = 1900;
-    //const currentYear = new Date().getFullYear();
-    //for (let yr = startYear; yr <= currentYear; yr++) {
-    //    let option = document.createElement("option");
-    //    option.value = yr;
-    //    option.textContent = yr;
-    //    year.appendChild(option);
-    //}
-    //for (let m = 1; m <= 12; m++) {
-    //    let option = document.createElement("option");
-    //    option.value = m;
-    //    option.textContent = m;
-    //    month.appendChild(option);
-    //}
-    //for (let d = 1; d <= 31; d++) {
-    //    let option = document.createElement("option");
-    //    option.value = d;
-    //    option.textContent = d;
-    //    day.appendChild(option);
-    //}
+// product
+if (Controller === "Home" && Action === "Product") {
+    const List_menu = document.getElementById("list_menu");
+    const LIST = document.getElementById("LIST");
+    const iconBtn_list_menu = document.getElementById("list_menu_btn");
+    iconBtn_list_menu.addEventListener("click", () => {
+        List_menu.classList.toggle("ac");
+        if (iconBtn_list_menu.classList.contains("fa-bars")) {
+            iconBtn_list_menu.classList.remove("fa-bars");
+            iconBtn_list_menu.classList.add("fa-xmark");
+            LIST.style.background = "red";
+            //LIST.style = `
+            //    background = "red"
+            //`
+            return;
+        }
+        iconBtn_list_menu.classList.remove("fa-xmark");
+        iconBtn_list_menu.classList.add("fa-bars");
+        LIST.style.background = "none";
+        //alert("check")
+    });
+}
 
+if (IsLoggedIn == true) {
+    // user drop down
+    document.getElementById("user_drop_down").addEventListener("click", () => {
+        document.getElementById("user_profile").classList.toggle("ac");
+    })
+
+    document.getElementById("btn_Notification").addEventListener("click", () => {
+        document.getElementById("Notification").classList.toggle("ac");
+    })
 }
