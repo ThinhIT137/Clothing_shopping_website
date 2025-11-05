@@ -1,0 +1,351 @@
+﻿@model Clothing_shopping.Models.Product
+
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var TargetGroup = HttpContextAccessor.HttpContext.Request.Query["TargetGroup"];
+    var CategoryId = HttpContextAccessor.HttpContext.Request.Query["CategoryId"];
+    var ProductId = HttpContextAccessor.HttpContext.Request.Query["ProductId"];
+    var colorFromQuery = HttpContextAccessor.HttpContext.Request.Query["color"].ToString();   
+    var AllGroup = ViewBag.AllGroup as Dictionary<int, string>;
+    // color
+    var distinctColors = Model.ProductVariants
+                            .Select(s => s.Color)
+                            .Distinct();
+    var firsSelectedColor = distinctColors.FirstOrDefault();
+    // size
+    var distinctSize = Model.ProductVariants
+                            .Select(s => s.Size)
+                            .Distinct();
+    var firsSelectedSize = distinctSize.FirstOrDefault();
+
+    // img
+    var images = JsonConvert.DeserializeObject<List<string>>(Model.Images);
+    var imgList = new Dictionary<string,List<string>>();
+    foreach (var img in images)
+    {
+        string fileName = System.IO.Path.GetFileNameWithoutExtension(img);
+        string color = fileName.Split('_').Last();
+        if (!imgList.ContainsKey(color))
+        {
+            imgList[color] = new List<string>();
+        }
+        imgList[color].Add(img);
+    }
+
+    var imgFisrt = imgList[firsSelectedColor].FirstOrDefault();
+
+    var firstProduct = Model.ProductVariants.FirstOrDefault();
+    var SalePrice = firstProduct.SalePrice ?? 0;
+    var Price = firstProduct.Price ?? 0;
+    var cultureVN = new CultureInfo("vi-VN");
+}
+
+<div class="ProductDetail">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@TargetGroup">
+                        @AllGroup[int.Parse(TargetGroup)]
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@TargetGroup" asp-route-CategoryId="@CategoryId">
+                        @ViewBag.AllCategories[int.Parse(CategoryId)]
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    @Model.Name
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="ProductDetail_container">
+        <div class="ProductDetail_imgDetail">
+            <div id="ImgList">
+                @foreach (var img in imgList[firsSelectedColor])
+                {
+                    <img class="@(img == imgFisrt ? "ac" : "")" src="@img" />
+                }
+            </div>
+            <div id="RenderImg">
+                <img src="@imgFisrt" alt="" />
+                <div class="RenderImg_btn">
+                    <div class="RenderImg_btn_left"><i class="fa-solid fa-circle-left"></i></div>
+                    <div class="RenderImg_btn_right"><i class="fa-solid fa-circle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ProductDetail_form_content">
+            <form method="post" class="Form_Order">
+                <div class="Color">
+                    <h3>@Model.Name</h3>
+                    @if (SalePrice == 0)
+                    {
+                        <input type="hidden" name="Price" type="" value="@Price" />
+                    }
+                    else
+                    {
+                        <input type="hidden" name="Price" type="" value="@SalePrice" />
+                    }
+                    <div class="from_price">
+                        @if (SalePrice != 0)
+                        {
+                            <span id="display_price" class="shoe_price" style="color: red;">@Price.ToString("C0", cultureVN)</span>
+                            <span id="display_salePrice" class="shoe_salePrice" style="display: none">@SalePrice.ToString("C0", cultureVN)</span>
+                        }
+                        else
+                        {
+                            <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px;">@Price.ToString("C0")</span>
+                            <span id="display_salePrice" class="shoe_salePrice" style="color: red;">@SalePrice.ToString("C0")</span>
+                        }
+                    </div>
+                    <h3>Màu</h3>
+                    <input type="hidden" id="selectedColorInput" name="SelectedColor" value="@firsSelectedColor" />
+                    <div>
+                        @foreach (var pv_c in distinctColors)
+                        {
+                            <a data-color="@pv_c" class="btn_SelectedColor @(pv_c == firsSelectedColor ? "ac" : "")">
+                                <div style="background: @pv_c"></div>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="Size">
+                    <h3>Kích cỡ</h3>
+                    <input type="hidden" id="selectedSizeInput" name="SelectedSize" value="@firsSelectedSize" />
+                    <div>
+                        @foreach (var pv_s in distinctSize)
+                        {
+                            <a data-size="@pv_s" class="btn_SelectedSize @(pv_s == firsSelectedSize ? "ac" : "")">
+                                <div>@pv_s</div>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="ProductDetail_Form_btn">
+                    <button type="submit">Mua</button>
+                    <a>Thêm vào giỏ hàng</a>
+                </div>
+            </form>
+            <div>
+                @{
+                    try
+                    {
+                        JArray jsonArray = JArray.Parse(Model.ShortDesc);
+
+                        if (jsonArray.Count > 0)
+                        {
+                            <div>@jsonArray[0].ToString()</div>
+                        }
+
+                        foreach (JObject jObj in jsonArray.Skip(1).OfType<JObject>())
+                        {
+                            var tempDict = jObj.ToObject<Dictionary<string, List<string>>>();
+                            foreach (var kvp in tempDict)
+                            {
+                                <ul>
+                                    @foreach (var content in kvp.Value)
+                                    {
+                                        <li>@content.ToString()</li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Lỗi xử lý JSON: " + ex.Message);
+                    }
+                }
+                <div><a class="ProductDetail_ChiTietSanPham">Xem chi tiết sản phẩm</a></div>
+                <div>
+                    <div class="ProductDetail_GiaoHangFree">
+                        <span>Giao hàng và trả hàng miễn phí</span>
+                        <i class="fa-solid fa-angle-down"></i>
+                    </div>
+                    <div class="ProductDetail_GiaoHangFree_Content">
+                        <span>Đơn hàng từ 1.000.000₫ trở lên của bạn sẽ được miễn phí giao hàng tiêu chuẩn.</span>
+                        <ul>
+                            <li>
+                                Giao hàng tiêu chuẩn trong vòng 4-5 ngày làm việc
+                            </li>
+                            <li>
+                                Giao hàng nhanh trong vòng 2-4 ngày làm việc
+                            </li>
+                        </ul>
+                        <span>Đơn hàng được xử lý và giao từ Thứ Hai đến Thứ Sáu (trừ ngày lễ)</span>
+                        <span>Thành viên ALVÉA được hưởng <a>quyền trả hàng miễn phí</a>.</span>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ProductDetail_ChiTiet">
+        <div class="ProductDetail_ChiTiet_Content">
+            <div class="ProductDetail_ChiTiet_btn"><i class="fa-solid fa-x"></i></div>
+            <div class="ProductDetail_ChiTiet_Content_ScrollArea">
+                @{
+                    try
+                    {
+                        JArray jsonArray = JArray.Parse(Model.FullDesc);
+
+                        if (jsonArray.Count > 0)
+                        {
+                            <div class="ProductDetail_ChiTiet_Content_title">@jsonArray[0].ToString()</div>
+                        }
+
+                        foreach (JObject jObj in jsonArray.Skip(1).OfType<JObject>())
+                        {
+                            var tempDict = jObj.ToObject<Dictionary<string, List<string>>>();
+                            foreach (var kvp in tempDict)
+                            {
+                                <div class="ProductDetail_ChiTiet_Content_key">@kvp.Key.ToString()</div>
+                                <ul>
+                                    @foreach (var content in kvp.Value)
+                                    {
+                                        <li>@content.ToString()</li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Lỗi xử lý JSON: " + ex.Message);
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        if (Controller == "Home" && Action == "ProductDetail") {
+            // xem chi tiết sản phẩm
+            $(".ProductDetail_ChiTietSanPham").on("click", function() {
+                $(".ProductDetail_ChiTiet").toggleClass("ac");
+                document.body.classList.add("no-scroll");
+            });
+            // tắt xem chi tiết sản phẩm
+            $(".ProductDetail_ChiTiet_Content").on("click", function(event) {
+                event.stopPropagation();
+            });
+
+            $(".ProductDetail_ChiTiet").on("click", () => {
+                 $(".ProductDetail_ChiTiet").removeClass("ac");
+                 document.body.classList.remove("no-scroll");
+            });
+
+            $(".ProductDetail_ChiTiet_btn i").on("click", () => {
+                 $(".ProductDetail_ChiTiet").removeClass("ac");
+                 document.body.classList.remove("no-scroll");
+            });
+            // Giao hàng Free
+            $(".ProductDetail_GiaoHangFree").on("click", () => {
+                $(".ProductDetail_GiaoHangFree_Content").toggleClass("ac");
+            })
+
+            // hàm hình ảnh
+            const imgList = @Html.Raw(JsonConvert.SerializeObject(imgList));
+            const renderImgColor = (color) => {
+                const imgs = imgList[color];
+                let html ="";
+                let imgFirst = imgs[0];
+                imgs.forEach(img => {
+                    html += `<img class="${img == imgFirst ? "ac" : ""}" src="${img}">`
+                })
+                $("#ImgList").html(html)
+                $("#RenderImg img").attr("src", imgFirst);
+
+                $("#ImgList img").on("click", function() {
+                    $("#ImgList img").removeClass("ac");
+                    $(this).addClass("ac");
+                    $("#RenderImg img").attr("src", $(this).attr("src"));
+                });
+            }
+
+            // đổi màu
+            const colorButtons = document.querySelectorAll(".btn_SelectedColor");
+            const hiddenInputColor = document.getElementById("selectedColorInput");
+            colorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    colorButtons.forEach(btn => btn.classList.remove("ac"));
+                    button.classList.add("ac");
+                    hiddenInputColor.value = button.dataset.color;
+                    renderImgColor(button.dataset.color);
+                })
+            })
+
+            // đổi size
+            const sizeButtons = document.querySelectorAll(".btn_SelectedSize");
+            const hiddenInputSize = document.getElementById("selectedSizeInput");
+            sizeButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    sizeButtons.forEach(btn => btn.classList.remove("ac"));
+                    button.classList.add("ac");
+                    hiddenInputSize.value = button.dataset.size;
+                    // renderImgColor(button.dataset.color);
+                })
+            })
+
+            // click vào hình ảnh cập nhật hiển thị
+            $("#ImgList img").on("click", function() {
+                $("#ImgList img").removeClass("ac");
+                $(this).addClass("ac");
+                $("#RenderImg img").attr("src", $(this).attr("src"));
+            });
+
+            $(".RenderImg_btn_left").on("click", () => {
+                let $allThumbs = $("#ImgList img");
+                let $activeThumb = $allThumbs.filter(".ac");
+                let currentIndex = $allThumbs.index($activeThumb);
+                let newIndex;
+
+                if (currentIndex === 0) {
+                    newIndex = $allThumbs.length - 1; // Vòng về cuối
+                } else {
+                    newIndex = currentIndex - 1; // Lùi 1
+                }
+
+                let $newThumb = $allThumbs.eq(newIndex);
+                let newSrc = $newThumb.attr("src");
+
+                $("#RenderImg img").attr("src", newSrc);
+                $activeThumb.removeClass("ac");
+                $newThumb.addClass("ac");
+            });
+
+            $(".RenderImg_btn_right").on("click", () => {
+                let $allThumbs = $("#ImgList img");
+                let $activeThumb = $allThumbs.filter(".ac");
+                let currentIndex = $allThumbs.index($activeThumb);
+                let newIndex;
+
+                if (currentIndex === $allThumbs.length-1) {
+                    newIndex = 0; // Vòng về cuối
+                } else {
+                    newIndex = currentIndex + 1; // Lùi 1
+                }
+
+                let $newThumb = $allThumbs.eq(newIndex);
+                let newSrc = $newThumb.attr("src");
+
+                $("#RenderImg img").attr("src", newSrc);
+                $activeThumb.removeClass("ac");
+                $newThumb.addClass("ac");
+            });
+        }
+    </script>
+}

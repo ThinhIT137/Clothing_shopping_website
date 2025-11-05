@@ -1,5 +1,4 @@
-﻿@inject IHttpContextAccessor httpContextAccessor
-@{
+﻿@{
     // var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
     // var CurrentAction = ViewContext.RouteData.Values["action"].ToString();
 }
@@ -32,7 +31,7 @@
     <script>
         var Controller = "@ViewContext.RouteData.Values["controller"].ToString()";
         var Action = "@ViewContext.RouteData.Values["action"].ToString()";
-        var IsLoggedIn = @(httpContextAccessor.HttpContext.Session.GetString("UserId") != null ? "true" : "false");
+        var IsLoggedIn = @(HttpContextAccessor.HttpContext.Session.GetString("UserId") != null ? "true" : "false");
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>

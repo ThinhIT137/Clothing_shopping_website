@@ -1,8 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
-@using Newtonsoft.Json
-@inject IHttpContextAccessor HttpContextAccessor
-
-@* @model Clothing_shopping.Views.Shared._HeaderModel *@
+﻿@* @model Clothing_shopping.Views.Shared._HeaderModel *@
 @{
     var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
     var userID = HttpContextAccessor.HttpContext.Session.GetString("UserId");
@@ -179,7 +175,7 @@
                 }
             </div>
             <div>
-                <i class="fa-regular fa-heart icon"></i>
+                <i id="header-wishlist-icon" class="fa-regular fa-heart icon"></i>
             </div>
             <div class="Notification">
                 @if (userID == null)
@@ -212,7 +208,11 @@
 </header>
 
 <div class="btn_use" style="@(CurrentController=="Login" ? "display:none;" : "")">
-    <div class="search">
+    <div class="search" id="search">
+        <div class="search_container">
+            
+        </div>
+
         <form action="/" method="post">
             <div>
                 <input type="" value="" />
@@ -228,7 +228,7 @@
         </div>
         <div>
             <a>
-                <i class="fa-solid fa-magnifying-glass icon"></i>
+                <i id="btn_search" class="fa-solid fa-magnifying-glass icon"></i>
             </a>
         </div>
         <div>
@@ -240,8 +240,8 @@
             }
             else
             {
-                <a>
-                    <i class="fa-solid fa-cart-shopping icon"></i>
+                <a asp-controller="Order" asp-action="Cart">
+                    <i id="header_cartlist_icon" class="fa-solid fa-cart-shopping icon"></i>
                 </a>
             }
         </div>

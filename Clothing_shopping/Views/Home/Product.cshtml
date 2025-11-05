@@ -1,10 +1,12 @@
-﻿@using X.PagedList
-@using X.PagedList.Mvc.Core
-@model IPagedList<Clothing_shopping.Models.Product>
+﻿@model Dictionary<int, IPagedList<Clothing_shopping.Models.Product>>
 
+@{
+    var CategoryId = 0;
+    int.TryParse(ViewContext.HttpContext.Request.Query["CategoryId"], out CategoryId);
+}
 
 <div class="Product_container">
-    <div>
+    <div class="Product_list_menu">
         <partial name="_list_menu"/>
     </div>
     <div class="container">
@@ -34,33 +36,198 @@
                 </li>
             </ol>
         </nav>
-
-        <div class="container-fluid">
-            <div class="product-list row">
-            @foreach (var product in Model)
-            {
-                <div class="col-md-3 col-sm-6 mb-4">
-                    @await Html.PartialAsync("_shoe", product)
-                </div>
-            }
-            </div>
-        </div>
-    
-        <div class="d-flex justify-content-center mt-4">
-            @Html.PagedListPager(
-                Model,
-                page => Url.Action("Product", new {
-                    Page = page,
-                    TargetGroup = ViewContext.HttpContext.Request.Query["TargetGroup"],
-                    CategoryId = ViewContext.HttpContext.Request.Query["CategoryId"]
-                }),
-                new PagedListRenderOptions
-                {
-                    UlElementClasses = new[] { "pagination" },
-                    LiElementClasses = new[] { "page-item" },
-                    PageClasses = new[] { "page-link" }
-                }
-            )
+        <div id="product-list-area">
+            @await Html.PartialAsync("_ProductListContainer", Model)
         </div>
     </div>
+    @* <div class="Product_video">
+        @if(@ViewBag.TargetGroup == 0)
+        {
+            <video aria-label="BỘ SƯU TẬP LifeWear Thu / Đông 2025"
+                playsinline
+                preload="auto"
+                autoplay
+                loop
+                muted
+                poster="/img">
+                <source src="/videos/Products/Nam/Nam.mp4" type="video/mp4">
+            </video>
+        }
+        else if (@ViewBag.TargetGroup == 1)
+        {
+           @("Đồ Nữ")               
+        }
+        else
+        {
+           @("Đồ Trẻ Em")
+        } *@
+    @* </div> *@
 </div>
+
+@section Scripts{
+    <script>
+        if (Controller === "Home" && Action === "Product") {
+            const List_menu = document.getElementById("list_menu");
+            const LIST = document.getElementById("LIST");
+            const iconBtn_list_menu = document.getElementById("list_menu_btn");
+            // --- CODE LIST MENU (CẠNH TRÁI) ---
+            iconBtn_list_menu.addEventListener("click", () => {
+                List_menu.classList.toggle("ac");
+                $(".container").toggleClass("ac");
+                if (iconBtn_list_menu.classList.contains("fa-bars")) {
+                    iconBtn_list_menu.classList.remove("fa-bars");
+                    iconBtn_list_menu.classList.add("fa-xmark");
+                    LIST.style.background = "$bgr-1";
+                    //LIST.style = `
+                    //    background = "red"
+                    //`
+                    return;
+                }
+                iconBtn_list_menu.classList.remove("fa-xmark");
+                iconBtn_list_menu.classList.add("fa-bars");
+                LIST.style.background = "none";
+                //alert("check")
+            });
+
+            // --- CODE THÊM SẢN PHẨM VÀO YÊU THÍCH AJAX VỚI HIỆU ỨNG BAY TRÁI TIM ---
+            document.addEventListener('DOMContentLoaded', function () {
+                const wishlistButtons = document.querySelectorAll('.add-to-wishlist-btn');
+                // const cartlistButtons = document.querySelectorAll('.add-to-cartlist-btn');
+                const headerWishlistIcon = document.getElementById('header-wishlist-icon');
+                // const headerCartlistIcon = document.getElementById('header_cartlist_icon');
+
+                if (!headerWishlistIcon) {
+                    console.error('Không tìm thấy icon trái tim trên header (id="header-wishlist-icon")');
+                    return;
+                }
+
+                wishlistButtons.forEach(button => {
+                    button.addEventListener('click', async function (event) {
+                        event.preventDefault();
+
+                        // Lấy ID sản phẩm từ data attribute
+                        const variantId = this.dataset.variantId;
+                        if (!variantId || variantId === '0') {
+                            console.error('Không tìm thấy productVariantId');
+                            alert('Lỗi: Không tìm thấy ID sản phẩm.');
+                            return;
+                        }
+
+                        const clickedIcon = this.querySelector('i');
+
+                        // Gọi ajax
+                        try {
+                            // gọi AddFavorite
+                            const response = await $.post(`/Home/AddFavorite?productVariantId=${variantId}`)
+
+
+                            // const response = await fetch(`/Home/AddFavorite?productVariantId=${variantId}`, {
+                            //     method: 'POST',
+                            //     headers: {
+                            //         'X-Requested-With': 'XMLHttpRequest'
+                            //     }
+                            // });
+
+                            // 3. Xử lý kết quả
+                            if (response.ok) { // response.ok == true khi status là 200 (OK)
+                                // --- CHỈ KHI THÀNH CÔNG MỚI CHẠY HIỆU ỨNG ---
+                                const flyingHeart = clickedIcon.cloneNode(true);
+                                flyingHeart.classList.add('flying-heart');
+                                const startRect = clickedIcon.getBoundingClientRect(); // lấy vị trí của icon đã bấm
+                                const endRect = headerWishlistIcon.getBoundingClientRect(); // lấy vị trí của icon trên header
+                                flyingHeart.style.top = `${startRect.top}px`;
+                                flyingHeart.style.left = `${startRect.left}px`;
+                                document.body.appendChild(flyingHeart);
+
+                                setTimeout(() => {
+                                    flyingHeart.style.top = `${endRect.top + (endRect.height / 4)}px`; // cập nhật top để bay tới
+                                    flyingHeart.style.left = `${endRect.left + (endRect.width / 4)}px`; // cập nhật left để bay tới
+                                    flyingHeart.style.opacity = '0';
+                                }, 10);
+
+                                setTimeout(() => {
+                                    flyingHeart.remove();
+                                }, 810);
+
+                                // Thay đổi màu của trái tim gốc
+                                clickedIcon.style.color = 'red';
+                                clickedIcon.classList.remove('fa-regular');
+                                clickedIcon.classList.add('fa-solid');
+
+                            } else {
+                                // 4. Xử lý lỗi từ server
+                                if (response.status === 401) { // Unauthorized (Chưa đăng nhập)
+                                    window.location.href = '/User/Login';
+                                } else if (response.status === 409) { // Conflict (Đã tồn tại)
+                                    alert("Sản phẩm đã có trong yêu thích.");
+                                } else {
+                                    alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Lỗi khi gọi API:', error);
+                            //alert('Không thể kết nối đến máy chủ.');
+                        }
+                    });
+                });
+            });
+
+            // --- CODE PHÂN TRANG AJAX ---
+            $(document).on('click', '#product-list-area .pagination a', function(event) {
+                event.preventDefault(); // Chặn hành vi reload trang mặc định
+                // 2. Lấy link URL từ nút Pager đã bấm
+                var href = $(this).attr('href');
+                if (!href) return;
+                // 3. Tìm div cha 'category-section' gần nhất
+                var $sectionToUpdate = $(this).closest('.category-section');
+                // 4. Lấy ID của section đó (ví dụ: 'category-section-7')
+                var sectionId = $sectionToUpdate.attr('id');
+                $sectionToUpdate.load(href + ' #' + sectionId + ' > *');
+            });
+
+            // --- THÊM CODE MỚI CHO FILTER ---
+            // $(document).ready(function () {
+
+            //     Gắn sự kiện 'change' cho slider giá (ví dụ)
+            //     $('#price-slider').on('change', function() {
+            //         updateProducts();
+            //     });
+
+            //     Gắn sự kiện 'click' cho checkbox màu (ví dụ)
+            //     $('.filter-color-checkbox').on('click', function() {
+            //         updateProducts();
+            //     });
+
+            //     Hàm này sẽ gọi AJAX
+            //     function updateProducts() {
+            //         1. Thu thập tất cả giá trị filter
+            //         var minPrice = $('#price-slider').val();
+            //         var colors = [];
+            //         $('.filter-color-checkbox:checked').each(function() {
+            //             colors.push($(this).val());
+            //         });
+
+            //         Lấy các giá trị phân trang hiện tại (nếu cần)
+            //         ...
+
+            //         2. Tạo URL
+            //         Rất quan trọng: Chúng ta sẽ gọi Action "Product" GỐC
+            //         var url = '@Url.Action("Product")';
+            //         var params = {
+            //             TargetGroup: @ViewBag.TargetGroup,
+            //             CategoryId: @CategoryId,
+            //             minPrice: minPrice, Thêm param mới
+            //             colors: colors      Thêm param mới
+            //             ... thêm tất cả các filter khác
+            //         };
+
+            //         3. Dùng $.load() để gọi AJAX và thay thế HTML
+            //         Nó sẽ gọi /Home/Product?TargetGroup=...&minPrice=...
+            //         và lấy nội dung của div#product-list-area trong kết quả trả về
+            //         để đè vào div#product-list-area hiện tại
+            //         $('#product-list-area').load(url + '?' + $.param(params) + ' #product-list-area > *');
+            //     }
+            // });
+        }
+    </script>
+}

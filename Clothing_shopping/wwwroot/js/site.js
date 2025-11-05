@@ -71,36 +71,28 @@ if (Controller === "Login" && Action === "Register") {
     const year = document.getElementById("year");
 }
 
-// product
-if (Controller === "Home" && Action === "Product") {
-    const List_menu = document.getElementById("list_menu");
-    const LIST = document.getElementById("LIST");
-    const iconBtn_list_menu = document.getElementById("list_menu_btn");
-    iconBtn_list_menu.addEventListener("click", () => {
-        List_menu.classList.toggle("ac");
-        if (iconBtn_list_menu.classList.contains("fa-bars")) {
-            iconBtn_list_menu.classList.remove("fa-bars");
-            iconBtn_list_menu.classList.add("fa-xmark");
-            LIST.style.background = "red";
-            //LIST.style = `
-            //    background = "red"
-            //`
-            return;
-        }
-        iconBtn_list_menu.classList.remove("fa-xmark");
-        iconBtn_list_menu.classList.add("fa-bars");
-        LIST.style.background = "none";
-        //alert("check")
-    });
-}
-
 if (IsLoggedIn == true) {
     // user drop down
     document.getElementById("user_drop_down").addEventListener("click", () => {
         document.getElementById("user_profile").classList.toggle("ac");
+        document.getElementById("Notification").classList.remove("ac")
     })
 
     document.getElementById("btn_Notification").addEventListener("click", () => {
         document.getElementById("Notification").classList.toggle("ac");
+        document.getElementById("user_profile").classList.remove("ac");
     })
 }
+
+var search_menu = document.getElementById("search");
+var btn_search = document.getElementById("btn_search");
+btn_search.addEventListener("click", () => {
+    search_menu.classList.toggle("ac");
+    if (btn_search.classList.contains("fa-magnifying-glass")) {
+        btn_search.classList.remove("fa-magnifying-glass");
+        btn_search.classList.add("fa-x");
+        return;
+    }
+    btn_search.classList.remove("fa-x");
+    btn_search.classList.add("fa-magnifying-glass");
+})

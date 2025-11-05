@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Clothing_shopping.Models.CartItem>
+@{
+}
+
+<div class="cart">
+    <div></div>
+    <div>
+        @foreach (var cart in Model)
+        {
+            var product = cart.ProductVariant.Product;
+            var variant = cart.ProductVariant;
+            decimal price = variant.SalePrice ?? variant.Price ?? 0;
+            decimal total = price * cart.Quantity;
+                
+            <tr>
+                <td>@product.Name</td>
+                <td>@variant.Color</td>
+                <td>@variant.Size</td>
+                <td>@price.ToString("N0") đ</td>
+                <td>@cart.Quantity</td>
+                <td>@total.ToString("N0") đ</td>
+            </tr>
+        }
+    </div>
+</div>

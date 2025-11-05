@@ -1,5 +1,4 @@
-﻿@using Newtonsoft.Json
-@* @model Clothing_shopping.models.Category *@
+﻿@* @model Clothing_shopping.models.Category *@
 
 @{
     var TargetGroup = ViewContext.HttpContext.Request.Query["TargetGroup"].ToString();
@@ -28,7 +27,7 @@
                 {
                     <h3 id="list_menu_Catagory">
                         <span>@Catagory.Key </span>
-                        <i class="fa-solid fa-caret-down"></i>
+                        @* <i class="fa-solid fa-caret-down"></i> *@
                     </h3>
                     <div class="column categoryName">
                         @foreach (var i in Catagory.Value)
@@ -47,14 +46,14 @@
                 {
                     <h2 id="list_menu_group">
                         @group.Key
-                        <i class="fa-solid fa-caret-down"></i>    
+                        @* <i class="fa-solid fa-caret-down"></i>     *@
                     </h2> <!-- Nam / Nu -->
-                    <div class="column category">
+                    <div class="column Catagory">
                         @foreach (var category in group.Value)
                         {
                             <h3 id="list_menu_Catagory">
                                 @category.Key
-                                <i class="fa-solid fa-caret-down"></i>    
+                                @* <i class="fa-solid fa-caret-down"></i>     *@
                             </h3> <!-- Ao / Quan / Giay / Dep -->
                             <div class="column categoryName">
                                 @foreach (var id in category.Value)
@@ -70,5 +69,3 @@
         }
     </nav>
 </div>
-
-

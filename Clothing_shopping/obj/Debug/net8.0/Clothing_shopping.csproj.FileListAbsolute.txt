@@ -295,3 +295,4 @@ E:\FullStack_developer\Clothing_shopping_website\Clothing_shopping\bin\Debug\net
 E:\FullStack_developer\Clothing_shopping_website\Clothing_shopping\bin\Debug\net8.0\runtimes\win7-x86\native\sni.dll
 E:\FullStack_developer\Clothing_shopping_website\Clothing_shopping\bin\Debug\net8.0\runtimes\unix\lib\netstandard1.3\System.Data.SqlClient.dll
 E:\FullStack_developer\Clothing_shopping_website\Clothing_shopping\bin\Debug\net8.0\runtimes\win\lib\netstandard1.3\System.Data.SqlClient.dll
+E:\FullStack_developer\Clothing_shopping_website\Clothing_shopping\bin\Debug\net8.0\X.PagedList.EF.dll

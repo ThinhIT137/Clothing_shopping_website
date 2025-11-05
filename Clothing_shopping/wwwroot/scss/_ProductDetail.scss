@@ -1,0 +1,281 @@
+﻿@use "root.scss" as *;
+
+.ProductDetail {
+    position: relative;
+    overflow: hidden;
+
+    .ProductDetail_container {
+        @include flex_center_1;
+
+        .ProductDetail_imgDetail {
+            display: flex;
+
+            #ImgList {
+                display: flex;
+                flex-direction: column;
+
+                img {
+                    width: 60px;
+                    height: fit-content;
+                    padding: 4px;
+                    padding-top: 0;
+                    padding-bottom: 8px;
+                }
+
+                img.ac {
+                    border: 1px solid black;
+                }
+            }
+
+            #RenderImg {
+                position: relative;
+                padding: 0 10px;
+                height: fit-content;
+
+                img {
+                    width: 500px;
+                }
+
+                .RenderImg_btn {
+                    position: absolute;
+                    left: 0;
+                    //top: 0;
+                    bottom: 50%;
+                    display: flex;
+                    justify-content: space-between;
+                    width: 100%;
+                    //background: red;
+
+                    .RenderImg_btn_left, .RenderImg_btn_right {
+                        font-size: 30px;
+                        color: black;
+                    }
+                }
+            }
+        }
+
+        .ProductDetail_form_content {
+            width: 400px;
+
+            .Form_Order {
+                //background: blue;
+                padding: 20px;
+
+                a {
+                    cursor: pointer;
+                }
+
+                .Color {
+                    div {
+                        @include flex_center_2;
+                        flex-wrap: wrap;
+                        padding-left: 5px;
+
+                        .btn_SelectedColor {
+                            div {
+                                width: 35px;
+                                height: 35px;
+                                border-radius: 50%;
+                                margin: 2px 2px;
+                            }
+                        }
+
+                        .btn_SelectedColor.ac {
+                            border: 5px solid black;
+                            border-radius: 50%;
+                            padding: 2px;
+                        }
+                    }
+                }
+
+                .Size {
+                    div {
+                        @include flex_center_2;
+                        padding-left: 5px;
+                        display: flex;
+                        flex-wrap: wrap;
+
+                        .btn_SelectedSize {
+                            div {
+                                @include flex_center_center;
+                                padding: 2px 6px;
+                                background: #dadada;
+                                color: black;
+                                border-radius: 5px;
+                                margin: 2px 2px;
+                                font-size: 20px;
+                            }
+                        }
+
+                        .btn_SelectedSize.ac {
+                            div {
+                                background: #333;
+                                color: white;
+                                border: 2px solid white;
+                            }
+                        }
+                    }
+                }
+
+                .ProductDetail_Form_btn {
+                    button {
+                        /* Reset cơ bản */
+                        background: red;
+                        border: none;
+                        padding: 0;
+                        margin: 0;
+                        /* Reset font (phải đủ bộ) */
+                        font-family: inherit;
+                        font-size: inherit;
+                        font-weight: inherit; /* Thêm cái này cho chắc */
+                        line-height: inherit;
+                        color: inherit;
+                        /* Reset căn lề */
+                        text-align: inherit;
+                        vertical-align: baseline;
+                        /* Reset trình duyệt */
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        appearance: none;
+                        ::-moz-focus-inner {
+                            border: 0;
+                            padding: 0;
+                        }
+                        display: inline;
+                        -webkit-font-smoothing: inherit;
+                        -moz-osx-font-smoothing: inherit;
+                        cursor: pointer;
+                        height: fit-content;
+                        width: auto;
+                    }
+
+                    button::-moz-focus-inner {
+                        border: 0;
+                        padding: 0;
+                    }
+
+                    button:focus {
+                    }
+
+                    a {
+                        background: red;
+                    }
+                }
+            }
+
+            .ProductDetail_ChiTietSanPham {
+                cursor: pointer;
+                text-decoration: underline;
+                font-size: 20px;
+                font-weight: 500;
+            }
+
+            .ProductDetail_GiaoHangFree {
+                margin-top: 10px;
+                font-size: 20px;
+                @include flex_space-between_center;
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            .ProductDetail_GiaoHangFree_Content {
+                opacity: 0;
+                visibility: hidden;
+                max-height: 0;
+                transition: 0.5s;
+            }
+
+            .ProductDetail_GiaoHangFree_Content.ac {
+                opacity: 1;
+                visibility: visible;
+                max-height: 200px;
+            }
+        }
+    }
+
+    .ProductDetail_ChiTiet {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        transition: 0.5s;
+        opacity: 0;
+        visibility: hidden;
+
+        .ProductDetail_ChiTiet_Content {
+            position: absolute;
+            top: 1000px;
+            width: 726px;
+            //left: 50%;
+            left: 0;
+            right: 0;
+            margin: auto;
+            //transform: translateX(-50%);
+            background: #FFFFFF;
+            padding: 48px;
+            border-radius: 24px;
+            transition: 0.5s;
+            max-height: 612px;
+
+            .ProductDetail_ChiTiet_btn {
+                position: absolute;
+                border-radius: 50%;
+                background: #CACACB;
+                width: 30px;
+                height: 30px;
+                @include flex_center_center;
+                right: 20px;
+                top: 15px;
+                cursor: pointer;
+            }
+
+            .ProductDetail_ChiTiet_Content_ScrollArea {
+                overflow-y: auto;
+                max-height: 520px;
+
+                .ProductDetail_ChiTiet_Content_title {
+                    font-size: 16px;
+                    line-height: 24px;
+                    padding-bottom: 10px;
+                }
+
+                .ProductDetail_ChiTiet_Content_key {
+                    font-size: 20px;
+                    font-weight: 400;
+                    line-height: 24px;
+
+                    ul {
+                        li {
+                            font-size: 16px;
+                        }
+                    }
+                }
+            }
+
+            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 10px;
+            }
+
+            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        }
+    }
+
+    .ProductDetail_ChiTiet.ac {
+        opacity: 1 !important;
+        visibility: visible !important;
+        background: $bgr_night;
+
+        .ProductDetail_ChiTiet_Content {
+            bottom: 10px;
+            top: 20px;
+        }
+    }
+}

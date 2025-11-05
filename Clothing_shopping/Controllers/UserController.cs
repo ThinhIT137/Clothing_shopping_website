@@ -41,18 +41,28 @@ namespace Clothing_shopping.Controllers
                 HttpContext.Session.SetString("Email", user.Email.ToString());
                 HttpContext.Session.SetString("FullName", user.FullName.ToString());
 
-                var query = from nt in db.Notifications
-                            join n in db.News on nt.NewsId equals n.NewsId
-                            join u in db.Users on nt.ReceiverId equals u.UserId
-                            where nt.ReceiverId == user.UserId && nt.IsRead == false
-                            orderby nt.CreatedAt descending
-                            select new
-                            {
-                                Title = n.Title.Replace("{OrderId}", nt.OrderId.ToString()),
-                                Content = n.Content.Replace("{OrderId}", nt.OrderId.ToString()),
-                                CreatedAt = nt.CreatedAt
-                            };
-                var newsList = await query.ToListAsync();
+                //var query = from nt in db.Notifications
+                //            join n in db.News on nt.NewsId equals n.NewsId
+                //            join u in db.Users on nt.ReceiverId equals u.UserId
+                //            where nt.ReceiverId == user.UserId && nt.IsRead == false
+                //            orderby nt.CreatedAt descending
+                //            select new
+                //            {
+                //                Title = n.Title.Replace("{OrderId}", nt.OrderId.ToString()),
+                //                Content = n.Content.Replace("{OrderId}", nt.OrderId.ToString()),
+                //                CreatedAt = nt.CreatedAt
+                //            };
+                var newsList = await db.Notifications.Where(nt => nt.ReceiverId == user.UserId)
+                                                     .Where(nt => nt.IsRead == false)
+                                                     .Include(nt => nt.News)
+                                                     .OrderByDescending(nt => nt.CreatedAt)
+                                                     .Select(nt => new
+                                                     {
+                                                         Title = nt.News.Title.Replace("{OrderId}", nt.OrderId.ToString()),
+                                                         Content = nt.News.Content.Replace("{OrderId}", nt.OrderId.ToString()),
+                                                         CreatedAt = nt.CreatedAt
+                                                     })
+                                                     .ToListAsync();
                 HttpContext.Session.SetString("Notification", JsonConvert.SerializeObject(newsList, new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -88,8 +98,8 @@ namespace Clothing_shopping.Controllers
             u.IsLocked = false;
             u.CreatedAt = DateTime.Now;
             u.IsDeleted = false;
-            db.Users.Add(u);
-            db.SaveChanges();
+            await db.Users.AddAsync(u);
+            await db.SaveChangesAsync();
             return View("Login");
         }
 
@@ -98,7 +108,7 @@ namespace Clothing_shopping.Controllers
             Console.WriteLine(">>> Đăng xuất, SessionId: " + HttpContext.Session.Id);
             Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
             HttpContext.Session.Clear();
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Login", "User");
         }
 
         [HttpGet]

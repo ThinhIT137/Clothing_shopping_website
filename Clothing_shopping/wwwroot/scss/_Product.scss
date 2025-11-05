@@ -1,11 +1,41 @@
 @use "root.scss" as *;
 
 .Product_container {
+    position: relative;
     display: flex;
+    align-items: flex-start;
+
+    .Product_list_menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        z-index: 10;
+    }
 
     .container {
-        border: 1px solid black;
-        margin-right: 0;
+        margin-left: 60px;
+        margin-top: 20px;
+        flex-shrink: 1;
+        transition: 0.5s;
+
+        .product_item{
+            width: fit-content;
+        }
+    }
+
+    .container.ac {
+        margin-left: 250px !important;
+    }
+
+    .Product_video {
+        position: fixed;
+        top: 70px;
+        right: 0;
+        max-width: 400px;
+
+        video {
+            width: 100%;
+        }
     }
 }
 
@@ -22,16 +52,25 @@
         cursor: pointer;
     }
 
-    .shoe_like, .shoe_cart x {
+    .shoe_like, .shoe_cart {
         font-size: 25px;
         position: absolute;
         left: 20px;
         top: 15px;
+        z-index: 1;
+        transition: 0.5s;
+
+        i {
+            color: white;
+        }
     }
 
     .shoe_cart {
         left: unset;
         right: 20px;
+    }
+
+    #shoe_cart {
     }
 
     .shoe_img {
@@ -150,7 +189,23 @@
 }
 
 @include media-phone {
+    .container-fluid {
+        padding: 2px;
+    }
+    
+    .product_item {
+        padding: 2px;
+    }
+
+    .product-list {
+        //width: 200vw;
+        padding: 0;
+        margin: 0;
+    }
+
     .Product_container {
+        width: auto;
+
         .container {
             margin: 0;
             padding: 0;
@@ -158,7 +213,21 @@
     }
 
     .shoe {
-        transform: scale(0.5);
-        transform-origin: top left;
+        zoom: 0.5;
+        //padding: 0;
+        //transform: scale(0.5);
+        //transform-origin: top left;
     }
+}
+
+.flying-heart {
+    position: fixed;
+    z-index: 9999;
+    color: red;
+    font-size: 25px;
+    pointer-events: none;
+    transition: top 1s ease-in-out, 
+        left 1s ease-in-out, 
+        transform 1s ease-in-out, 
+        opacity 2s ease-in-out;
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "42dGGTeLHME=",
+  "dgSpecHash": "55U7nRPm4B4=",
   "success": true,
   "projectFilePath": "E:\\FullStack_developer\\Clothing_shopping_website\\Clothing_shopping\\Clothing_shopping.csproj",
   "expectedPackageFiles": [
@@ -234,6 +234,7 @@
     "C:\\Users\\Admin\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\x.pagedlist\\10.5.9\\x.pagedlist.10.5.9.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\x.pagedlist.ef\\10.5.9\\x.pagedlist.ef.10.5.9.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\x.pagedlist.mvc.core\\10.5.9\\x.pagedlist.mvc.core.10.5.9.nupkg.sha512"
   ],
   "logs": []

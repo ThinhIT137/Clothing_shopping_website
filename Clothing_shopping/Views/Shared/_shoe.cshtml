@@ -1,5 +1,4 @@
 ﻿@model Clothing_shopping.Models.Product
-@using Newtonsoft.Json
 
 @{
     string imgUrl = "/images/Products/Degbug.png";
@@ -19,83 +18,105 @@
             Console.WriteLine($"Error deserializing JSON: {errorMessage}");
         }
     }
-
+    var favoriteIds = ViewData["FavoriteIds"] as HashSet<int> ?? new HashSet<int>();
     var firstVariant = Model.ProductVariants.FirstOrDefault();
+    bool isFavorite = favoriteIds.Contains(firstVariant.ProductVariantId);
+    //VND
+    var cultureVN = new CultureInfo("vi-VN");
 }
 
 <div class="shoe">
     @* like *@
     <div class="shoe_like">
-        <a><i class="fa-regular fa-heart"></i></a>
+        <a class="add-to-wishlist-btn" asp-controller="Home" asp-action="AddFavorite" data-variant-id="@(firstVariant?.ProductVariantId ?? 0)">
+            @if (isFavorite == true)
+            {
+                <i class="fa-solid fa-heart" style="color: red;"></i>
+            }
+            else
+            {
+                <i class="fa-regular fa-heart"></i>
+            }
+        </a>
     </div>
     @* cart *@
     <div class="shoe_cart">
-        <a><i class="fa-solid fa-cart-shopping"></i></a>
+        <a class="add-to-cartlist-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+        </a>
     </div>
 
     @* img *@
-    <div class="shoe_img"><img loading="lazy" src="@imgUrl" alt="" /></div>
+    <div class="shoe_img">
+        <a asp-controller="Home" asp-action="ProductDetail" asp-route-TargetGroup="@Model.TargetGroup" asp-route-CategoryId="@Model.CategoryId" asp-route-ProductId="@Model.ProductId">
+            <img loading="lazy" src="@imgUrl" alt="" />
+        </a>
+    </div>
     
     @* name + money *@
     <div class="shoe_name">
         <span class="title">@Model.Name</span>
     </div>
     <div class="shoe_moeny">
-        @if (firstVariant != null)
-        {
-            if (firstVariant.Stock >0)
+        <a asp-controller="Home" asp-action="ProductDetail" asp-route-TargetGroup="@Model.TargetGroup" asp-route-CategoryId="@Model.CategoryId" asp-route-ProductId="@Model.ProductId">
+            @if (firstVariant != null)
             {
-                var Price = firstVariant.Price ?? 0;
-                var SalePrice = firstVariant.SalePrice ?? 0;
-
-                if (SalePrice == 0)
+                if (firstVariant.Stock > 0)
                 {
-                    <span id="display_price" class="shoe_price" style="color: red;">@Price.ToString("C0")</span>
-                    <span id="display_salePrice" class="shoe_salePrice" style="display: none">@SalePrice.ToString("C0")</span>
+                    var Price = firstVariant.Price ?? 0;
+                    var SalePrice = firstVariant.SalePrice ?? 0;
+
+                    if (SalePrice == 0)
+                    {
+                        <span id="display_price" class="shoe_price" style="color: red;">@Price.ToString("C0", cultureVN)</span>
+                        <span id="display_salePrice" class="shoe_salePrice" style="display: none">@SalePrice.ToString("C0", cultureVN)</span>
+                    }
+                    else
+                    {
+                        <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px;">@Price.ToString("C0")</span>
+                        <span id="display_salePrice" class="shoe_salePrice" style="color: red;">@SalePrice.ToString("C0")</span>
+                    }
                 }
                 else
                 {
-                    <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px;">@Price.ToString("C0")</span>
-                    <span id="display_salePrice" class="shoe_salePrice" style="color: red;">@SalePrice.ToString("C0")</span>
+                    <span class="shoe_price"> Hết hàng </span>
                 }
             }
             else
             {
-                <span class="shoe_price"> Hết hàng </span>
+                <span class="no_sell">Size @firstVariant.Size này không còn được bán nữa</span>
             }
-        }
-        else
-        {
-            <span class="no_sell">Size @firstVariant.Size này không còn được bán nữa</span>
-        }
+        </a>
     </div>
 
     <div class="shoe_bottom">
         @* size *@
-        <div class="size_option">
-            <h3>Size: </h3>
+        <a asp-controller="Home" asp-action="ProductDetail" asp-route-TargetGroup="@Model.TargetGroup" asp-route-CategoryId="@Model.CategoryId" asp-route-ProductId="@Model.ProductId">
+            <div class="size_option">
+                <h3>Size: </h3>
 
-            <div class="Size_product">
-                @foreach (var variant in @Model.ProductVariants.Select(s => s.Size).Distinct())
-                {
-                    <span class="size-item">
-                        @variant
-                    </span>
-                }
+                <div class="Size_product">
+                    @foreach (var variant in @Model.ProductVariants.Select(s => s.Size).Distinct())
+                    {
+                        <span class="size-item">
+                            @variant
+                        </span>
+                    }
+                </div>
             </div>
-        </div>
 
-        @* color *@
-        <div class="color_option">
-            <h3>Color:</h3>
+            @* color *@
+            <div class="color_option">
+                <h3>Color:</h3>
 
-            <div class="Color_product">
-                @foreach (var PrColor in @Model.ProductVariants.Select(c => c.Color).Distinct())
-                {
-                    <div class="bgr-product" style="background: @PrColor;"></div>
-                }
+                <div class="Color_product">
+                    @foreach (var PrColor in @Model.ProductVariants.Select(c => c.Color).Distinct())
+                    {
+                        <div class="bgr-product" style="background: @PrColor;"></div>
+                    }
+                </div>
             </div>
-        </div>
+        </a>
 
         <div class="Shoe_buy">
             <a>Mua</a>
