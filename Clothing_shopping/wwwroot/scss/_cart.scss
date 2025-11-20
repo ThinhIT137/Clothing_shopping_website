@@ -1,0 +1,46 @@
+@use "root.scss" as *;
+
+.cart {
+    max-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+
+    > div:first-child {
+        overflow-y: auto;
+        max-height: calc(100vh - 70px);
+        border: 1px solid #ddd;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead {
+            th {
+                position: sticky;
+                top: 0;
+                background-color: #fff;
+                z-index: 1;
+                box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        tbody {
+            tr {
+                //display: flex;
+                //@include flex_center_2;
+            }
+        }
+
+        img {
+            width: 50px;
+            object-fit: cover;
+        }
+    }
+
+    form {
+        width: 300px;
+        //background: aqua;
+    }
+}

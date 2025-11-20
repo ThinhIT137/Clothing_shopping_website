@@ -1,0 +1,48 @@
+﻿@model IEnumerable<FavoriteItem>;
+
+
+<div class="favorite">
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Màu sắc</th>
+                    <th>Kích cỡ</th>
+                    <th>Giá</th>
+                    <th>Ảnh</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var favorite in Model)
+                {
+                    var product = favorite.ProductVariant.Product;
+                    var variant = favorite.ProductVariant;
+                    decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
+                    var img = JsonConvert.DeserializeObject<List<string>>(product.Images)[1];
+
+                    <tr>
+                        <td>@product.Name</td>
+                        <td>@variant.Color</td>
+                        <td>@variant.Size</td>
+                        <td>
+                            @price.ToString("N0") đ
+                        </td>
+                        <td><img src="@img" alt="" /></td>
+                        <td>
+                            <a class="btn_delete_favorite" asp-controller="Home" asp-action="delete_favorite" asp-route-id="@favorite.FavoriteItemsId">Xóa</a>
+                            <a>Thêm vào giỏ hàng</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+       
+    </script>
+}

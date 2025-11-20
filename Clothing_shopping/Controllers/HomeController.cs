@@ -47,6 +47,35 @@ namespace Clothing_shopping.Controllers
             return Ok(new { success = true, message = "Đã thêm vào yêu thích." }); // trả về 200 OK
         }
 
+        public async Task<IActionResult> Favorite()
+        {
+            var userIdstring = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdstring))
+            {
+                return RedirectToAction("Login", "User");
+            }
+            Guid.TryParse(userIdstring, out Guid userId);
+
+            var favorite = await context.FavoriteItems.Where(f => f.UserId == userId)
+                                                        .Include(pv => pv.ProductVariant).ThenInclude(p => p.Product)
+                                                        .OrderByDescending(f => f.AddedAt)
+                                                        .AsNoTracking()
+                                                        .ToListAsync();
+            return View(favorite);
+        }
+
+        public async Task<IActionResult> delete_favorite(int id)
+        {
+            Console.WriteLine(id);
+            var favoriteItem = await context.FavoriteItems.FirstOrDefaultAsync(f => f.FavoriteItemsId == id);
+            if (favoriteItem != null)
+            {
+                context.FavoriteItems.Remove(favoriteItem);
+                await context.SaveChangesAsync();
+            }
+            return RedirectToAction("Favorite");
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -78,27 +107,6 @@ namespace Clothing_shopping.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        //public async Task<IActionResult> ProductList(int? Page, int TargetGroup)
-        //{
-        //    int pageSize = 10;
-        //    int pageNumber = Page ?? 1;
-        //    var ProductList = new Dictionary<int, IPagedList<Product>>();
-        //    var categories = await context.Categories.ToListAsync();
-        //    var query = context.Products.Include(p => p.ProductVariants)
-        //                                .Include(p => p.Category)
-        //                                .Where(p => p.TargetGroup == TargetGroup);
-        //    foreach (var category in categories)
-        //    {
-        //        var productsInCategory = await query.Where(p => p.CategoryId == category.CategoryId)
-        //                                            .OrderBy(p => p.ProductId)
-        //                                            .ToPagedListAsync(pageNumber, pageSize);
-        //        if (productsInCategory.Any()) ProductList[category.CategoryId] = productsInCategory;
-        //    }
-
-
-        //    return View(ProductList);
-        //}
-
         /* --- TRANG HIỂN THỊ SẢN PHẨM --- */
         public async Task<IActionResult> Product(
             // page bình thường
@@ -118,7 +126,7 @@ namespace Clothing_shopping.Controllers
             int pageNumber = Page ?? 1;
             // Catagory nam
             string jsonStringNam = @"{
-                ""Áo"": [1, 2, 3, 4, 5],
+                ""Áo"": [1, 2, 3, 4, 5, 6],
                 ""Quần"": [7, 8, 9],
                 ""Giày"": [12, 13],
                 ""Dép"": [16, 17, 18]
@@ -134,7 +142,7 @@ namespace Clothing_shopping.Controllers
             // Catagory trẻ em
             string jsonStringTreEm = @"{
                 ""Nam"": {
-                    ""Áo"": [1, 2, 3, 4, 5],
+                    ""Áo"": [1, 2, 3, 4, 5, 6],
                     ""Quần"": [7, 8, 9],
                     ""Giày"": [12, 13],
                     ""Dép"": [16, 17, 18]
@@ -154,17 +162,32 @@ namespace Clothing_shopping.Controllers
 
             var ProductList = new Dictionary<int, IPagedList<Product>>(); // key: CategoryId, value: danh sách sản phẩm phân trang
             var categories = await context.Categories.ToListAsync(); // lấy tất cả category
-            var query = context.Products.Include(p => p.ProductVariants)
-                                        .Include(p => p.Category)
-                                        .Where(p => p.TargetGroup == TargetGroup);
-            // --- LOGIC LỌC SẢN PHẨM THEO GIÁ, MÀU SẮC, KÍCH CỠ KHI CÓ FILTER---
-            if (minPrice.HasValue)
+            IQueryable<Product> query = context.Products.Include(p => p.ProductVariants)
+                                        .Include(p => p.Category);
+            switch (TargetGroup)
             {
-                query = query.Where(p => p.ProductVariants.Any(pv => pv.Price >= minPrice));
+                case 0: // Nam
+                    query = query.Where(p => p.TargetGroup == 0 || p.TargetGroup == 10); // 10 là cho cả nam nữ
+                    break;
+                case 1: // Nu
+                    query = query.Where(p => p.TargetGroup == 1 || p.TargetGroup == 10); // 10 là cho cả nam nữ
+                    break;
+                case 20:
+                    query = query.Where(p => p.TargetGroup == 2 || p.TargetGroup == 20); // 20 là cho cả nam, 2 là cả nam nữ (trẻ em)
+                    break;
+                case 21:
+                    query = query.Where(p => p.TargetGroup == 2 || p.TargetGroup == 21); // 21 là cho cả nữ, 2 là cả nam nữ (trẻ em)
+                    break;
+                case 2: // Tre Em
+                    query = query.Where(p => p.TargetGroup == 2 || p.TargetGroup == 20 || p.TargetGroup == 21); // 20 là cho cả nam, 21 là cho cả nữ, 2 là cả nam nữ (trẻ em)
+                    break;
             }
-            if (maxPrice.HasValue)
+            // --- LOGIC LỌC SẢN PHẨM THEO GIÁ, MÀU SẮC, KÍCH CỠ KHI CÓ FILTER---
+            if (minPrice.HasValue && maxPrice.HasValue)
             {
-                query = query.Where(p => p.ProductVariants.Any(pv => pv.Price <= maxPrice));
+                query = query.Where(p => p.ProductVariants.Any(
+                    pv => (pv.Price >= minPrice && pv.Price <= maxPrice)
+                    || (pv.SalePrice >= minPrice && pv.SalePrice <= maxPrice)));
             }
             if (color != null && color.Length > 0)
             {
@@ -174,7 +197,6 @@ namespace Clothing_shopping.Controllers
             {
                 query = query.Where(p => p.ProductVariants.Any(pv => sizes.Contains(pv.Size)));
             }
-
             // --- LOGIC PHÂN TRANG CHO TRANG "TẤT CẢ SẢN PHẨM" VÀ THEO CATEGORY ---
             if (!CategoryId.HasValue || CategoryId.Value == 0)
             {
@@ -208,7 +230,6 @@ namespace Clothing_shopping.Controllers
                     if (productsInCategory.Any()) ProductList[CategoryId.Value] = productsInCategory;
                 }
             }
-
             // làm thanh chỉ ở product
             ViewBag.TargetGroup = TargetGroup;
             ViewBag.CatagoryName = context.Categories.Where(c => c.CategoryId == CategoryId)
@@ -227,6 +248,10 @@ namespace Clothing_shopping.Controllers
                     .ToHashSetAsync();
             }
             ViewData["FavoriteIds"] = favoriteVariantIds;
+            // lấy color sản phẩm
+            ViewBag.colorFilter = await context.ProductVariants.Select(c => c.Color).Distinct().ToListAsync();
+            // lấy size sản phẩm
+            ViewBag.sizeFilter = await context.ProductVariants.Select(c => c.Size).Distinct().ToListAsync();
 
             // khi ajax gọi load
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -240,19 +265,36 @@ namespace Clothing_shopping.Controllers
         /* --- TRANG CHI TIẾT SẢN PHẨM --- */
         public async Task<IActionResult> ProductDetail(int? TargetGroup, int? CategoryId, int? ProductId)
         {
-            var query = await context.Products.Include(p => p.ProductVariants)
-                                        .FirstOrDefaultAsync(p => p.TargetGroup == TargetGroup &&
-                                                                  p.CategoryId == CategoryId &&
-                                                                  p.ProductId == ProductId);
+            Product? product;
+
+            if (TargetGroup == 0 || TargetGroup == 1)
+            {
+                product = await context.Products.Include(p => p.ProductVariants)
+                                                .FirstOrDefaultAsync(p =>
+                                                (p.TargetGroup == TargetGroup || p.TargetGroup == 10) &&
+                                                p.CategoryId == CategoryId &&
+                                                p.ProductId == ProductId);
+            }
+            else
+            {
+                product = await context.Products.Include(p => p.ProductVariants)
+                                                .FirstOrDefaultAsync(p =>
+                                                (p.TargetGroup == TargetGroup || p.TargetGroup == 2) &&
+                                                p.CategoryId == CategoryId &&
+                                                p.ProductId == ProductId);
+            }
+
             var AllGroup = new Dictionary<int, string> {
                 { 0, "Nam" },
                 { 1, "Nữ" },
-                { 2, "Trẻ em" }
+                { 2, "Trẻ em" },
+                { 20, "Trẻ em nam" },
+                { 21, "Trẻ em nữ" }
             };
             ViewBag.AllGroup = AllGroup;
             ViewBag.AllCategories = context.Categories.ToDictionary(c => c.CategoryId, c => c.Name);
 
-            return View(query);
+            return View(product);
         }
     }
 }

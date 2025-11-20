@@ -4,7 +4,7 @@
     var CategoryId = 0;
     int.TryParse(ViewContext.HttpContext.Request.Query["CategoryId"], out CategoryId);
 }
-
+@await Html.PartialAsync("_FilterProduct", new Tuple<int, int>(@ViewBag.TargetGroup, CategoryId))
 <div class="Product_container">
     <div class="Product_list_menu">
         <partial name="_list_menu"/>
@@ -35,33 +35,15 @@
                     @ViewBag.CatagoryName
                 </li>
             </ol>
+            <div class="btn_filter">
+                <span>Bộ lọc</span>
+                <i class="fa-solid fa-sliders"></i>
+            </div>
         </nav>
         <div id="product-list-area">
             @await Html.PartialAsync("_ProductListContainer", Model)
         </div>
     </div>
-    @* <div class="Product_video">
-        @if(@ViewBag.TargetGroup == 0)
-        {
-            <video aria-label="BỘ SƯU TẬP LifeWear Thu / Đông 2025"
-                playsinline
-                preload="auto"
-                autoplay
-                loop
-                muted
-                poster="/img">
-                <source src="/videos/Products/Nam/Nam.mp4" type="video/mp4">
-            </video>
-        }
-        else if (@ViewBag.TargetGroup == 1)
-        {
-           @("Đồ Nữ")               
-        }
-        else
-        {
-           @("Đồ Trẻ Em")
-        } *@
-    @* </div> *@
 </div>
 
 @section Scripts{
@@ -77,17 +59,51 @@
                 if (iconBtn_list_menu.classList.contains("fa-bars")) {
                     iconBtn_list_menu.classList.remove("fa-bars");
                     iconBtn_list_menu.classList.add("fa-xmark");
-                    LIST.style.background = "$bgr-1";
-                    //LIST.style = `
-                    //    background = "red"
-                    //`
+                    $(".btn_list").css("border-radius", "0");
+                    $(".btn_list .img").css("display", "block");
+                    LIST.style.background = "#FFCF4";
+                    $("#LIST").css("box-shadow", "0 4px 6px rgba(0, 0, 0, 0.1)");
                     return;
                 }
                 iconBtn_list_menu.classList.remove("fa-xmark");
                 iconBtn_list_menu.classList.add("fa-bars");
                 LIST.style.background = "none";
+                $(".btn_list .img").css("display", "none");
+                $(".btn_list").css("border-radius", "20px");
+                $("#LIST").css("box-shadow", "none");
                 //alert("check")
             });
+            $(".group").on("click", function (){
+                $(this).toggleClass("ac");
+                $(this).find(".fa-solid").toggleClass("fa-angle-down fa-angle-up");
+            });
+            $(".Catagory").on("click", function (e){
+                e.stopPropagation();
+                $(this).toggleClass("ac");
+                $(this).find(".fa-solid").toggleClass("fa-angle-down fa-angle-up")
+            });
+            // document.querySelectorAll(".Catagory").forEach(ct => {
+            //     ct.addEventListener("click", function (e) {
+            //         e.stopPropagation();
+            //         this.classList.toggle("ac");
+            //     });
+            // });
+
+            // --- CODE FILTER (CẠNH PHẢI) ---
+            const filter_size = {};
+            $(".btn_filter").on("click", () => {
+                $(".Filter").toggleClass("ac");
+                $(".filter_CS").removeClass("ac");
+            })
+            $(".btn_filter_size_left").on("click", () => {
+                $(".filter_CS").removeClass("ac");
+            })
+            $(".btn_filterColor").on("click", () => {
+                 $(".filter_color").toggleClass("ac");
+            })
+            $(".btn_filterSize").on("click", () => {
+                 $(".filter_size").toggleClass("ac");
+            })
 
             // --- CODE THÊM SẢN PHẨM VÀO YÊU THÍCH AJAX VỚI HIỆU ỨNG BAY TRÁI TIM ---
             document.addEventListener('DOMContentLoaded', function () {
@@ -120,16 +136,8 @@
                             // gọi AddFavorite
                             const response = await $.post(`/Home/AddFavorite?productVariantId=${variantId}`)
 
-
-                            // const response = await fetch(`/Home/AddFavorite?productVariantId=${variantId}`, {
-                            //     method: 'POST',
-                            //     headers: {
-                            //         'X-Requested-With': 'XMLHttpRequest'
-                            //     }
-                            // });
-
                             // 3. Xử lý kết quả
-                            if (response.ok) { // response.ok == true khi status là 200 (OK)
+                            if (response.success) { // response.success == true khi status là 200 (OK)
                                 // --- CHỈ KHI THÀNH CÔNG MỚI CHẠY HIỆU ỨNG ---
                                 const flyingHeart = clickedIcon.cloneNode(true);
                                 flyingHeart.classList.add('flying-heart');
@@ -185,49 +193,91 @@
                 $sectionToUpdate.load(href + ' #' + sectionId + ' > *');
             });
 
-            // --- THÊM CODE MỚI CHO FILTER ---
-            // $(document).ready(function () {
 
-            //     Gắn sự kiện 'change' cho slider giá (ví dụ)
-            //     $('#price-slider').on('change', function() {
-            //         updateProducts();
-            //     });
+            // double range slider
+            window.onload = function () {
+                slideOne();
+                slideTwo();
+            };
 
-            //     Gắn sự kiện 'click' cho checkbox màu (ví dụ)
-            //     $('.filter-color-checkbox').on('click', function() {
-            //         updateProducts();
-            //     });
+            let sliderOne = document.getElementById("slider-1");
+            let sliderTwo = document.getElementById("slider-2");
+            let displayValOne = document.getElementById("range1");
+            let displayValTwo = document.getElementById("range2");
+            let minGap = 0;
+            let sliderTrack = document.querySelector(".slider-track");
+            let sliderMaxValue = document.getElementById("slider-1").max;
 
-            //     Hàm này sẽ gọi AJAX
-            //     function updateProducts() {
-            //         1. Thu thập tất cả giá trị filter
-            //         var minPrice = $('#price-slider').val();
-            //         var colors = [];
-            //         $('.filter-color-checkbox:checked').each(function() {
-            //             colors.push($(this).val());
-            //         });
+            function slideOne() {
+                if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+                    sliderOne.value = parseInt(sliderTwo.value) - minGap;
+                }
+                displayValOne.textContent = parseInt(sliderOne.value).toLocaleString('vi-VN') +"đ";
+                fillColor();
+            }
+            function slideTwo() {
+                if (parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap) {
+                    sliderTwo.value = parseInt(sliderOne.value) + minGap;
+                }
+                displayValTwo.textContent = parseInt(sliderTwo.value).toLocaleString('vi-VN')+"đ";
+                fillColor();
+            }
+            function fillColor() {
+                percent1 = (sliderOne.value / sliderMaxValue) * 100;
+                percent2 = (sliderTwo.value / sliderMaxValue) * 100;
+                sliderTrack.style.background = `linear-gradient(to right, #dadae5 ${percent1}% , #3264fe ${percent1}% , #3264fe ${percent2}%, #dadae5 ${percent2}%)`;
+            }
 
-            //         Lấy các giá trị phân trang hiện tại (nếu cần)
-            //         ...
+            // --- CODE CHO FILTER ---
+            $(document).ready(function(){
+                var TargetGroup = @(ViewBag.TargetGroup ?? 0);
+                var CategoryId = @(ViewBag.CategoryId ?? "null");
 
-            //         2. Tạo URL
-            //         Rất quan trọng: Chúng ta sẽ gọi Action "Product" GỐC
-            //         var url = '@Url.Action("Product")';
-            //         var params = {
-            //             TargetGroup: @ViewBag.TargetGroup,
-            //             CategoryId: @CategoryId,
-            //             minPrice: minPrice, Thêm param mới
-            //             colors: colors      Thêm param mới
-            //             ... thêm tất cả các filter khác
-            //         };
+                $(".btn_render_product_filter button").on("click", function(e) {
+                    e.preventDefault();
 
-            //         3. Dùng $.load() để gọi AJAX và thay thế HTML
-            //         Nó sẽ gọi /Home/Product?TargetGroup=...&minPrice=...
-            //         và lấy nội dung của div#product-list-area trong kết quả trả về
-            //         để đè vào div#product-list-area hiện tại
-            //         $('#product-list-area').load(url + '?' + $.param(params) + ' #product-list-area > *');
-            //     }
-            // });
+                    var minPrice = $('#slider-1').val();
+                    var maxPrice = $('#slider-2').val();
+                    var colors = $("input[name='colors']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+
+                    var sizes = $("input[name='sizes']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+
+                    var ajaxData = {
+                        TargetGroup: TargetGroup,
+                        minPrice: minPrice,
+                        maxPrice: maxPrice,
+                        color: colors,
+                        sizes: sizes
+                    }
+                    if (CategoryId) ajaxData.CategoryId = CategoryId;
+
+                    $.ajax({
+                        url: '@Url.Action("Product", "home")',
+                        type: "GET",
+                        data: ajaxData,
+                        traditional: true,
+                        success: function(response){
+                            $("#product-list-area").html(response);
+                        },
+                        error: function(){
+                            alert("Lỗi khi lọc!");
+                        }
+                    })
+                })
+            })
+
+            //reponsive list_menu
+            $(window).on("resize", () => {
+                 if ($("#LIST").css("display")=== "none") {
+                    $(".container").removeClass("ac");
+                 } else if ($("#list_menu").hasClass("ac")) {
+                    $(".container").addClass("ac");
+                 }
+            })
         }
     </script>
 }

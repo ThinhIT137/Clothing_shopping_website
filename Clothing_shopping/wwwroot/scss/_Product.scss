@@ -9,22 +9,53 @@
         position: fixed;
         top: 70px;
         left: 0;
+        //right: 0;
         z-index: 10;
     }
 
     .container {
         margin-left: 60px;
-        margin-top: 20px;
-        flex-shrink: 1;
+        margin-right: 0;
+        //padding-top: 20px;
         transition: 0.5s;
+        max-width: 100%;
+        //background: red;
 
-        .product_item{
+        nav {
+            padding-top: 10px;
+            width: 100%;
+            @include flex_space-between_center;
+            position: sticky;
+            top: 70px;
+            width: 100%;
+            z-index: 10;
+            background: white;
+            //display: flex;
+            //flex-direction: row;
+            //justify-content: center;
+        }
+
+        .product_item {
             width: fit-content;
+        }
+
+        .product-list {
+            width: 100%;
+            //display: flex;
+            //flex-direction: column;
+        }
+
+        .btn_filter {
+            cursor: pointer;
+            @include flex_center_center;
+            span {
+                padding-right: 5px;
+            }
         }
     }
 
     .container.ac {
-        margin-left: 250px !important;
+        margin-left: 200px !important;
     }
 
     .Product_video {
@@ -188,19 +219,50 @@
     }
 }
 
+@include media-Tablet {
+    .container-fluid {
+        padding: 2px;
+    }
+
+    .Product_container {
+        width: auto;
+
+        .container {
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    .product_item {
+        padding: 0;
+    }
+
+    .product-list {
+        padding: 0;
+        margin: 0;
+        @include flex_space-around;
+        flex-wrap: wrap;
+    }
+
+    .shoe {
+        zoom: 0.75;
+    }
+}
+
 @include media-phone {
     .container-fluid {
         padding: 2px;
     }
     
     .product_item {
-        padding: 2px;
+        padding: 0;
     }
 
     .product-list {
-        //width: 200vw;
         padding: 0;
         margin: 0;
+        @include flex_space-around;
+        flex-wrap: wrap;
     }
 
     .Product_container {
@@ -214,9 +276,6 @@
 
     .shoe {
         zoom: 0.5;
-        //padding: 0;
-        //transform: scale(0.5);
-        //transform-origin: top left;
     }
 }
 

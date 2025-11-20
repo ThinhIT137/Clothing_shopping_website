@@ -51,9 +51,21 @@
                     <a asp-controller="Home" asp-action="Index">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@TargetGroup">
-                        @AllGroup[int.Parse(TargetGroup)]
-                    </a>
+                    @if (TargetGroup == "10"){
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0">
+                            Nam
+                        </a>
+                        @(" và ")
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="1">
+                            Nữ
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@TargetGroup">
+                            @AllGroup[int.Parse(TargetGroup)]
+                        </a>
+                    }
                 </li>
                 <li class="breadcrumb-item">
                     <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="@TargetGroup" asp-route-CategoryId="@CategoryId">
@@ -88,24 +100,24 @@
             <form method="post" class="Form_Order">
                 <div class="Color">
                     <h3>@Model.Name</h3>
-                    @if (SalePrice == 0)
+                    @* @if (SalePrice == 0)
                     {
                         <input type="hidden" name="Price" type="" value="@Price" />
                     }
                     else
                     {
                         <input type="hidden" name="Price" type="" value="@SalePrice" />
-                    }
+                    } *@
                     <div class="from_price">
-                        @if (SalePrice != 0)
+                        @if (SalePrice == 0)
                         {
-                            <span id="display_price" class="shoe_price" style="color: red;">@Price.ToString("C0", cultureVN)</span>
+                            <span data-money="@Price" id="display_price" class="shoe_price" style="color: black;">@Price.ToString("C0", cultureVN)</span>
                             <span id="display_salePrice" class="shoe_salePrice" style="display: none">@SalePrice.ToString("C0", cultureVN)</span>
                         }
                         else
                         {
-                            <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px;">@Price.ToString("C0")</span>
-                            <span id="display_salePrice" class="shoe_salePrice" style="color: red;">@SalePrice.ToString("C0")</span>
+                            <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px; color: red;">@Price.ToString("C0", cultureVN)</span>
+                            <span data-money="@SalePrice" id="display_salePrice" class="shoe_salePrice" style="color: black;">@SalePrice.ToString("C0", cultureVN)</span>
                         }
                     </div>
                     <h3>Màu</h3>
@@ -233,6 +245,44 @@
 @section Scripts {
     <script>
         if (Controller == "Home" && Action == "ProductDetail") {
+            // color
+            const colorButtons = document.querySelectorAll(".btn_SelectedColor");
+            const hiddenInputColor = document.getElementById("selectedColorInput");
+            // size
+            const sizeButtons = document.querySelectorAll(".btn_SelectedSize");
+            const hiddenInputSize = document.getElementById("selectedSizeInput");
+            // Product
+            var Product = @Html.Raw(JsonConvert.SerializeObject(Model,
+                new JsonSerializerSettings {               
+                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore
+                }
+            ));
+            // around fuction render tiền
+            const Price = () => {
+                var color;
+                var size;
+                colorButtons.forEach(button => {
+                    if (button.classList.contains("ac")){
+                        color = button.dataset.color;
+                    }
+                })
+                sizeButtons.forEach(button => {
+                    if (button.classList.contains("ac")){
+                        size = button.dataset.size;
+                    }
+                })
+                const pv = Product.ProductVariants.find(v => v.Color === color && v.Size === size);
+
+                if (!pv) return;
+
+                if (pv.salePrice == 0){
+                    $("#display_price").text(pv.Price.toLocalString()+ "₫")
+                }
+                else {
+                    $("#display_price").text(pv.Price.toLocalString()+ "₫")
+                    $("#display_salePrice").text(pv.SalePrice.toLocalString()+ "₫")
+                }
+            };
             // xem chi tiết sản phẩm
             $(".ProductDetail_ChiTietSanPham").on("click", function() {
                 $(".ProductDetail_ChiTiet").toggleClass("ac");
@@ -256,7 +306,6 @@
             $(".ProductDetail_GiaoHangFree").on("click", () => {
                 $(".ProductDetail_GiaoHangFree_Content").toggleClass("ac");
             })
-
             // hàm hình ảnh
             const imgList = @Html.Raw(JsonConvert.SerializeObject(imgList));
             const renderImgColor = (color) => {
@@ -275,38 +324,35 @@
                     $("#RenderImg img").attr("src", $(this).attr("src"));
                 });
             }
-
             // đổi màu
-            const colorButtons = document.querySelectorAll(".btn_SelectedColor");
-            const hiddenInputColor = document.getElementById("selectedColorInput");
             colorButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     colorButtons.forEach(btn => btn.classList.remove("ac"));
                     button.classList.add("ac");
                     hiddenInputColor.value = button.dataset.color;
                     renderImgColor(button.dataset.color);
+                    Price();
                 })
             })
-
             // đổi size
-            const sizeButtons = document.querySelectorAll(".btn_SelectedSize");
-            const hiddenInputSize = document.getElementById("selectedSizeInput");
             sizeButtons.forEach(button => {
                 button.addEventListener("click", () => {
                     sizeButtons.forEach(btn => btn.classList.remove("ac"));
                     button.classList.add("ac");
                     hiddenInputSize.value = button.dataset.size;
+                    Price();
                     // renderImgColor(button.dataset.color);
                 })
             })
 
+            // === HIỂN THỊ ẢNH ===
             // click vào hình ảnh cập nhật hiển thị
             $("#ImgList img").on("click", function() {
                 $("#ImgList img").removeClass("ac");
                 $(this).addClass("ac");
                 $("#RenderImg img").attr("src", $(this).attr("src"));
             });
-
+            // btn-left ảnh
             $(".RenderImg_btn_left").on("click", () => {
                 let $allThumbs = $("#ImgList img");
                 let $activeThumb = $allThumbs.filter(".ac");
@@ -326,7 +372,7 @@
                 $activeThumb.removeClass("ac");
                 $newThumb.addClass("ac");
             });
-
+            // btn-right ảnh
             $(".RenderImg_btn_right").on("click", () => {
                 let $allThumbs = $("#ImgList img");
                 let $activeThumb = $allThumbs.filter(".ac");

@@ -1,25 +1,215 @@
 ﻿@model IEnumerable<Clothing_shopping.Models.CartItem>
 @{
+    string url = "";
 }
 
 <div class="cart">
-    <div></div>
     <div>
-        @foreach (var cart in Model)
-        {
-            var product = cart.ProductVariant.Product;
-            var variant = cart.ProductVariant;
-            decimal price = variant.SalePrice ?? variant.Price ?? 0;
-            decimal total = price * cart.Quantity;
-                
-            <tr>
-                <td>@product.Name</td>
-                <td>@variant.Color</td>
-                <td>@variant.Size</td>
-                <td>@price.ToString("N0") đ</td>
-                <td>@cart.Quantity</td>
-                <td>@total.ToString("N0") đ</td>
-            </tr>
-        }
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Chọn</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Màu</th>
+                    <th>Kích cỡ</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Ảnh</th>
+                    <th>Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cart in Model)
+                {
+                    var product = cart.ProductVariant.Product;
+                    var variant = cart.ProductVariant;
+                    decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
+                    decimal total = price * cart.Quantity;
+                    var img = JsonConvert.DeserializeObject<List<string>>(product.Images)[1];
+
+                    <tr class="cart_item">
+                        <td> 
+                            @* mai fix *@
+                            <input id="@cart.CartItemId" data-pvid="@variant.ProductVariantId" type="checkbox" name="name" value="" />
+                        </td>
+                        <td>@product.Name</td>
+                        <td>@variant.Color</td>
+                        <td>@variant.Size</td>
+                        <td>@price.ToString("N0") đ</td>
+                        <td>
+                            <input type="number" value="@cart.Quantity" min="1" />
+                        </td>
+                        <td>
+                            <img src="@img" alt="" />
+                        </td>
+                        <td>@total.ToString("N0") đ</td>
+                        <td>
+                            <a asp-action="delete_cart_product" asp-controller="Order" asp-route-id="@cart.CartItemId">xóa sản phẩm</a>
+                        </td>
+                    </tr>   
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <form>
+            <h3>Đơn hàng</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Sản phẩm</td>
+                        <td>Kích thước</td>
+                        <td>Số lượng</td>
+                    </tr>
+                </thead>
+                <tbody class="cart_item_order">
+                </tbody>
+            </table>
+            <span class="cart_item_money_order">Tổng tiền: </span>
+            <div class="btn_order">
+                <button class="cart_order_accept">Thanh toán</button>
+                <button class="cart_order_cancle">Hủy</button>
+            </div>
+        </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            var cart = $(".cart_item");
+            cart.each(function(){
+                var checkbox = $(this).find('input[type="checkbox"]');
+                var id = checkbox.attr("id");
+
+                if (itemCart[id]){
+                    checkbox.prop("checked", true);
+                }
+            })
+        })
+
+        // $(".cart_order_accept").on("click", () => {
+        //     $.ajax({
+
+        //     })
+        // })
+
+        $(".cart_order_cancle").on("click", (e) => {
+            e.preventDefault();
+            $('.cart_item input[type="checkbox"]').prop("checked", false);
+            itemCart = {};
+            cart_item_order();
+        })
+
+        // nút cập nhật lại số lượng
+        $('.cart_item input[type="number"]').on("click", function(){ 
+            let input = $(this);
+            let quantity = parseInt(input.val());
+
+            let row = input.closest(".cart_item"); // lấy hàng
+            let checkbox = row.find('input[type="checkbox"]'); // lấy nút checkbox 
+            let id = checkbox.attr("id"); // checkbox -> id 
+            let tds = row.find("td"); // hàng -> td
+
+            let moneyText = $(tds[4]).text().trim().replace(/[^\d]/g, "");
+            let money = parseInt(moneyText) * quantity;
+            $(tds[7]).text(money.toLocaleString("vi-VN") + " đ");
+
+            console.log(quantity + " " + id);
+
+            $.ajax ({
+                url: '@Url.Action("edit_quatity_cartItem", "Order")',
+                type: "POST",
+                data: {quatity: quantity, CartItemId: id},
+                success: function(res) {
+                    console.log(res.message);
+                 }
+            });
+
+            if (checkbox.prop("checked")){
+                itemCart[id].quantity = quantity;
+                itemCart[id].money = money;
+                cart_item_order(); // cập nhật lại đơn hàng
+            }
+        });
+
+        $(".cart_item").on("click", function(e){
+            if($(e.target).is('a') || $(e.target).closest('a').length) {
+                return;
+            }
+
+            if($(e.target).is('input[type="number"]')){ // chặn e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+
+            let checkbox = $(this).find('input[type="checkbox"]');
+            let tds = $(this).find("td");
+
+            if (e.target.type === "checkbox") return;
+            checkbox.prop("checked", !checkbox.prop("checked"));
+            
+            let id = checkbox.attr("id"); // lấy id của cart
+            let pvID = checkbox.data("pvid"); // lấy id của ProductVariant
+            let name = $(tds[1]).text().trim();
+            let size= $(tds[3]).text().trim();
+            let quantityInput = $(tds[5]).find("input").val();
+            quantity = parseInt(quantityInput.trim());
+            let moneyText = $(tds[7]).text().trim().replace(/[^\d]/g, "");
+            let money = parseInt(moneyText);
+
+            if (checkbox.prop("checked")){
+                itemCart[id] = {
+                    id: pvID,
+                    name: name,
+                    size: size,
+                    quantity: quantity,
+                    money: money
+                };
+                cart_item_order(); // cập nhật lại đơn hàng
+            }
+            else {
+                delete itemCart[id];
+                cart_item_order(); // cập nhật lại đơn hàng
+            }
+
+            console.log(itemCart);
+        })
+
+        // --- HÀM CHO BẢNG ĐƠN HÀNG ---
+        const cart_item_order = () => {
+            let money = 0;
+            let html = "";
+            itemOrder = {};
+            Object.values(itemCart).forEach( item => {
+                if (itemOrder[item.id]){
+                    itemOrder[item.id].quantity += item.quantity;
+                    itemOrder[item.id].money += item.money;
+                }
+                else {
+                    itemOrder[item.id] = {
+                        name: item.name,
+                        size: item.size,
+                        quantity: item.quantity,
+                        money: item.money
+                    };
+                }
+            });
+            Object.values(itemOrder).forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.size}</td>
+                        <td>${item.quantity}</td>
+                    </tr>
+                `;
+                money += item.money;
+            })
+            console.log(itemOrder);
+
+            $(".cart_item_order").html(html);
+            $(".cart_item_money_order").text("Tổng tiền: " + money.toLocaleString("vi-VN") + " đ");
+        };
+    </script>
+}

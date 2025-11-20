@@ -28,7 +28,11 @@
 <div class="shoe">
     @* like *@
     <div class="shoe_like">
-        <a class="add-to-wishlist-btn" asp-controller="Home" asp-action="AddFavorite" data-variant-id="@(firstVariant?.ProductVariantId ?? 0)">
+        <a class="add-to-wishlist-btn" 
+            asp-controller="Home" 
+            asp-action="AddFavorite" 
+            data-variant-id="@(firstVariant?.ProductVariantId ?? 0)"
+        >
             @if (isFavorite == true)
             {
                 <i class="fa-solid fa-heart" style="color: red;"></i>
@@ -41,7 +45,11 @@
     </div>
     @* cart *@
     <div class="shoe_cart">
-        <a class="add-to-cartlist-btn">
+        <a class="add-to-cartlist-btn" 
+            asp-action="add_cart_product" 
+            asp-controller="Order"
+           data-product-variant-id="@(firstVariant?.ProductVariantId ?? 0)"
+           data-quantity="1">
             <i class="fa-solid fa-cart-shopping"></i>
         </a>
     </div>

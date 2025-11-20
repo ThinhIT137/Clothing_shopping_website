@@ -4,78 +4,76 @@
     var CategoryId = 0;
     int.TryParse(ViewContext.HttpContext.Request.Query["CategoryId"], out CategoryId);
 }
-
-@if(CategoryId != 0)
-{
-    if (Model.ContainsKey(CategoryId) && Model[CategoryId] != null){
-        var products = Model[CategoryId];
-            
-        <div class="container-fluid">
-            <div class="product-list row">
-            @foreach (var p in products)
-            {
-                <div class="product_item">
-                    @await Html.PartialAsync("_shoe", p)
-                </div>
-            }
-            </div>
-        </div>
-    
-        <div class="d-flex justify-content-center mt-4">
-            @Html.PagedListPager(
-                products,
-                page => Url.Action("Product", new {
-                    Page = page,
-                    TargetGroup = ViewBag.TargetGroup,
-                    CategoryId = CategoryId
-                }),
-                new PagedListRenderOptions
-                {
-                    UlElementClasses = new[] { "pagination" },
-                    LiElementClasses = new[] { "page-item" },
-                    PageClasses = new[] { "page-link" }
-               }
-            )
-        </div>
-    }
-    else {
-        <div>@ViewBag.AllCategories[CategoryId] Không có</div>
-    }
-}
-else {
-    foreach(var m in Model)
+    @if(CategoryId != 0)
     {
-        var products = m.Value;
-        <div class="category-section" id="category-section-@m.Key">
-            <div>@ViewBag.AllCategories[m.Key]</div>
+        if (Model.ContainsKey(CategoryId) && Model[CategoryId] != null){
+            var products = Model[CategoryId];
             <div class="container-fluid">
                 <div class="product-list row">
-                    @foreach (var p in products)
-                    {
-                        <div class="product_item col-6 col-md-4">
-                            @await Html.PartialAsync("_shoe", p)
-                        </div>
-                    }
+                @foreach (var p in products)
+                {
+                    <div class="product_item">
+                        @await Html.PartialAsync("_shoe", p)
+                    </div>
+                }
                 </div>
             </div>
     
             <div class="d-flex justify-content-center mt-4">
                 @Html.PagedListPager(
-                    products, 
-                    page => Url.Action("Product", new { 
+                    products,
+                    page => Url.Action("Product", new {
+                        Page = page,
                         TargetGroup = ViewBag.TargetGroup,
-                        CategoryId = 0,
-                        pagedCatId = m.Key,
-                        pagedCatPage = page
+                        CategoryId = CategoryId
                     }),
                     new PagedListRenderOptions
                     {
                         UlElementClasses = new[] { "pagination" },
                         LiElementClasses = new[] { "page-item" },
                         PageClasses = new[] { "page-link" }
-                    }
+                   }
                 )
-            </div>  
-        </div>
+            </div>
+        }
+        else {
+            <div>@ViewBag.AllCategories[CategoryId] Không có</div>
+        }
     }
-}
+    else {
+        foreach(var m in Model)
+        {
+            var products = m.Value;
+            <div class="category-section" id="category-section-@m.Key">
+                <div>@ViewBag.AllCategories[m.Key]</div>
+                <div class="container-fluid">
+                    <div class="product-list row">
+                        @foreach (var p in products)
+                        {
+                            <div class="product_item col-6 col-md-4">
+                                @await Html.PartialAsync("_shoe", p)
+                            </div>
+                        }
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-center mt-4">
+                    @Html.PagedListPager(
+                        products, 
+                        page => Url.Action("Product", new { 
+                            TargetGroup = ViewBag.TargetGroup,
+                            CategoryId = 0,
+                            pagedCatId = m.Key,
+                            pagedCatPage = page
+                        }),
+                        new PagedListRenderOptions
+                        {
+                            UlElementClasses = new[] { "pagination" },
+                            LiElementClasses = new[] { "page-item" },
+                            PageClasses = new[] { "page-link" }
+                        }
+                    )
+                </div>  
+            </div>
+        }
+    }

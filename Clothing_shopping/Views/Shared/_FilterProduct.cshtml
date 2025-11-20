@@ -1,27 +1,82 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model dynamic
 
-
-<div class="Filter_Product">
-    <div class="wrapper">
-        <div class="values">
-            <span id="range1">
-                0
-            </span>
-            <span> &dash; </span>
-            <span id="range2">
-                100
-            </span>
+<div class="Filter">
+    <form>
+        @* color *@
+        <div class="filter_color filter_CS">
+            <div class="btn_filter_color btn_filterCS_CS">
+                <i class="fa-solid fa-arrow-left btn_filter_size_left"></i>
+                <span>Màu sắc</span>
+                <i class="fa-solid fa-xmark btn_filter"></i>
+            </div>
+            <div class="filter_list_CS">
+                @foreach (var color in ViewBag.colorFilter)
+                {
+                    <div>
+                        <input id="@color" type="checkbox" name="colors" value="@color"/>
+                        <label for="@color">@color</label>
+                    </div>
+                }
+            </div>
+            <div class="btn_render_product_filter">
+                <a href="">Hủy</a>
+                <button>Xem</button>
+            </div>
         </div>
-        <div class="container">
-            <div class="slider-track"></div>
-            <input type="range" min="0" max="100" value="30" id="slider-1" oninput="slideOne()">
-            <input type="range" min="0" max="100" value="70" id="slider-2" oninput="slideTwo()">
+        @* size *@
+        <div class="filter_size filter_CS">
+            <div class="btn_filter_size btn_filterCS_CS">
+                <i class="fa-solid fa-arrow-left btn_filter_size_left"></i>
+                <span>Kích cỡ</span>
+                <i class="fa-solid fa-xmark btn_filter"></i>
+            </div>
+            <div class="filter_list_CS filter_size_container">
+                @foreach (var size in ViewBag.sizeFilter)
+                {
+                    <div class="filter_size_item">
+                        <input id="@size" class="filter_size_input" type="hidden" name="sizes" value="@size" />
+                        <label class="filter_size_label" for="@size">@size</label>
+                    </div>
+                }
+            </div>
+            <div class="btn_render_product_filter">
+                <a href="">Hủy</a>
+                <button>Xem</button>
+            </div>
         </div>
-    </div>
-
-
+        @* menu filter *@
+        <div class="Filter_Product">
+            <div class="btn_filter">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div class="filter_rangeSlider">
+                <span>Tầm giá</span>
+                <div class="wrapper">
+                    <div class="values">
+                        <span id="range1">0</span>
+                        @* <span> &dash; </span> *@
+                        <span id="range2">10000000</span>
+                    </div>
+                    <div class="container">
+                        <div class="slider-track"></div>
+                        <input type="range" min="0" max="10000000" value="0" id="slider-1" oninput="slideOne()">
+                        <input type="range" min="0" max="10000000" value="10000000" id="slider-2" oninput="slideTwo()">
+                    </div>
+                </div>
+            </div>
+            <div class="btn_filterColor btn_filterCS">
+                <span>Màu sắc</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+            <div class="btn_filterSize btn_filterCS">
+                <span>Kích cỡ</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+                
+            <div class="btn_render_product_filter">
+                <a href="">Hủy</a>
+                <button>Xem</button>
+            </div>
+        </div>
+    </form>
 </div>

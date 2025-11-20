@@ -18,8 +18,8 @@
         <nav>
             <div class="Nam">
                 <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" class="nam_click_product click_product @(Context.Request.Query["TargetGroup"] == "0" ? "ac" : "")"><span>Nam</span></a>
-
                 <div class="Nam_Product Product">
+                    @* --- Áo --- *@
                     <div class="Product_column">
                         <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
                             <div class="items">
@@ -33,23 +33,87 @@
                                 <span>Áo sơ mi</span>
                             </div>
                         </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Hoodie.png" alt="" />
+                                <span>Áo hoodie</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Khoac.png" alt="" />
+                                <span>Áo khoác</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Phao.png" alt="" />
+                                <span>Áo phao</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="6">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Ao_Dai.png" alt="" />
+                                <span>Áo dài</span>
+                            </div>
+                        </a>
                     </div>
+                    @* --- Quần --- *@
                     <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Quan_Jean.png" alt="" />
+                                <span>Quần jean</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Quan_Short.png" alt="" />
+                                <span>Quần short</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Quan_Dai.png" alt="" />
+                                <span>Quần dài</span>
+                            </div>
+                        </a>
                     </div>
+                    @* --- Giày --- *@
                     <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Giay_Nike.png" alt="" />
+                                <span>Giày Nike</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Giay_Adidas.png" alt="" />
+                                <span>Giày Adidas</span>
+                            </div>
+                        </a>
                     </div>
+                    @* --- Dép --- *@
                     <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Dep_Tong.png" alt="" />
+                                <span>Dép tông</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Dep_Suc.png" alt="" />
+                                <span>Dép sục</span>
+                            </div>
+                        </a>
+                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18">
+                            <div class="items">
+                                <img loading="lazy" src="/images/Products/Nam/Dep_To_Ong.png" alt="" />
+                                <span>Dép tổ ong</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -175,7 +239,18 @@
                 }
             </div>
             <div>
-                <i id="header-wishlist-icon" class="fa-regular fa-heart icon"></i>
+                @if(userID == null)
+                {
+                    <a asp-controller="User" asp-action="Login">
+                        <i id="header-wishlist-icon" class="fa-regular fa-heart icon"></i>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Favorite">
+                        <i id="header-wishlist-icon" class="fa-regular fa-heart icon"></i>
+                    </a>
+                }
             </div>
             <div class="Notification">
                 @if (userID == null)

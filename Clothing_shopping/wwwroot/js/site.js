@@ -1,4 +1,7 @@
-﻿// index
+﻿var itemCart = {};
+var itemOrder = {};
+
+// index
 var swiper = new Swiper(".mySwiper", {
     direction: "vertical",
     loop: true,
@@ -95,4 +98,24 @@ btn_search.addEventListener("click", () => {
     }
     btn_search.classList.remove("fa-x");
     btn_search.classList.add("fa-magnifying-glass");
+})
+
+$(document).on("click", ".add-to-cartlist-btn", function (e) {
+    e.preventDefault();
+
+    var PVId = $(this).data("productVariantId");
+    var QT = $(this).data("quantity");
+
+    $.ajax({
+        url: '/Order/add_cart_product',
+        type: 'POST',
+        data: {
+            ProductVariantId: PVId, Quantity: QT
+        },
+        success: (res) => {
+            if (res.success) {
+                //alert(res.message);
+            }
+        }
+    })
 })

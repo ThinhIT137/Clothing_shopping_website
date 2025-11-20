@@ -24,6 +24,7 @@ namespace Clothing_shopping.Controllers
             return View();
         }
 
+        /* --- ĐĂNG NHẬP --- */
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
@@ -37,24 +38,12 @@ namespace Clothing_shopping.Controllers
 
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                HttpContext.Session.SetString("UserId", user.UserId.ToString());
-                HttpContext.Session.SetString("Email", user.Email.ToString());
-                HttpContext.Session.SetString("FullName", user.FullName.ToString());
-
-                //var query = from nt in db.Notifications
-                //            join n in db.News on nt.NewsId equals n.NewsId
-                //            join u in db.Users on nt.ReceiverId equals u.UserId
-                //            where nt.ReceiverId == user.UserId && nt.IsRead == false
-                //            orderby nt.CreatedAt descending
-                //            select new
-                //            {
-                //                Title = n.Title.Replace("{OrderId}", nt.OrderId.ToString()),
-                //                Content = n.Content.Replace("{OrderId}", nt.OrderId.ToString()),
-                //                CreatedAt = nt.CreatedAt
-                //            };
+                HttpContext.Session.SetString("UserId", user.UserId.ToString()); // lưu ID
+                HttpContext.Session.SetString("Email", user.Email.ToString()); // lưu Email
+                HttpContext.Session.SetString("FullName", user.FullName.ToString()); // Lưu fullname
                 var newsList = await db.Notifications.Where(nt => nt.ReceiverId == user.UserId)
                                                      .Where(nt => nt.IsRead == false)
-                                                     .Include(nt => nt.News)
+                                                     .Include(nt => nt.News) 
                                                      .OrderByDescending(nt => nt.CreatedAt)
                                                      .Select(nt => new
                                                      {
@@ -77,6 +66,7 @@ namespace Clothing_shopping.Controllers
             return View();
         }
 
+        /* --- ĐĂNG KÝ --- */
         [HttpGet]
         public IActionResult Register()
         {
@@ -111,6 +101,7 @@ namespace Clothing_shopping.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        /* --- THÔNG TIN NGƯỜI DÙNG --- */
         [HttpGet]
         public IActionResult Profile()
         {

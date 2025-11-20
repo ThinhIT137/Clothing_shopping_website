@@ -2,6 +2,8 @@
 
 @{
     var TargetGroup = ViewContext.HttpContext.Request.Query["TargetGroup"].ToString();
+    int.TryParse(ViewContext.HttpContext.Request.Query["CategoryId"], out int CatgoryID);
+
     // List<string> Product_Catagory_Nam = new List<string>{ "Áo", "Quần", "Giày", "Dép" };
     // List<string> Product_Catagory_Nu = new List<string>{"Áo", "Quần", "Váy", "Giày", "Dép"};
     var categoryNames = (Dictionary<int, string>)ViewBag.AllCategories;
@@ -18,42 +20,48 @@
 
 }
 <div class="LIST" id="LIST">
-    <div class="btn_list"><i id="list_menu_btn" class="fa-solid fa-bars"></i></div>
+    <div class="btn_list">
+        <img class="img" loading="lazy" src="~/images/logo_listMenu.svg" alt="" />
+        <i id="list_menu_btn" class="fa-solid fa-bars"></i>
+    </div>
     
     <nav class="list_menu" id="list_menu">
         @if (@ViewBag.TargetGroup == 0 || @ViewBag.TargetGroup == 1){
-           <div class="column Catagory">
-                @foreach (var Catagory in jsonDataFlat)
-                {
-                    <h3 id="list_menu_Catagory">
+            @foreach (var Catagory in jsonDataFlat)
+            {    
+                <div class="column Catagory">
+                    <h3 class="list_menu_Catagory">
                         <span>@Catagory.Key </span>
-                        @* <i class="fa-solid fa-caret-down"></i> *@
+                        <i class="fa-solid fa-angle-down"></i>
                     </h3>
                     <div class="column categoryName">
                         @foreach (var i in Catagory.Value)
                         {
                             string name = categoryNames.ContainsKey(i) ? categoryNames[i] : "Unknown";
-                            <a asp-controller="Home" asp-action="Product" asp-route-CategoryId=@i asp-route-TargetGroup="@TargetGroup">@name</a>
+                            <a asp-controller="Home" asp-action="Product" asp-route-CategoryId=@i asp-route-TargetGroup="@TargetGroup" class="@(CatgoryID == i ? "ac" : "")">
+                                @name
+                            </a>
                         }
                     </div>
-                }
-           </div>
+                </div>
+            }
+           
         }
         else
         {
-            <div class="column group">
-                @foreach (var group in jsonDataNested)
-                {
-                    <h2 id="list_menu_group">
+            @foreach (var group in jsonDataNested)
+            {
+                <div class="column group">
+                    <h2 class="list_menu_group">
                         @group.Key
-                        @* <i class="fa-solid fa-caret-down"></i>     *@
+                        <i class="fa-solid fa-angle-down"></i>
                     </h2> <!-- Nam / Nu -->
-                    <div class="column Catagory">
-                        @foreach (var category in group.Value)
-                        {
-                            <h3 id="list_menu_Catagory">
+                    @foreach (var category in group.Value)
+                    {
+                        <div class="column Catagory">
+                            <h3 class="list_menu_Catagory">
                                 @category.Key
-                                @* <i class="fa-solid fa-caret-down"></i>     *@
+                                <i class="fa-solid fa-angle-down"></i>
                             </h3> <!-- Ao / Quan / Giay / Dep -->
                             <div class="column categoryName">
                                 @foreach (var id in category.Value)
@@ -62,10 +70,11 @@
                                     <a asp-controller="Home" asp-action="Product" asp-route-CategoryId="@id" asp-route-TargetGroup="@TargetGroup">@name</a>
                                 }
                             </div>
-                        }
-                    </div>
-                }
-            </div>
+                        </div>
+                    }
+                    
+                </div>
+            }
         }
     </nav>
 </div>

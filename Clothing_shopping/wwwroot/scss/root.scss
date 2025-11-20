@@ -34,7 +34,7 @@ $shoe_color_hover: green;
 }
 // reponsive tablet
 @mixin media-Tablet {
-    @media (min-width: 768px) and (max-width: 991.98px){
+    @media (min-width: 575.99px) and (max-width: 991.98px) {
         @content;
     }
 }
@@ -44,8 +44,6 @@ $shoe_color_hover: green;
         @content;
     }
 }
-
-
 
 @mixin flex_center_1 {
     display: flex;
@@ -82,5 +80,11 @@ $shoe_color_hover: green;
 @mixin flex_space-between_center {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+@mixin flex_end_center {
+    display: flex;
+    justify-content: end;
     align-items: center;
 }
