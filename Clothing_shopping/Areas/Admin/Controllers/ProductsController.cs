@@ -762,5 +762,69 @@ namespace Clothing_shopping.Areas.Admin.Controllers
             value = Regex.Replace(value, @"([-_]){2,}", "$1", RegexOptions.Compiled);
             return value;
         }
+
+
+        public async Task<IActionResult> Sales()
+        {
+            // ----- INVENTORY -----
+            var inventoryRaw = await db.ProductVariants
+                .GroupBy(pv => pv.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalStock = g.Sum(x => x.Stock)
+                })
+                .ToListAsync();
+
+            var inventoryDict = inventoryRaw.ToDictionary(i => i.ProductId, i => i.TotalStock);
+
+            var productsInventory = await db.Products
+                .Where(p => inventoryDict.Keys.Contains(p.ProductId))
+                .ToListAsync();
+
+            var inventory = productsInventory
+                .Select(p => new
+                {
+                    Product = p,
+                    TotalStock = inventoryDict[p.ProductId]
+                })
+                .ToList();
+
+
+            // ----- BEST SELLERS -----
+            var bestRaw = await db.OrderItems
+                .Where(oi => oi.Order.OrderStatus == OrderStatus.Completed)
+                .GroupBy(oi => oi.ProductVariant.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalSold = g.Sum(x => x.Quantity)
+                })
+                .OrderByDescending(x => x.TotalSold)
+                .Take(10)
+                .ToListAsync();
+
+            var bestDict = bestRaw.ToDictionary(b => b.ProductId, b => b.TotalSold);
+
+            var productsBest = await db.Products
+                .Where(p => bestDict.Keys.Contains(p.ProductId))
+                .ToListAsync(); // lấy product từ SQL trước
+
+            var bestSellers = productsBest
+                .Select(p => new
+                {
+                    Product = p,
+                    TotalSold = bestDict[p.ProductId]
+                })
+                .OrderByDescending(x => x.TotalSold) // Sort tại RAM, không phải SQL
+                .ToList();
+
+
+            ViewBag.Inventory = inventory;
+            ViewBag.BestSellers = bestSellers;
+
+            return View();
+        }
+
     }
 }

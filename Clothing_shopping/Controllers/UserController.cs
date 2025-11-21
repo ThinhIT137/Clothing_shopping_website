@@ -37,40 +37,43 @@ namespace Clothing_shopping.Controllers
         {
             var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email);
 
-            if (user != null)
+            if (user is null)
             {
-                if (user.IsLocked)
-                {
-                    ViewBag.Error = "Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.";
-                    return View();
-                }
+                ViewBag.Error = "Sai email hoặc mật khẩu!";
+                return View();
+            }
 
-                if (BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-                {
-                    HttpContext.Session.SetString("UserId", user.UserId.ToString()); // lưu ID
-                    HttpContext.Session.SetString("Email", user.Email.ToString()); // lưu Email
-                    HttpContext.Session.SetString("FullName", user.FullName.ToString()); // Lưu fullname
-                    var newsList = await db.Notifications.Where(nt => nt.ReceiverId == user.UserId)
-                                                         .Where(nt => nt.IsRead == false)
-                                                         .Include(nt => nt.News)
-                                                         .OrderByDescending(nt => nt.CreatedAt)
-                                                         .Select(nt => new
-                                                         {
-                                                             Title = nt.News.Title.Replace("{OrderId}", nt.OrderId.ToString()),
-                                                             Content = nt.News.Content.Replace("{OrderId}", nt.OrderId.ToString()),
-                                                             CreatedAt = nt.CreatedAt
-                                                         })
-                                                         .ToListAsync();
-                    HttpContext.Session.SetString("Notification", JsonConvert.SerializeObject(newsList, new JsonSerializerSettings
-                    {
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    }));
+            if (user.IsLocked)
+            {
+                ViewBag.Error = "Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.";
+                return View();
+            }
 
-                    await HttpContext.Session.CommitAsync();
-                    Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
-                    Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
-                    return RedirectToAction("Index", "Home");
-                }
+            if (BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            {
+                HttpContext.Session.SetString("UserId", user.UserId.ToString()); // lưu ID
+                HttpContext.Session.SetString("Email", user.Email.ToString()); // lưu Email
+                HttpContext.Session.SetString("FullName", user.FullName.ToString()); // Lưu fullname
+                var newsList = await db.Notifications.Where(nt => nt.ReceiverId == user.UserId)
+                                                     .Where(nt => nt.IsRead == false)
+                                                     .Include(nt => nt.News) 
+                                                     .OrderByDescending(nt => nt.CreatedAt)
+                                                     .Select(nt => new
+                                                     {
+                                                         Title = nt.News.Title.Replace("{OrderId}", nt.OrderId.ToString()),
+                                                         Content = nt.News.Content.Replace("{OrderId}", nt.OrderId.ToString()),
+                                                         CreatedAt = nt.CreatedAt
+                                                     })
+                                                     .ToListAsync();
+                HttpContext.Session.SetString("Notification", JsonConvert.SerializeObject(newsList, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }));
+
+                await HttpContext.Session.CommitAsync();
+                Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
+                Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
