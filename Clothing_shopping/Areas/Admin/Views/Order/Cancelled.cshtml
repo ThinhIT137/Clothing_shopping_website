@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Order>
+@{
+    ViewData["Title"] = "Đơn hàng đã hủy";
+}
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-ban me-1"></i>
+        Danh sách đơn hàng đã hủy
+    </div>
+    <div class="card-body">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">Bạn chưa có đơn hàng nào bị hủy.</div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Mã đơn (#ID)</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Lý do/Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.OrderId</td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.TotalAmount.ToString("#,##0") đ</td>
+                            <td>
+                                <span class="badge bg-danger">Đã hủy</span>
+                            </td>
+                            <td>
+                                <a asp-action="OrderDetails" asp-route-id="@item.OrderId" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> Xem chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

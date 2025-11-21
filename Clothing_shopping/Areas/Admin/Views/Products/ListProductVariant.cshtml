@@ -1,0 +1,294 @@
+﻿@model IPagedList<Clothing_shopping.Models.ProductVariant>
+
+@{
+    ViewData["Title"] = "Quản lý Biến thể Sản phẩm";
+}
+
+<style>
+    /* CSS làm đẹp cho bộ lọc */
+    .filter-card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 10px;
+    }
+
+    .filter-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        border-radius: 10px 10px 0 0;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .list-group-item.active {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .color-box-label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .size-box-label {
+        cursor: pointer;
+        min-width: 40px;
+        text-align: center;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 5px;
+        transition: all 0.2s;
+    }
+
+    .filter-checkbox:checked + .size-box-label {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+    /* Scroll cho list dài */
+    .scrollable-filter {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #f1f1f1;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card filter-card mb-4">
+                <div class="filter-header">
+                    <i class="fa-solid fa-filter me-2"></i> Bộ lọc tìm kiếm
+                </div>
+                <div class="card-body">
+                    <form id="filterForm" action="/Admin/Products/ListProductVariant" method="get">
+                        <input type="hidden" name="ProductId" value="@ViewBag.CurrentProductId" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Đối tượng</label>
+                            <select class="form-select" name="TargetGroup"
+                                    onchange="window.location.href = '/Admin/Products/ListProductVariant?TargetGroup=' + this.value">
+                                <option value="0" selected="@(ViewBag.CurrentTargetGroup == 0)">Nam</option>
+                                <option value="1" selected="@(ViewBag.CurrentTargetGroup == 1)">Nữ</option>
+                                <option value="20" selected="@(ViewBag.CurrentTargetGroup == 20)">Bé Trai</option>
+                                <option value="21" selected="@(ViewBag.CurrentTargetGroup == 21)">Bé Gái</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Tên sản phẩm</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input type="text" class="form-control" name="name" id="txtName"
+                                       placeholder="Nhập tên..." value="@ViewBag.CurrentName">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Danh mục</label>
+                            <div class="list-group scrollable-filter" style="max-height: 150px;">
+                                <a href="#" class="list-group-item list-group-item-action category-link @(string.IsNullOrEmpty(ViewBag.CurrentCategoryIds) ? "active" : "")" data-ids="">
+                                    <i class="fa-solid fa-layer-group me-2"></i> Tất cả
+                                </a>
+                                @if (ViewBag.MenuCategories != null)
+                                {
+                                    foreach (var item in (Dictionary<string, string>)ViewBag.MenuCategories)
+                                    {
+                                        string isActive = (ViewBag.CurrentCategoryIds == item.Value) ? "active" : "";
+                                        <a href="#" class="list-group-item list-group-item-action category-link @isActive"
+                                           data-ids="@item.Value">
+                                            @item.Key
+                                        </a>
+                                    }
+                                }
+                            </div>
+                            <input type="hidden" name="CategoryIds" id="hiddenCategoryIds" value="@ViewBag.CurrentCategoryIds" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Khoảng giá</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="number" class="form-control form-control-sm" name="minPrice" placeholder="0" value="@ViewBag.CurrentMinPrice">
+                                <span>-</span>
+                                <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="Max" value="@ViewBag.CurrentMaxPrice">
+                            </div>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Màu sắc</label>
+                            @{
+                                string[] cColors = ViewBag.CurrentColors as string[] ?? new string[] { };
+                                var allColors = ViewBag.AllColors as List<string> ?? new List<string>();
+                            }
+                            <div class="scrollable-filter">
+                                @if (allColors.Any())
+                                {
+                                    foreach (var item in allColors)
+                                    {
+                                        var uniqueId = "color_" + item.Replace(" ", "_");
+                                        <div class="form-check mb-1">
+                                            <input class="form-check-input filter-checkbox" type="checkbox" name="color" value="@item" id="@uniqueId"
+                                                   @(cColors.Contains(item) ? "checked" : "")>
+                                            <label class="form-check-label color-box-label" for="@uniqueId">
+                                                @* Tạo 1 chấm màu demo *@
+                                                <span style="width:12px;height:12px;background-color:@(IsValidColor(item) ? item : "#ccc");border-radius:50%;display:inline-block;border:1px solid #ddd;"></span>
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <small class="text-muted fst-italic">Không có dữ liệu màu</small>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary small text-uppercase">Kích cỡ</label>
+                            @{
+                                string[] cSizes = ViewBag.CurrentSizes as string[] ?? new string[] { };
+                                var allSizes = ViewBag.AllSizes as List<string> ?? new List<string>();
+                            }
+                            <div class="d-flex gap-2 flex-wrap">
+                                @if (allSizes.Any())
+                                {
+                                    foreach (var item in allSizes)
+                                    {
+                                        var uniqueId = "size_" + item.Replace(" ", "_");
+                                        <div>
+                                            <input class="btn-check filter-checkbox" type="checkbox" name="sizes" value="@item" id="@uniqueId"
+                                                   @(cSizes.Contains(item) ? "checked" : "")>
+                                            <label class="btn btn-outline-secondary btn-sm" for="@uniqueId">@item</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <small class="text-muted fst-italic">Không có dữ liệu size</small>
+                                }
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100 mt-3" onclick="submitCleanFilter()">
+                            <i class="fa-solid fa-filter"></i> Áp dụng bộ lọc
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="mb-0 fw-bold text-dark">Quản lý Biến thể</h3>
+                    <p class="text-muted small mb-0">Danh sách chi tiết màu sắc và kích cỡ của sản phẩm</p>
+                </div>
+
+                <a asp-controller="Products" asp-action="add_Products" asp-area="Admin" class="btn btn-success">
+                    <i class="fa-solid fa-plus"></i> Thêm sản phẩm mới
+                </a>
+            </div>
+
+            <div id="loader" class="text-center d-none my-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+            </div>
+
+            <div id="product-list-container">
+                @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_ProductList.cshtml", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. Hàm gọi AJAX filter
+        function submitCleanFilter() {
+            filterData(1);
+        }
+
+        function filterData(pageNumber) {
+            // Lấy dữ liệu từ form
+            var formData = $('#filterForm').serialize();
+            formData += "&Page=" + pageNumber;
+
+            // UI Loading Effect
+            $('#product-list-container').css('opacity', '0.3');
+            $('#loader').removeClass('d-none');
+
+            // LƯU Ý: URL đã đổi thành ListProductVariant
+            $.ajax({
+                url: '/Admin/Products/ListProductVariant',
+                type: 'GET',
+                data: formData,
+                success: function (result) {
+                    $('#product-list-container').html(result);
+                    $('#product-list-container').css('opacity', '1');
+                    $('#loader').addClass('d-none');
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Lỗi tải dữ liệu!");
+                    $('#product-list-container').css('opacity', '1');
+                    $('#loader').addClass('d-none');
+                }
+            });
+        }
+
+        // 2. Xử lý click Danh mục
+        $('.category-link').click(function(e) {
+            e.preventDefault();
+            $('.category-link').removeClass('active');
+            $(this).addClass('active');
+            var ids = $(this).data('ids');
+            $('#hiddenCategoryIds').val(ids);
+            filterData(1);
+        });
+
+        // 3. Tự động tìm kiếm khi gõ tên (Delay 500ms)
+        let timeout = null;
+        $('#txtName').keyup(function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(function () { filterData(1); }, 500);
+        });
+
+        // 4. Tự động filter khi tick checkbox Color/Size
+        $('.filter-checkbox').change(function () {
+            filterData(1);
+        });
+
+        // 5. Xử lý Phân trang (AJAX)
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            try {
+                var url = $(this).attr('href');
+                if(url) {
+                    var urlParams = new URLSearchParams(url.split('?')[1]);
+                    var page = urlParams.get('Page');
+                    if(page) filterData(page);
+                }
+            } catch(ex) {}
+        });
+    </script>
+}
+
+@functions {
+    // Hàm nhỏ check xem string có phải tên màu hợp lệ không để tô màu background
+    // (Chỉ mang tính chất trang trí)
+    public bool IsValidColor(string color)
+    {
+        var validColors = new[] { "red", "blue", "green", "black", "white", "yellow", "gray", "pink", "purple", "orange", "brown", "navy", "teal" };
+        return validColors.Contains(color.ToLower());
+    }
+}

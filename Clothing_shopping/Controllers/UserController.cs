@@ -21,7 +21,14 @@ namespace Clothing_shopping.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            var userIdstring = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdstring))
+            {
+                return View();
+            }
+            Guid.TryParse(userIdstring, out Guid userId);
+
+            return RedirectToAction("Index", "Home");
         }
 
         /* --- ĐĂNG NHẬP --- */
@@ -70,7 +77,14 @@ namespace Clothing_shopping.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            var userIdstring = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdstring))
+            {
+                return View();
+            }
+            Guid.TryParse(userIdstring, out Guid userId);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]

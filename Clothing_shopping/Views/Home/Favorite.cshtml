@@ -32,7 +32,13 @@
                         <td><img src="@img" alt="" /></td>
                         <td>
                             <a class="btn_delete_favorite" asp-controller="Home" asp-action="delete_favorite" asp-route-id="@favorite.FavoriteItemsId">Xóa</a>
-                            <a>Thêm vào giỏ hàng</a>
+                            <a class="add-to-cartlist-btn"
+                               asp-action="add_cart_product"
+                               asp-controller="Order"
+                               data-product-variant-id="@variant.ProductVariantId"
+                               data-quantity="1">
+                                Thêm vào giỏ hàng
+                            </a>
                         </td>
                     </tr>
                 }
@@ -43,6 +49,6 @@
 
 @section Scripts {
     <script>
-       
+      
     </script>
 }

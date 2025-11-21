@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng chờ xác nhận";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Đơn hàng chờ xác nhận</h1>
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <i class="fas fa-clock me-1"></i>
+            Danh sách đơn cần duyệt
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-hover table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@item.OrderId</td>
+                                <td>
+                                    <div>@item.ShippingAddress</div>
+                                    <small class="text-muted">@item.Phone</small>
+                                </td>
+                                <td class="text-danger fw-bold">
+                                    @* Format tiền tệ *@
+                                    @string.Format("{0:N0} ₫", item.TotalAmount)
+                                </td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (item.OrderStatus == "Pending")
+                                    {
+                                        <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.OrderStatus</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="OrderDetails" asp-route-id="@item.OrderId" class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="ConfirmOrder" asp-route-id="@item.OrderId" class="btn btn-sm btn-success" onclick="return confirm('Duyệt đơn #@item.OrderId?')">
+                                        <i class="fas fa-check"></i> Duyệt
+                                    </a>
+
+                                    <a asp-action="CancelOrder" asp-route-id="@item.OrderId" class="btn btn-sm btn-danger" onclick="return confirm('Hủy đơn #@item.OrderId?')">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    Không có đơn hàng "Pending" nào.
+                </div>
+            }
+        </div>
+    </div>
+</div>

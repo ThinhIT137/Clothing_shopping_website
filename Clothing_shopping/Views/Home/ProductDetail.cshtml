@@ -23,19 +23,73 @@
 
     // img
     var images = JsonConvert.DeserializeObject<List<string>>(Model.Images);
-    var imgList = new Dictionary<string,List<string>>();
-    foreach (var img in images)
-    {
+    var imgList = new Dictionary<string, List<string>>();
+
+    // Bước 1: Parse thông tin từ tên file
+    var parsedImages = images.Select(img => {
         string fileName = System.IO.Path.GetFileNameWithoutExtension(img);
-        string color = fileName.Split('_').Last();
-        if (!imgList.ContainsKey(color))
+        string[] parts = fileName.Split('_');
+        
+        // Lấy màu (Phần cuối cùng)
+        string color = parts.Last();
+
+        // Lấy Variant Index (Số thứ tự biến thể - để lọc trùng)
+        // Cấu trúc file: Name_VarIndex_Color_ImgIndex (hoặc Name_VarIndex_ImgIndex_Color)
+        // Dựa vào code Controller trước đó: Name_VarIndex_Color_ImgIndex
+        // VarIndex nằm ở vị trí thứ 3 từ dưới lên (parts.Length - 3)
+        int varIndex = 0;
+        if (parts.Length >= 3)
         {
-            imgList[color] = new List<string>();
+            // Cố gắng parse số thứ tự biến thể
+            int.TryParse(parts[parts.Length - 3], out varIndex);
         }
-        imgList[color].Add(img);
+
+        return new { Path = img, Color = color, VarIndex = varIndex };
+    }).ToList();
+
+    // Bước 2: Group theo màu
+    var colorGroups = parsedImages.GroupBy(x => x.Color);
+
+    foreach (var group in colorGroups)
+    {
+        // Tìm Variant Index nhỏ nhất của màu này (đại diện cho bộ ảnh gốc)
+        // Ví dụ: Màu đen có Variant 1, 2, 3. Ta chỉ lấy Variant 1.
+        var minVarIndex = group.Where(x => x.VarIndex > 0)
+                               .OrderBy(x => x.VarIndex)
+                               .Select(x => x.VarIndex)
+                               .FirstOrDefault();
+
+        if (minVarIndex == 0) 
+        {
+            // Trường hợp ảnh đại diện hoặc ảnh không đúng định dạng variant
+            imgList[group.Key] = group.Select(x => x.Path).ToList();
+        }
+        else
+        {
+            // Chỉ lấy danh sách ảnh thuộc về Variant đầu tiên của màu đó
+            imgList[group.Key] = group.Where(x => x.VarIndex == minVarIndex)
+                                      .Select(x => x.Path)
+                                      .ToList();
+        }
+    }
+    // --- KẾT THÚC SỬA LOGIC ẢNH ---
+
+    // Nếu màu đầu tiên chưa có ảnh (do logic lọc có thể sai lệch với key), fallback
+    if (!imgList.ContainsKey(firsSelectedColor) && imgList.Keys.Count > 0)
+    {
+        firsSelectedColor = imgList.Keys.FirstOrDefault();
     }
 
-    var imgFisrt = imgList[firsSelectedColor].FirstOrDefault();
+    // Lấy ảnh hiển thị mặc định
+    var imgFisrt = "";
+    if (imgList.ContainsKey(firsSelectedColor) && imgList[firsSelectedColor].Count > 0)
+    {
+        imgFisrt = imgList[firsSelectedColor].FirstOrDefault();
+    }
+    else if (images.Count > 0)
+    {
+        imgFisrt = images[0]; // Fallback ảnh gốc nếu không tìm thấy màu
+    }
 
     var firstProduct = Model.ProductVariants.FirstOrDefault();
     var SalePrice = firstProduct.SalePrice ?? 0;

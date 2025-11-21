@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng đang giao";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Quản lý Vận chuyển</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active">Đang giao hàng</li>
+    </ol>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+            <i class="fas fa-shipping-fast me-1"></i>
+            Danh sách đơn đang trên đường giao
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-hover table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền (COD)</th>
+                            <th>Bắt đầu giao lúc</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@item.OrderId</td>
+                                <td>
+                                    <div>@item.ShippingAddress</div>
+                                    <small class="text-muted">@item.Phone</small>
+                                </td>
+                                <td class="text-danger fw-bold">
+                                    @string.Format("{0:N0} ₫", item.TotalAmount)
+                                </td>
+                                <td>
+                                    @item.UpdatedAt?.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">Đang giao (Shipping)</span>
+                                </td>
+                                <td class="text-center" style="min-width: 150px;">
+                                    <a asp-action="OrderDetails" asp-route-id="@item.OrderId" class="btn btn-sm btn-secondary text-white" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a asp-action="CompleteOrder" asp-route-id="@item.OrderId" class="btn btn-sm btn-success"
+                                       title="Xác nhận giao thành công"
+                                       onclick="return confirm('Xác nhận đơn #@item.OrderId đã giao thành công và đã thu tiền?')">
+                                        <i class="fas fa-check-circle"></i> Hoàn thành
+                                    </a>
+
+                                    <a asp-action="FailShipping" asp-route-id="@item.OrderId" class="btn btn-sm btn-danger"
+                                       title="Giao thất bại / Bom hàng"
+                                       onclick="return confirm('Xác nhận đơn #@item.OrderId giao thất bại/bị hủy?')">
+                                        <i class="fas fa-times-circle"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-truck-loading fa-2x mb-3"></i><br />
+                    Hiện không có đơn hàng nào đang đi giao.
+                </div>
+            }
+        </div>
+    </div>
+</div>

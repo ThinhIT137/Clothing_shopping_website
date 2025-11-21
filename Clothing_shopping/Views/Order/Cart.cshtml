@@ -88,12 +88,6 @@
             })
         })
 
-        // $(".cart_order_accept").on("click", () => {
-        //     $.ajax({
-
-        //     })
-        // })
-
         $(".cart_order_cancle").on("click", (e) => {
             e.preventDefault();
             $('.cart_item input[type="checkbox"]').prop("checked", false);
@@ -133,7 +127,7 @@
             }
         });
 
-        $(".cart_item").on("click", function(e){
+        $(".cart_item ").on("click", function(e){
             if($(e.target).is('a') || $(e.target).closest('a').length) {
                 return;
             }

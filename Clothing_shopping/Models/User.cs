@@ -31,6 +31,8 @@ public partial class User
 
     public DateOnly? Birthday { get; set; }
 
+    public string? Address { get; set; }
+
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<FavoriteItem> FavoriteItems { get; set; } = new List<FavoriteItem>();

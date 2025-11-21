@@ -53,26 +53,14 @@ function lock_password(Element, class_input) {
 }
 
 // login
-if (Controller === "Login" && Action === "Login") {
-    const Password_login = document.getElementById("Password_login");
-    const login_lock = document.querySelector(".login_lock");
-    lock_password(login_lock, Password_login);
+if (Controller === "User" && Action === "Login") {
+    
 }
 
 //register
-if (Controller === "Login" && Action === "Register") {
-    const Password_register = document.getElementById("password_register");
-    const register_lock = document.querySelector(".register_lock");
-    lock_password(register_lock, Password_register);
-
-    const check_Password_register = document.getElementById("check_password_register");
-    const check_register_lock = document.querySelector(".check_register_lock");
-    lock_password(check_register_lock, check_Password_register);
-
-    const day = document.getElementById("day");
-    const month = document.getElementById("month");
-    const year = document.getElementById("year");
-}
+//if (Controller === "User" && Action === "Register") {
+    
+//}
 
 if (IsLoggedIn == true) {
     // user drop down

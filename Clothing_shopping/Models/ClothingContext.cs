@@ -43,7 +43,7 @@ public partial class ClothingContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=TRANDUCTHINH\\SQLEXPRESS;Initial Catalog=Clothing_Shopping;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        => optionsBuilder.UseSqlServer("Data Source=TRANDUCTHINH\\SQLEXPRESS;Initial Catalog=Clothing_Shopping;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -184,7 +184,6 @@ public partial class ClothingContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Name).HasMaxLength(250);
-            entity.Property(e => e.ShortDesc).HasMaxLength(500);
             entity.Property(e => e.Slug).HasMaxLength(300);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)

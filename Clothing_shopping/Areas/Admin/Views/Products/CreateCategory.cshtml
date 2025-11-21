@@ -1,0 +1,66 @@
+﻿@model Clothing_shopping.Models.Category
+
+@{
+    ViewData["Title"] = "Thêm mới Danh mục";
+    // Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml"; // Bỏ comment nếu cần chỉnh layout
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fa-solid fa-plus-circle"></i> Thêm mới Danh mục</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateCategory" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="VD: Áo khoác, Quần Jeans..." />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Mô tả</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Nhập mô tả ngắn..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="SortOrder" class="form-label fw-bold">Thứ tự hiển thị</label>
+                                <input asp-for="SortOrder" class="form-control" type="number" min="0" />
+                                <small class="text-muted">Số nhỏ xếp trước (Ưu tiên).</small>
+                                <span asp-validation-for="SortOrder" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3 d-flex align-items-center">
+                                <div class="form-check form-switch mt-4">
+                                    <input class="form-check-input" type="checkbox" asp-for="IsHidden" id="isHiddenCheck">
+                                    <label class="form-check-label" for="isHiddenCheck">Ẩn danh mục này ngay?</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4 border-top pt-3">
+                            <a asp-action="ListCategory" class="btn btn-secondary">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fa-solid fa-check"></i> Tạo mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

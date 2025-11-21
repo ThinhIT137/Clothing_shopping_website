@@ -80,3 +80,40 @@
         </div>
     </form>
 </div>
+
+@section Scripts{
+    <script>
+        const Password_register = document.getElementById("password_register");
+        const register_lock = document.querySelector(".register_lock");
+        lock_password(register_lock, Password_register);
+
+        const check_Password_register = document.getElementById("check_password_register");
+        const check_register_lock = document.querySelector(".check_register_lock");
+        lock_password(check_register_lock, check_Password_register);
+        
+        $("form").on("submit", function (e) {
+            // Lấy giá trị (Chú ý đúng ID: check_password_register viết thường)
+            var pass = $("#password_register").val();
+            var checkPass = $("#check_password_register").val();
+
+            // Kiểm tra khớp
+            if (pass !== checkPass) {
+                // Chặn không cho form gửi đi
+                e.preventDefault();
+
+                // Thông báo lỗi
+                alert("Mật khẩu nhập lại không khớp!");
+
+                // Focus vào ô nhập lại để người dùng sửa
+                $("#check_password_register").focus();
+            }
+        });
+
+        
+        // const day = document.getElementById("day");
+        // const month = document.getElementById("month");
+        // const year = document.getElementById("year");
+
+
+    </script>
+}

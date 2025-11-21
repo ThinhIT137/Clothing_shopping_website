@@ -1,0 +1,94 @@
+﻿@model Clothing_shopping.Models.User
+@{
+    ViewData["Title"] = "Profile Admin";
+}
+
+<h2>Thông tin tài khoản</h2>
+
+<div class="card shadow-sm p-4 mx-auto" style="max-width: 800px;">
+    <h2 class="mb-4 text-center">Thông tin tài khoản</h2>
+
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success">@ViewBag.Success</div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <form asp-action="Profile" method="post" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Họ</label>
+            <input type="text" class="form-control" name="firstName"
+                   value="@(Model?.FullName?.Split(' ')[0] ?? "")" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Tên</label>
+            <input type="text" class="form-control" name="secondName"
+                   value="@(Model?.FullName?.Split(' ').Length > 1 ? Model.FullName.Split(' ')[1] : "")" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Mật khẩu cũ</label>
+            <input type="password" class="form-control" name="currentPassword" placeholder="Mật khẩu cũ" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Mật khẩu mới</label>
+            <input type="password" class="form-control" name="password" placeholder="Mật khẩu mới" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Xác nhận mật khẩu</label>
+            <input type="password" class="form-control" name="confirmPassword" placeholder="Nhập lại" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Địa chỉ</label>
+            <input type="text" class="form-control" name="address" value="@Model?.Address" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" name="phone" value="@Model?.Phone" />
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Giới tính</label>
+            <select class="form-select" name="Gender">
+                <option value="">Chọn giới tính</option>                @if (Model?.Gender == "Nam")
+                {
+                    <option value="Nam" selected>Nam</option>
+                }
+                else
+                {
+                    <option value="Nam">Nam</option>
+                }
+ @if (Model?.Gender == "Nữ")
+{
+                    <option value="Nữ" selected>Nữ</option>
+                }
+                else
+                {
+                    <option value="Nữ">Nữ</option>
+                }
+ @if (Model?.Gender == "Khác")
+{
+                    <option value="Khác" selected>Khác</option>
+                }
+                else
+                {
+                    <option value="Khác">Khác</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" name="Birthday"
+                   value="@(Model?.Birthday.HasValue == true ? Model.Birthday.Value.ToString("yyyy-MM-dd") : "")" />
+        </div>
+
+        <div class="col-12 text-center mt-3">
+            <button type="submit" class="btn btn-primary px-5">Cập nhật</button>
+        </div>
+    </form>
+</div>

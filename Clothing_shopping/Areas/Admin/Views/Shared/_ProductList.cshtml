@@ -1,0 +1,196 @@
+﻿@using X.PagedList.Mvc.Core
+@* @model X.PagedList.IPagedList<Product>  *@
+@model dynamic
+
+@{
+    var culture = new CultureInfo("vi-VN");
+    // Ép kiểu Model về IPagedList để dùng được vòng lặp và phân trang
+    var pagedList = Model as X.PagedList.IPagedList<dynamic>;
+}
+
+<div class="row">
+    @if (pagedList != null && pagedList.Any())
+    {
+        foreach (var item in pagedList)
+        {
+            // 2. KHAI BÁO CÁC BIẾN CHUNG ĐỂ HIỂN THỊ
+            string name = "";
+            string imgUrl = "/images/no-image.png";
+            string priceDisplay = "";
+            int stock = 0;
+            int id = 0;
+            string actionName = ""; // Link chi tiết sẽ khác nhau
+            string detailUrl = "#"; // Biến quan trọng để chứa Link
+
+            // 3. KIỂM TRA KIỂU DỮ LIỆU VÀ GÁN GIÁ TRỊ
+            
+            // TRƯỜNG HỢP A: Là Product (Danh sách tổng hợp)
+            if (item is Clothing_shopping.Models.Product p)
+            {
+                id = p.ProductId;
+                name = p.Name;
+                stock = p.ProductVariants.Sum(x => x.Stock);
+                actionName = "ProductDetail"; // Link sang trang chi tiết Product
+
+                detailUrl = Url.Action("ListProductVariant", "Products", new { area = "Admin", ProductId = p.ProductId });
+
+                // Xử lý ảnh (Lấy ảnh đầu tiên)
+                try {
+                    var imgs = JsonConvert.DeserializeObject<List<string>>(p.Images);
+                    if (imgs != null && imgs.Count > 0) imgUrl = imgs[0];
+                } catch {}
+
+                // Xử lý giá (Hiển thị khoảng Min - Max)
+                if(p.ProductVariants.Any())
+                {
+                    var min = p.ProductVariants.Min(x => x.SalePrice ?? x.Price) ?? 0;
+                    var max = p.ProductVariants.Max(x => x.SalePrice ?? x.Price) ?? 0;
+                    priceDisplay = (min == max) ? min.ToString("C0", culture) : $"{min.ToString("C0", culture)} - {max.ToString("C0", culture)}";
+                }
+                else 
+                {
+                    priceDisplay = "Liên hệ";
+                }
+            }
+            // TRƯỜNG HỢP B: Là ProductVariant (Danh sách chi tiết biến thể)
+            else if (item is Clothing_shopping.Models.ProductVariant v)
+            {
+                id = v.ProductVariantId;
+                // Tên kết hợp: Tên + Màu + Size
+                name = $"{v.Product.Name} ({v.Color} - {v.Size})";
+                stock = v.Stock;
+                actionName = "EditVariant"; // Link sang trang sửa biến thể (Admin)
+
+                detailUrl = Url.Action("EditVariant", new { area = "Admin", id = v.ProductVariantId });
+
+                // Xử lý ảnh (Ưu tiên ảnh Variant -> Ảnh Product)
+                try {
+                    // Nếu variant có cột Image riêng thì dùng v.Image, nếu ko thì lấy của Product cha
+                    var imgs = JsonConvert.DeserializeObject<List<string>>(v.Product.Images);
+                    if (imgs != null && imgs.Count > 0) imgUrl = imgs[0];
+                } catch {}
+
+                // Xử lý giá (Giá cụ thể của biến thể)
+                var finalPrice = v.SalePrice ?? v.Price;
+                priceDisplay = finalPrice?.ToString("C0", culture);
+            }
+
+            // 4. RENDER HTML (Dùng các biến đã chuẩn hóa ở trên)
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="position-relative">
+                        <img src="@imgUrl" class="card-img-top" alt="@name" style="height: 200px; object-fit: cover;">
+                        @if(stock == 0) 
+                        {
+                            <span class="position-absolute top-0 end-0 badge bg-danger m-2">Hết hàng</span>
+                        }
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title text-truncate" title="@name">@name</h6>
+                        
+                        <div class="mt-auto">
+                            <p class="card-text text-danger fw-bold mb-2">@priceDisplay</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Kho: <b>@stock</b></small>
+                                <a href="@detailUrl" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    @if(item is Clothing_shopping.Models.Product) {
+                                        <i class="fa-solid fa-list"></i> <span>Chi tiết</span>
+                                    } else {
+                                        <i class="fa-solid fa-pen"></i> <span>Chỉnh Sửa</span>
+                                    }
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5">
+            <div class="text-muted fs-1 mb-3"><i class="fa-solid fa-box-open"></i></div>
+            <p class="text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
+        </div>
+    }
+</div>
+
+<div class="d-flex justify-content-center mt-4">
+    @if (pagedList != null)
+    {
+        @Html.PagedListPager(pagedList, page => Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { 
+            Page = page, 
+            TargetGroup = ViewBag.CurrentTargetGroup, 
+            name = ViewBag.CurrentName,
+            CategoryIds = ViewBag.CurrentCategoryIds
+        }), 
+           new PagedListRenderOptions { // <--- SỬA TẠI ĐÂY: Xóa đoạn prefix dài ngoằng đi
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" },
+                UlElementClasses = new string[] { "pagination pagination-sm" },
+            
+                // Lưu ý: Nếu PagedListDisplayMode báo lỗi, hãy xóa prefix luôn hoặc kiểm tra lại using
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                MaximumPageNumbersToDisplay = 5
+           })
+    }
+</div>
+
+@* <div class="row">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            string img = JsonConvert.DeserializeObject<List<string>>(item.Images)[1];
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@img" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">@item.Name</h5>
+                        
+                        @{
+                            // Lấy giá min-max từ variant để hiển thị cho đẹp
+                            var minPrice = item.ProductVariants.Min(x => x.SalePrice ?? x.Price);
+                            var maxPrice = item.ProductVariants.Max(x => x.SalePrice ?? x.Price);
+                        }
+                        
+                        <p class="card-text text-danger fw-bold">
+                            @if(minPrice == maxPrice)
+                            {
+                                <span>@minPrice.Value.ToString("#,##0") đ</span>
+                            }
+                            else
+                            {
+                                <span>@minPrice.Value.ToString("#,##0") - @maxPrice.Value.ToString("#,##0") đ</span>
+                            }
+                        </p>
+
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">Còn @item.ProductVariants.Sum(x=>x.Stock) sp</small>
+                            <a href="#" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p class="text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
+        </div>
+    }
+</div>
+
+<div class="d-flex justify-content-center mt-4">
+    @Html.PagedListPager(Model, page => Url.Action("ListProduct", new { Page = page }), 
+    new PagedListRenderOptions {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+    })
+</div> *@

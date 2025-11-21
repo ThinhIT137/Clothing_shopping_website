@@ -32,3 +32,11 @@
     </form>
 </div>
 
+@section Scripts {
+    <script>
+        const Password_login = document.getElementById("Password_login");
+        const login_lock = document.querySelector(".login_lock");
+        lock_password(login_lock, Password_login);
+    </script>
+}
+

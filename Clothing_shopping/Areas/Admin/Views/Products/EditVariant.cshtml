@@ -1,0 +1,183 @@
+﻿@model Clothing_shopping.Models.ProductVariant
+@using System.Globalization
+@{
+    ViewData["Title"] = "Chỉnh sửa Biến thể";
+    var culture = new CultureInfo("vi-VN");
+
+    // Lấy ảnh đại diện từ Product cha để hiển thị cho đẹp (vì Variant chưa chắc có ảnh riêng)
+    string mainImg = "/images/no-image.png";
+    try
+    {
+        // KIỂM TRA NULL TRƯỚC KHI XỬ LÝ
+        if (Model.Product != null && !string.IsNullOrEmpty(Model.Product.Images))
+        {
+            var imgs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(Model.Product.Images);
+            if (imgs != null && imgs.Any())
+            {
+                mainImg = imgs[0];
+            }
+        }
+    }
+    catch { }
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-primary"><i class="fa-solid fa-pen-to-square"></i> Cập nhật Biến thể</h3>
+        <a asp-action="ListProductVariant" asp-route-ProductId="@Model.ProductId" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-dark fw-bold">@Model.Product?.Name</h5>
+                    <p class="text-muted small">Mã SP: #@Model.ProductId | SKU Variant: #@Model.ProductVariantId</p>
+
+                    <div class="position-relative d-inline-block mt-2">
+                        <img src="@mainImg" class="img-fluid rounded shadow-sm" style="max-height: 250px;" alt="Product Image">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                            @(Model.Product?.Category?.Name ?? "Khác")
+                        </span>
+                    </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Đối tượng:</span>
+                        <strong>@(Model.Product.TargetGroup == 0 ? "Nam" : "Nữ")</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Ngày tạo:</span>
+                        <span>@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-secondary">Thông tin chi tiết</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditVariant" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="ProductVariantId" />
+                        <input type="hidden" asp-for="ProductId" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Size" class="form-label fw-bold">Kích cỡ (Size)</label>
+                                <input asp-for="Size" class="form-control" placeholder="VD: 40, XL..." />
+                                <span asp-validation-for="Size" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Color" class="form-label fw-bold">Màu sắc</label>
+                                <div class="input-group">
+                                    <input asp-for="Color" class="form-control" id="colorInput" placeholder="VD: Red, Black..." />
+                                    <span class="input-group-text"><div id="colorPreview" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc;"></div></span>
+                                </div>
+                                <span asp-validation-for="Color" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label fw-bold">Giá gốc (VNĐ)</label>
+                                <div class="input-group">
+                                    <input asp-for="Price" class="form-control" type="number" />
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="SalePrice" class="form-label fw-bold">Giá khuyến mãi (VNĐ)</label>
+                                <div class="input-group">
+                                    <input asp-for="SalePrice" class="form-control text-danger fw-bold" type="number" />
+                                    <span class="input-group-text">₫</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Stock" class="form-label fw-bold">Số lượng tồn kho</label>
+                                <input asp-for="Stock" class="form-control" type="number" min="0" />
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" asp-for="IsHidden">
+                                    <label class="form-check-label" asp-for="IsHidden">Ẩn biến thể này?</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Cập nhật ảnh (Chọn nhiều)</label>
+                            <input type="file" name="ImageFiles" class="form-control" multiple accept="image/*" />
+                            <small class="text-muted">Chức năng này sẽ tải thêm ảnh vào thư mục (cần code xử lý thêm ở Controller nếu muốn thay thế).</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="fw-bold">Ảnh hiện tại của biến thể này:</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                @{
+                                    // Logic tách ảnh để hiển thị ở View
+                                    var currentVariantImages = new List<string>();
+                                    if (Model.Product != null && !string.IsNullOrEmpty(Model.Product.Images))
+                                    {
+                                        var allImgs = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(Model.Product.Images);
+                                        if (allImgs != null)
+                                        {
+                                            string varIdStr = Model.ProductVariantId.ToString();
+                                            string colorSlug = Model.Color != null ? Model.Color.ToLower().Replace(" ", "-") : ""; // Hoặc dùng hàm Slug bên C#
+
+                                            // Lọc ảnh ở View để hiển thị
+                                            currentVariantImages = allImgs.Where(img => img.Contains($"_{varIdStr}_")).ToList();
+                                        }
+                                    }
+                                }
+
+                                @if (currentVariantImages.Any())
+                                {
+                                    foreach (var img in currentVariantImages)
+                                    {
+                                        <div class="position-relative border rounded p-1">
+                                            <img src="@img" style="width: 80px; height: 80px; object-fit: cover;" />
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted small fst-italic">Biến thể này chưa có ảnh riêng (đang dùng ảnh chung hoặc chưa upload).</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fa-solid fa-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Script nhỏ để preview màu khi nhập tên màu tiếng Anh hoặc mã Hex
+        $('#colorInput').on('input', function() {
+            $('#colorPreview').css('background-color', $(this).val());
+        });
+        // Trigger ngay khi load trang
+        $('#colorPreview').css('background-color', $('#colorInput').val());
+    </script>
+}

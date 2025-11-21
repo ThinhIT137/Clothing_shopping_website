@@ -1,0 +1,252 @@
+﻿@model Clothing_shopping.Models.Product
+@{
+    ViewData["Title"] = "Thêm sản phẩm mới";
+}
+
+<div class="card shadow p-4">
+    <h3 class="mb-4">Thêm sản phẩm (JSON Mode)</h3>
+
+    <form id="productForm" asp-action="add_Products" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Tên sản phẩm</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                    <option value="">-- Chọn --</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Đối tượng</label>
+                <select asp-for="TargetGroup" class="form-select" asp-items="ViewBag.TargetGroup"></select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold text-primary">Ảnh đại diện (Thumbnail)</label>
+            <input type="file" name="MainImage" class="form-control" accept="image/*" required />
+        </div>
+
+        <div class="card mb-4 border-info">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Cấu hình Biến thể (Size - Màu - Ảnh)</h5>
+                <button type="button" class="btn btn-light btn-sm text-primary fw-bold" onclick="addVariantRow()">+ Thêm biến thể</button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th width="10%">Size</th>
+                                <th width="15%">Màu</th>
+                                <th width="15%">Giá gốc</th>
+                                <th width="15%">Giá bán</th>
+                                <th width="10%">Kho</th>
+                                <th>Ảnh biến thể</th>
+                                <th width="5%">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="variantBody">
+                            <tr class="variant-row">
+                                <td><input type="text" name="Variants[0].Size" class="form-control form-control-sm" placeholder="39" required /></td>
+                                <td><input type="text" name="Variants[0].Color" class="form-control form-control-sm" placeholder="Red..." required /></td>
+                                <td><input type="number" name="Variants[0].Price" class="form-control form-control-sm" value="0" /></td>
+                                <td><input type="number" name="Variants[0].SalePrice" class="form-control form-control-sm" value="0" /></td>
+                                <td><input type="number" name="Variants[0].Stock" class="form-control form-control-sm" value="10" /></td>
+                                <td>
+                                    <input type="file" name="Variants[0].ImageFiles" class="form-control form-control-sm" multiple accept="image/*" />
+                                </td>
+                                <td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeVariant(this)">X</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3 bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Cấu hình Mô tả ngắn</h5>
+
+                <input type="hidden" asp-for="ShortDesc" id="FinalShortDesc" />
+
+                <div class="mb-2">
+                    <label>Lời dẫn (Đoạn text đầu tiên)</label>
+                    <textarea class="form-control" id="Short_Intro" rows="2" placeholder="Ví dụ: Thoải mái, bền bỉ..."></textarea>
+                </div>
+                <div class="mb-2">
+                    <label>Tiêu đề mục chi tiết (Ví dụ: Chi tiết sản phẩm)</label>
+                    <input type="text" class="form-control" id="Short_Title" value="Chi tiết sản phẩm">
+                </div>
+                <div class="mb-2">
+                    <label>Danh sách chi tiết (Mỗi dòng là 1 gạch đầu dòng)</label>
+                    <textarea class="form-control" id="Short_List" rows="4" placeholder="Màu sắc: Trắng&#10;Kiểu dáng: ABC&#10;Xuất xứ: VN"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3 bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Cấu hình Mô tả chi tiết</h5>
+
+                <input type="hidden" asp-for="FullDesc" id="FinalFullDesc" />
+
+                <div class="mb-3">
+                    <label>Lời dẫn chính</label>
+                    <textarea class="form-control" id="Full_Intro" rows="3" placeholder="Ví dụ: Nike Air Force 1 ra mắt năm 1982..."></textarea>
+                </div>
+
+                <label class="fw-bold">Các mục chi tiết:</label>
+                <div id="FullDesc_BlocksContainer">
+                </div>
+
+                <button type="button" class="btn btn-sm btn-info mt-2" onclick="addFullDescBlock()">+ Thêm mục mới</button>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <button type="button" onclick="submitProductForm()" class="btn btn-primary">Lưu sản phẩm</button>
+            <a asp-action="ListProduct" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. Script xử lý thêm dòng Variant
+        function addVariantRow() {
+            var index = $('#variantBody tr').length;
+            var html = `
+                <tr class="variant-row">
+                    <td><input type="text" name="Variants[${index}].Size" class="form-control form-control-sm" required /></td>
+                    <td><input type="text" name="Variants[${index}].Color" class="form-control form-control-sm" required /></td>
+                    <td><input type="number" name="Variants[${index}].Price" class="form-control form-control-sm" value="0" /></td>
+                    <td><input type="number" name="Variants[${index}].SalePrice" class="form-control form-control-sm" value="0" /></td>
+                    <td><input type="number" name="Variants[${index}].Stock" class="form-control form-control-sm" value="10" /></td>
+
+                    <td>
+                        <input type="file" name="Variants[${index}].ImageFiles" class="form-control form-control-sm" multiple accept="image/*" />
+                    </td>
+
+                    <td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="removeVariant(this)">X</button></td>
+                </tr>
+            `;
+            $('#variantBody').append(html);
+        }
+
+        function removeVariant(btn) {
+            $(btn).closest('tr').remove();
+            reIndexVariants(); // Xóa xong phải đánh lại số thứ tự
+        }
+
+        function reIndexVariants() {
+            $('#variantBody tr').each(function(i, row) {
+                $(row).find('input').each(function() {
+                    var name = $(this).attr('name');
+                    if (name && name.indexOf('Variants[') >= 0) {
+                        var newName = name.replace(/Variants\[\d+\]/, 'Variants[' + i + ']');
+                        $(this).attr('name', newName);
+                    }
+                });
+            });
+        }
+
+        // 2. Hàm thêm giao diện nhập cho Full Desc (Vì Full Desc có nhiều mục)
+        function addFullDescBlock() {
+            var html = `
+                <div class="border p-2 mb-2 bg-white rounded block-item">
+                    <div class="d-flex justify-content-between">
+                        <label>Tên mục (Key)</label>
+                        <button type="button" class="btn btn-danger btn-sm py-0" onclick="this.closest('.block-item').remove()">X</button>
+                    </div>
+                    <input type="text" class="form-control mb-2 block-title" placeholder="Ví dụ: Những lợi ích / Air Force 1 Origin">
+
+                    <label>Nội dung (Mỗi dòng 1 ý)</label>
+                    <textarea class="form-control block-list" rows="3" placeholder="Gạch đầu dòng 1&#10;Gạch đầu dòng 2"></textarea>
+                </div>
+            `;
+            $('#FullDesc_BlocksContainer').append(html);
+        }
+
+        function removeVariant(btn) {
+            $(btn).closest('tr').remove();
+            reIndexVariants(); // Xóa xong phải đánh lại số thứ tự
+        }
+
+        function reIndexVariants() {
+            $('#variantBody tr').each(function(i, row) {
+                $(row).find('input').each(function() {
+                    var name = $(this).attr('name');
+                    if (name && name.indexOf('Variants[') >= 0) {
+                        var newName = name.replace(/Variants\[\d+\]/, 'Variants[' + i + ']');
+                        $(this).attr('name', newName);
+                    }
+                });
+            });
+        }
+
+        // 3. Hàm xử lý gom dữ liệu thành JSON trước khi Submit
+        function submitProductForm() {
+            reIndexVariants();
+
+            // --- XỬ LÝ SHORT DESC ---
+            // Cấu trúc: [ "Lời dẫn", { "Tiêu đề": ["Dòng 1", "Dòng 2"] } ]
+            var shortJson = [];
+
+            // a. Lấy lời dẫn
+            var shortIntro = $('#Short_Intro').val();
+            if(shortIntro) shortJson.push(shortIntro);
+
+            // b. Lấy mục chi tiết
+            var shortTitle = $('#Short_Title').val();
+            var shortListRaw = $('#Short_List').val();
+            if(shortTitle && shortListRaw) {
+                // Tách từng dòng thành mảng, loại bỏ dòng trống
+                var listItems = shortListRaw.split('\n').filter(line => line.trim() !== '');
+
+                var obj = {};
+                obj[shortTitle] = listItems; // Tạo object dynamic key: { "Chi tiết sản phẩm": [...] }
+                shortJson.push(obj);
+            }
+
+            // Gán chuỗi JSON vào input ẩn
+            $('#FinalShortDesc').val(JSON.stringify(shortJson));
+
+
+            // --- XỬ LÝ FULL DESC ---
+            // Cấu trúc: [ "Lời dẫn", { "Mục 1": [] }, { "Mục 2": [] } ... ]
+            var fullJson = [];
+
+            // a. Lấy lời dẫn
+            var fullIntro = $('#Full_Intro').val();
+            if(fullIntro) fullJson.push(fullIntro);
+
+            // b. Lấy danh sách các block động
+            $('.block-item').each(function() {
+                var title = $(this).find('.block-title').val();
+                var listRaw = $(this).find('.block-list').val();
+
+                if(title && listRaw) {
+                    var listItems = listRaw.split('\n').filter(line => line.trim() !== '');
+                    var obj = {};
+                    obj[title] = listItems;
+                    fullJson.push(obj);
+                }
+            });
+
+            // Gán chuỗi JSON vào input ẩn
+            $('#FinalFullDesc').val(JSON.stringify(fullJson));
+
+            // Debug để xem JSON tạo ra đúng chưa (Xem F12 Console)
+            console.log("Short JSON:", $('#FinalShortDesc').val());
+            console.log("Full JSON:", $('#FinalFullDesc').val());
+
+            // 3. Submit form thật
+            $('#productForm').submit();
+        }
+    </script>
+}

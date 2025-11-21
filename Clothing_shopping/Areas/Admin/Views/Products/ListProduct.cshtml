@@ -1,0 +1,220 @@
+﻿@model X.PagedList.IPagedList<Product>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card p-3 mb-4">
+                <h4>Bộ lọc tìm kiếm</h4>
+                <form id="filterForm" action="/Admin/Products/ListProduct" method="get">
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Đối tượng</label>
+                        <select class="form-select" name="TargetGroup"
+                                onchange="window.location.href = '/Admin/Products/ListProduct?TargetGroup=' + this.value">
+                            <option value="0" selected="@(ViewBag.CurrentTargetGroup == 0)">Nam</option>
+                            <option value="1" selected="@(ViewBag.CurrentTargetGroup == 1)">Nữ</option>
+                            <option value="20" selected="@(ViewBag.CurrentTargetGroup == 20)">Bé Trai</option>
+                            <option value="21" selected="@(ViewBag.CurrentTargetGroup == 21)">Bé Gái</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Tên sản phẩm</label>
+                        <input type="text" class="form-control" name="name" id="txtName"
+                               placeholder="Nhập tên..." value="@ViewBag.CurrentName">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Danh mục</label>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action category-link @(string.IsNullOrEmpty(ViewBag.CurrentCategoryIds) ? "active" : "")" data-ids="">
+                                Tất cả
+                            </a>
+
+                            @if (ViewBag.MenuCategories != null)
+                            {
+                                foreach (var item in (Dictionary<string, string>)ViewBag.MenuCategories)
+                                {
+                                    string isActive = (ViewBag.CurrentCategoryIds == item.Value) ? "active" : "";
+                                    <a href="#" class="list-group-item list-group-item-action category-link @isActive"
+                                       data-ids="@item.Value">
+                                        @item.Key
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <input type="hidden" name="CategoryIds" id="hiddenCategoryIds" value="@ViewBag.CurrentCategoryIds" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Mức giá</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" class="form-control" name="minPrice" placeholder="Min" value="@ViewBag.CurrentMinPrice">
+                            <input type="number" class="form-control" name="maxPrice" placeholder="Max" value="@ViewBag.CurrentMaxPrice">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Màu sắc</label>
+                        @{
+                            string[] cColors = ViewBag.CurrentColors as string[] ?? new string[] { };
+                            var allColors = ViewBag.AllColors as List<string> ?? new List<string>();
+                        }
+
+                        <div class="d-flex flex-column gap-1">
+                            @if (allColors.Any())
+                            {
+                                foreach (var item in allColors)
+                                {
+                                    // Tạo ID duy nhất cho mỗi checkbox để bấm vào Label nó tự tick
+                                    var uniqueId = "color_" + item.Replace(" ", "");
+
+                                    <div class="form-check">
+                                        <input class="form-check-input filter-checkbox"
+                                               type="checkbox"
+                                               name="color"
+                                               value="@item"
+                                               id="@uniqueId"
+                                               @(cColors.Contains(item) ? "checked" : "")>
+                                        <label class="form-check-label" for="@uniqueId">@item</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <small class="text-muted">Chưa có dữ liệu màu</small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-bold">Kích cỡ</label>
+                        @{
+                            string[] cSizes = ViewBag.CurrentSizes as string[] ?? new string[] { };
+                            var allSizes = ViewBag.AllSizes as List<string> ?? new List<string>();
+                        }
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            @if (allSizes.Any())
+                            {
+                                foreach (var item in allSizes)
+                                {
+                                    // Tạo ID duy nhất
+                                    var uniqueId = "size_" + item.Replace(" ", "");
+
+                                    <div class="form-check">
+                                        <input class="form-check-input filter-checkbox"
+                                               type="checkbox"
+                                               name="sizes"
+                                               value="@item"
+                                               id="@uniqueId"
+                                               @(cSizes.Contains(item) ? "checked" : "")>
+                                        <label class="form-check-label border px-2 py-1 rounded cursor-pointer"
+                                               for="@uniqueId"
+                                               style="cursor: pointer; min-width: 30px; text-align: center;">
+                                            @item
+                                        </label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <small class="text-muted">Chưa có dữ liệu size</small>
+                            }
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100" onclick="submitCleanFilter()">Lọc ngay</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Sản phẩm mới nhất</h3>
+                <a asp-controller="Products" asp-action="add_Products" asp-area="Admin" class="btn btn-primary">
+                    Thêm sản phẩm
+                </a>
+            </div>            
+            <hr />
+            <div id="loader" class="text-center d-none my-5">
+                <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+            </div>
+            <div id="product-list-container">
+                @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_ProductList.cshtml", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function submitCleanFilter() {
+            filterData(1);
+        }
+
+        function filterData(pageNumber) {
+            // Lấy dữ liệu từ form
+            var formData = $('#filterForm').serialize();
+            formData += "&Page=" + pageNumber;
+
+            // Debug: Bật F12 tab Console để xem nó gửi đi cái gì
+            console.log("Đang gửi dữ liệu:", formData);
+
+            $('#product-list-container').css('opacity', '0.5');
+            $('#loader').removeClass('d-none');
+
+            $.ajax({
+                url: '/Admin/Products/ListProduct',
+                type: 'GET',
+                data: formData,
+                success: function (result) {
+                    $('#product-list-container').html(result);
+                    $('#product-list-container').css('opacity', '1');
+                    $('#loader').addClass('d-none');
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Lỗi AJAX: " + err.statusText); // Báo lỗi nếu có
+                    $('#product-list-container').css('opacity', '1');
+                    $('#loader').addClass('d-none');
+                }
+            });
+        }
+
+        $('.category-link').click(function(e) {
+            e.preventDefault();
+            $('.category-link').removeClass('active');
+            $(this).addClass('active');
+            var ids = $(this).data('ids');
+            $('#hiddenCategoryIds').val(ids);
+            filterData(1);
+        });
+
+        let timeout = null;
+         $('#txtName').keyup(function () {
+             clearTimeout(timeout);
+             timeout = setTimeout(function () { filterData(1); }, 500);
+         });
+
+        $('.filter-checkbox').change(function () {
+            filterData(1);
+        });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            try {
+                var url = $(this).attr('href');
+                // Kiểm tra nếu url tồn tại
+                if(url) {
+                    var urlParams = new URLSearchParams(url.split('?')[1]);
+                    var page = urlParams.get('Page');
+                    if(page) filterData(page);
+                }
+            } catch(ex) {}
+        });
+    </script>
+}
