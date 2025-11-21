@@ -1,2 +1,6 @@
 # Ignore Visual Studio cache
 .vs/
+
+# Ignore build output
+bin/
+obj/
