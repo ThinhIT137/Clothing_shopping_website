@@ -1,0 +1,74 @@
+﻿@model Clothing_shopping.Models.Voucher
+@{
+    ViewData["Title"] = "Sửa Voucher";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Chỉnh sửa Voucher</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i> Thông tin chi tiết
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="VoucherId" />
+                <input type="hidden" asp-for="CreatedAt" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Mã Voucher</label>
+                        <input asp-for="Name" class="form-control" style="text-transform: uppercase; font-weight: bold;" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Trạng thái</label>
+                        <select asp-for="IsActive" class="form-select">
+                            <option value="true">Đang hoạt động</option>
+                            <option value="false">Tạm khóa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Loại Voucher</label>
+                        <select asp-for="VoucherType" class="form-select">
+                            <option value="Percent">Giảm theo %</option>
+                            <option value="Fixed">Giảm tiền mặt</option>
+                            <option value="FreeShip">Freeship</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Giá trị giảm</label>
+                        <input asp-for="DiscountValue" class="form-control" type="number" />
+                        <span class="text-muted small">Nhập số % hoặc số tiền VNĐ tùy theo loại voucher.</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ngày bắt đầu</label>
+                        <input asp-for="StartDate" class="form-control" type="datetime-local" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ngày kết thúc</label>
+                        <input asp-for="EndDate" class="form-control" type="datetime-local" />
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu thay đổi</button>
+                    <a asp-action="Vouchers" class="btn btn-secondary">Quay lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

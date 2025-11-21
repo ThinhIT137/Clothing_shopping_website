@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Order>
+@{
+    ViewData["Title"] = "Lịch sử & Thống kê";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Thống kê giao dịch</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <select id="filterType" class="form-select">
+                        <option value="Latest">Lịch sử đơn hàng (Mới nhất)</option>
+                        <option value="HighValue">Đơn hàng giá trị cao nhất</option>
+                        <option value="UserSearch">Tìm theo tên khách hàng</option>
+                        <option value="TopBuyerDay">Khách mua nhiều nhất (Hôm nay)</option>
+                        <option value="TopBuyerMonth">Khách mua nhiều nhất (Tháng này)</option>
+                        <option value="TopProduct">Sản phẩm bán chạy nhất</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="keyword" class="form-control" placeholder="Nhập tên khách (nếu chọn tìm kiếm)..." disabled>
+                </div>
+                <div class="col-md-2">
+                    <button onclick="loadData()" class="btn btn-primary w-100">Xem</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id="ajaxContainer">
+                @await Html.PartialAsync("_OrderList", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Bật tắt ô input tìm kiếm
+        $('#filterType').change(function() {
+            if($(this).val() == 'UserSearch') {
+                $('#keyword').prop('disabled', false).focus();
+            } else {
+                $('#keyword').prop('disabled', true).val('');
+                loadData(); // Tự động load luôn khi chọn loại khác
+            }
+        });
+
+        function loadData() {
+            var type = $('#filterType').val();
+            var keyword = $('#keyword').val();
+
+            $.ajax({
+                url: '@Url.Action("History", "Customers")',
+                type: 'GET',
+                data: { type: type, keyword: keyword },
+                success: function(response) {
+                    $('#ajaxContainer').html(response);
+                },
+                error: function() {
+                    alert('Lỗi tải dữ liệu');
+                }
+            });
+        }
+    </script>
+}

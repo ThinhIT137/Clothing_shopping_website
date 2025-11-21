@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Order>
+
+<h5 class="text-primary">Danh sách đơn hàng</h5>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>#@item.OrderId</td>
+                <td>
+                    <b>@item.User?.FullName</b><br>
+                    <small>@item.User?.Phone</small>
+                </td>
+                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td class="text-danger fw-bold">@item.TotalAmount.ToString("#,##0") đ</td>
+                <td>@item.OrderStatus</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,150 @@
+﻿@model IEnumerable<Clothing_shopping.Models.User>
+@{
+    ViewData["Title"] = "Phát hành Voucher (Flash Sale)";
+    var vouchers = ViewBag.Vouchers as List<Clothing_shopping.Models.Voucher>;
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Flash Sale - Phát Voucher</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning">@TempData["Warning"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <form asp-action="Distribute" method="post" id="distributeForm">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-gift me-1"></i> Chọn Voucher
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chương trình khuyến mãi</label>
+                            <select name="VoucherId" class="form-select form-select-lg" required>
+                                <option value="">-- Chọn Voucher --</option>
+                                @if (vouchers != null)
+                                {
+                                    foreach (var v in vouchers)
+                                    {
+                                        <option value="@v.VoucherId">
+                                            @v.Name
+                                            (@(v.VoucherType == "Percent" ? $"-{v.DiscountValue:0}%" : $"-{v.DiscountValue:#,##0}đ"))
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text mt-2">Chỉ hiện voucher đang hoạt động và còn hạn.</div>
+                        </div>
+                        @* số lượng *@
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số lượng mỗi người nhận</label>
+                            <input type="number" name="amountPerUser" value="1" min="1" class="form-control fw-bold text-center text-primary" required />
+                            <div class="form-text">Ví dụ: Nhập 2 thì mỗi người được chọn sẽ nhận 2 mã.</div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2" onclick="return confirm('Xác nhận phát voucher cho các khách hàng đã chọn?');">
+                            <i class="fas fa-paper-plane me-2"></i> PHÁT NGAY
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <span><i class="fas fa-users me-1"></i> Bước 2: Chọn Khách Hàng nhận quà</span>
+
+                        <input type="text" id="userSearch" class="form-control form-control-sm w-auto" placeholder="Tìm tên khách..." onkeyup="searchTable()">
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-hover mb-0" id="userTable">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th style="width: 50px;" class="text-center">
+                                            <input type="checkbox" id="checkAll" class="form-check-input" style="cursor: pointer;">
+                                        </th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Email</th>
+                                        <th>SĐT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model)
+                                    {
+                                        <tr>
+                                            <td class="text-center">
+                                                <input type="checkbox" name="selectedUsers" value="@user.UserId" class="form-check-input user-checkbox">
+                                            </td>
+                                            <td class="fw-bold">@user.FullName</td>
+                                            <td>@user.Email</td>
+                                            <td>@user.Phone</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        Đang hiển thị: <span id="countVisible">@Model.Count()</span> khách hàng
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. Chức năng Chọn Tất Cả (Select All)
+        document.getElementById('checkAll').addEventListener('change', function() {
+            var checkboxes = document.querySelectorAll('.user-checkbox');
+            // Chỉ chọn những dòng đang hiện (đã lọc) hoặc chọn hết nếu không lọc
+            var isChecked = this.checked;
+
+            checkboxes.forEach(function(checkbox) {
+                // Kiểm tra xem dòng đó có đang bị ẩn do search không
+                if (checkbox.closest('tr').style.display !== 'none') {
+                    checkbox.checked = isChecked;
+                }
+            });
+        });
+
+        // 2. Chức năng Tìm kiếm nhanh trên bảng (Javascript thuần)
+        function searchTable() {
+            var input = document.getElementById("userSearch");
+            var filter = input.value.toUpperCase();
+            var table = document.getElementById("userTable");
+            var tr = table.getElementsByTagName("tr");
+            var visibleCount = 0;
+
+            // Duyệt qua các dòng (bỏ qua header)
+            for (var i = 1; i < tr.length; i++) {
+                var tdName = tr[i].getElementsByTagName("td")[1]; // Cột Tên
+                var tdEmail = tr[i].getElementsByTagName("td")[2]; // Cột Email
+
+                if (tdName || tdEmail) {
+                    var txtName = tdName.textContent || tdName.innerText;
+                    var txtEmail = tdEmail.textContent || tdEmail.innerText;
+
+                    if (txtName.toUpperCase().indexOf(filter) > -1 || txtEmail.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+            document.getElementById('countVisible').innerText = visibleCount;
+        }
+    </script>
+}

@@ -1,0 +1,107 @@
+﻿@model Clothing_shopping.Models.Voucher
+@{
+    ViewData["Title"] = "Chi tiết Voucher: " + Model.Name;
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h1>Chi tiết Voucher <span class="text-primary">@Model.Name</span></h1>
+        <a asp-action="Vouchers" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    </div>
+
+    <div class="card mb-4 border-primary">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Mã Code:</strong> <br> <span class="h4">@Model.Name</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Giá trị:</strong> <br>
+                    <span class="badge bg-success fs-6">
+                        @(Model.VoucherType == "Percent" ? $"-{Model.DiscountValue:0}%" : $"-{Model.DiscountValue:#,##0}đ")
+                    </span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Tổng số người sở hữu:</strong> <br> <span class="h4">@Model.Voucherusers.Count</span>
+                </div>
+                @* <div class="col-md-3">
+                    <strong>Kho còn lại:</strong> <br> <span class="h4 text-danger">@Model.Quantity</span>
+                </div> *@
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-users me-1"></i> Danh sách khách hàng đang sở hữu mã này
+        </div>
+        <div class="card-body">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Email</th>
+                        <th style="width: 150px;">Số lượt được dùng</th>
+                        <th>Ngày cấp gần nhất</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Voucherusers)
+                    {
+                        <tr id="row-@item.UserId">
+                            <td class="fw-bold">@item.User.FullName</td>
+                            <td>@item.User.Email</td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control text-center fw-bold"
+                                           id="qty-@item.UserId" value="@item.UsedCount" min="0">
+                                    <button class="btn btn-primary" onclick="updateQty('@Model.VoucherId', '@item.UserId')">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                @(item.LastUsedAt.HasValue? item.LastUsedAt.Value.ToString("dd/MM/yyyy") : "Chưa dùng")
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-danger" onclick="deleteUserVoucher('@Model.VoucherId', '@item.UserId')">
+                                    <i class="fas fa-trash"></i> Thu hồi
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Hàm cập nhật số lượng (AJAX)
+        function updateQty(voucherId, userId) {
+            var newQty = $('#qty-' + userId).val();
+
+            $.post('/Admin/Voucher/UpdateUserVoucher', {
+                voucherId: voucherId,
+                userId: userId,
+                newAmount: newQty
+            }, function(res) {
+                alert(res.message);
+                if(newQty <= 0) $('#row-' + userId).remove(); // Nếu về 0 thì xóa dòng
+            }).fail(function() {
+                alert('Lỗi cập nhật!');
+            });
+        }
+
+        // Hàm thu hồi (Xóa)
+        function deleteUserVoucher(voucherId, userId) {
+            if(confirm('Bạn có chắc muốn thu hồi voucher của khách này không?')) {
+                // Gọi lại hàm update với số lượng = 0 để xóa
+                $('#qty-' + userId).val(0);
+                updateQty(voucherId, userId);
+            }
+        }
+    </script>
+}

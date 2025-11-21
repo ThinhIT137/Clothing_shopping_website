@@ -70,12 +70,12 @@ namespace Clothing_shopping.Controllers
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }));
 
-                await HttpContext.Session.CommitAsync();
-                Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
-                Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
-                return RedirectToAction("Index", "Home");
+                    await HttpContext.Session.CommitAsync();
+                    Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
+                    Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
+                    return RedirectToAction("Index", "Home");
+                }
             }
-
             return View();
         }
 

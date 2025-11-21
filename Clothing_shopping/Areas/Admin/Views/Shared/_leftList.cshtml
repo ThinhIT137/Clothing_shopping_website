@@ -6,7 +6,7 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
-
+            @* Quản lý kho hàng *@
             <div class="sb-sidenav-menu-heading">Quản lý kho hàng</div>
 
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -26,7 +26,6 @@
                     </a>
                 </nav>
             </div>
-
             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                 <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div> Quản lý Đơn hàng
                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -54,22 +53,25 @@
                 </nav>
             </div>
 
+            @* Người dùng *@
             <div class="sb-sidenav-menu-heading">Người dùng</div>
-            <a class="nav-link" href="@Url.Action("Profile", "Customers")">
+            <a class="nav-link" asp-controller="Customers" asp-action="Customers" asp-area="Admin">
                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> Hồ sơ khách hàng
             </a>
-            <a class="nav-link" href="@Url.Action("History", "Customers")">
+            <a class="nav-link" asp-area="Admin" asp-controller="Customers" asp-action="History">
                 <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div> Lịch sử mua hàng
             </a>
 
-            <div class="sb-sidenav-menu-heading">Voucher & Marketing</div>
-            <a class="nav-link" href="@Url.Action("Index", "Vouchers")">
+            @* Voucher & Marketing *@
+            <div class="sb-sidenav-menu-heading">Voucher và Marketing</div>
+            <a class="nav-link" asp-area="Admin" asp-controller="Voucher" asp-action="Vouchers">
                 <div class="sb-nav-link-icon"><i class="fas fa-ticket-alt"></i></div> Mã giảm giá
             </a>
-            <a class="nav-link" href="tables.html">
+            <a class="nav-link" asp-area="Admin" asp-controller="Voucher" asp-action="FlastSale">
                 <div class="sb-nav-link-icon"><i class="fas fa-bolt"></i></div> Flash Sale
             </a>
 
+            @* Báo cáo thống kê *@
             <div class="sb-sidenav-menu-heading">Báo cáo và thống kê</div>
             <a class="nav-link" href="@Url.Action("Sales", "Products")">
                 <div class="sb-nav-link-icon"><i class="fas fa-fire"></i></div> Tồn kho & Sản phẩm bán chạy
