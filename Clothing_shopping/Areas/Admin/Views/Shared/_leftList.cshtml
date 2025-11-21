@@ -2,7 +2,7 @@
     <div class="sb-sidenav-menu">
         <div class="nav">
             <div class="sb-sidenav-menu-heading">Quản lý chung</div>
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="@Url.Action("Index", "Home")">
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
@@ -55,15 +55,15 @@
             </div>
 
             <div class="sb-sidenav-menu-heading">Người dùng</div>
-            <a class="nav-link" href="charts.html">
+            <a class="nav-link" href="@Url.Action("Profile", "Customers")">
                 <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> Hồ sơ khách hàng
             </a>
-            <a class="nav-link" href="tables.html">
+            <a class="nav-link" href="@Url.Action("History", "Customers")">
                 <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div> Lịch sử mua hàng
             </a>
 
             <div class="sb-sidenav-menu-heading">Voucher & Marketing</div>
-            <a class="nav-link" href="charts.html">
+            <a class="nav-link" href="@Url.Action("Index", "Vouchers")">
                 <div class="sb-nav-link-icon"><i class="fas fa-ticket-alt"></i></div> Mã giảm giá
             </a>
             <a class="nav-link" href="tables.html">
@@ -71,14 +71,11 @@
             </a>
 
             <div class="sb-sidenav-menu-heading">Báo cáo và thống kê</div>
-            <a class="nav-link" href="tables.html">
-                <div class="sb-nav-link-icon"><i class="fas fa-fire"></i></div> Sản phẩm bán chạy
+            <a class="nav-link" href="@Url.Action("Sales", "Products")">
+                <div class="sb-nav-link-icon"><i class="fas fa-fire"></i></div> Tồn kho & Sản phẩm bán chạy
             </a>
-            <a class="nav-link" href="tables.html">
-                <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div> Tồn kho
-            </a>
-            <a class="nav-link" href="tables.html">
-                <div class="sb-nav-link-icon"><i class="fas fa-undo-alt"></i></div> Tỷ lệ hoàn hàng
+            <a class="nav-link" href="@Url.Action("Return", "Orders")">
+                <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div> Tỷ lệ hoàn hàng
             </a>
         </div>
     </div>
