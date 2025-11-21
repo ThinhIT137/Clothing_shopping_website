@@ -34,6 +34,10 @@ namespace Clothing_shopping.Areas.Admin.Controllers
         public async Task<IActionResult> Login(string email, string password)
         {
             var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email);
+            if (user is null)
+            {
+                return View();
+            }
 
             if (user.Role != "Admin")
             {
