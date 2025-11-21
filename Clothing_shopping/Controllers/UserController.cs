@@ -49,7 +49,7 @@ namespace Clothing_shopping.Controllers
                 return View();
             }
 
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 HttpContext.Session.SetString("UserId", user.UserId.ToString()); // lưu ID
                 HttpContext.Session.SetString("Email", user.Email.ToString()); // lưu Email
@@ -70,11 +70,10 @@ namespace Clothing_shopping.Controllers
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }));
 
-                    await HttpContext.Session.CommitAsync();
-                    Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
-                    Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
-                    return RedirectToAction("Index", "Home");
-                }
+                await HttpContext.Session.CommitAsync();
+                Console.WriteLine(">>> Đăng nhập thành công, SessionId: " + HttpContext.Session.Id);
+                Console.WriteLine(">>> UserId: " + HttpContext.Session.GetString("UserId"));
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
