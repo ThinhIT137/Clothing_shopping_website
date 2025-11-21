@@ -7,6 +7,66 @@
     var Notification = string.IsNullOrEmpty(json)
     ? new List<News>()
     : JsonConvert.DeserializeObject<List<News>>(json); ;
+
+    var CategoryName = new Dictionary<int, string>
+    {
+        {1, "Áo phông"},
+        {2, "Áo sơ mi"},
+        {3, "Áo hoodie"},
+        {4, "Áo khoác"},
+        {5, "Áo phao"},
+        {6, "Áo dài"},
+        {7, "Quần jean"},
+        {8, "Quần short"},
+        {9, "Quần dài"},
+        {10, "Chân váy"},
+        {11, "Đầm"},
+        {12, "Giày Nike"},
+        {13, "Giày Adidas"},
+        {14, "Giày cao gót"},
+        {15, "Giày bốt"},
+        {16, "Dép tông"},
+        {17, "Dép sục"},
+        {18, "Dép tổ ong"},
+        {19, "Tạp dề"}
+    };
+
+    var Nam = new Dictionary<string, int[]>
+    {
+        { "Áo",   new[] {1,2,3,4,5,6} },
+        { "Quần", new[] {7,8,9} },
+        { "Giày", new[] {12,13} },
+        { "Dép",  new[] {16,17,18} },
+    };
+
+    var Nu = new Dictionary<string, int[]>
+    {
+        { "Áo",   new[] {1,2,3,4,5,6} },
+        { "Quần", new[] {7,8,9} },
+        { "Váy",  new[] {10,11} },
+        { "Giày", new[] {12,13,14,15} },
+        { "Dép",  new[] {16,17,18} },
+    };
+
+    var TreEm = new Dictionary<string, Dictionary<string, int[]>>
+    {
+        ["Nam"] = new()
+        {
+            { "Áo",   new[] {1,2,3,4,5,6} },
+            { "Quần", new[] {7,8,9} },
+            { "Giày", new[] {12,13} },
+            { "Dép",  new[] {16,17,18} },
+        },
+        ["Nữ"] = new()
+        {
+            { "Áo",   new[] {1,2,3,4,5,6} },
+            { "Quần", new[] {7,8,9} },
+            { "Váy",  new[] {10,11} },
+            { "Giày", new[] {12,13,14,15} },
+            { "Dép",  new[] {16,17,18} },
+        }
+    };
+
 }
 <header>
     <div class="header_container">
@@ -16,181 +76,85 @@
             </a>
         </div>
         <nav>
+
+            <!-- NAM -->
             <div class="Nam">
-                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" class="nam_click_product click_product @(Context.Request.Query["TargetGroup"] == "0" ? "ac" : "")"><span>Nam</span></a>
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0"
+                   class="nam_click_product @(Context.Request.Query["TargetGroup"] == "0" ? "ac" : "")">
+                    <span>Nam</span>
+                </a>
+
                 <div class="Nam_Product Product">
-                    @* --- Áo --- *@
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
-                                <span>Áo phông</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
-                            <div class="items">
-                                <img loading="lazy" src="" alt="" />
-                                <span>Áo sơ mi</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Hoodie.png" alt="" />
-                                <span>Áo hoodie</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Khoac.png" alt="" />
-                                <span>Áo khoác</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Phao.png" alt="" />
-                                <span>Áo phao</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="6">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Dai.png" alt="" />
-                                <span>Áo dài</span>
-                            </div>
-                        </a>
-                    </div>
-                    @* --- Quần --- *@
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Quan_Jean.png" alt="" />
-                                <span>Quần jean</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Quan_Short.png" alt="" />
-                                <span>Quần short</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Quan_Dai.png" alt="" />
-                                <span>Quần dài</span>
-                            </div>
-                        </a>
-                    </div>
-                    @* --- Giày --- *@
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Giay_Nike.png" alt="" />
-                                <span>Giày Nike</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Giay_Adidas.png" alt="" />
-                                <span>Giày Adidas</span>
-                            </div>
-                        </a>
-                    </div>
-                    @* --- Dép --- *@
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Dep_Tong.png" alt="" />
-                                <span>Dép tông</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Dep_Suc.png" alt="" />
-                                <span>Dép sục</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Dep_To_Ong.png" alt="" />
-                                <span>Dép tổ ong</span>
-                            </div>
-                        </a>
-                    </div>
+                    @foreach (var group in Nam)
+                    {
+                        <div class="Product_column">
+                            @foreach (var id in group.Value)
+                            {
+                                <a asp-controller="Home" asp-action="Product"
+                                   asp-route-TargetGroup="0" asp-route-CategoryId="@id">
+                                    <span>@CategoryName[id]</span>
+                                </a>
+                            }
+                        </div>
+                    }
                 </div>
             </div>
+
+
+            <!-- NỮ -->
             <div class="Nu">
-                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="1" class="nu_click_product @(Context.Request.Query["TargetGroup"] == "1" ? "ac" : "")"><span>Nữ</span></a>
-                
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="1"
+                   class="nu_click_product @(Context.Request.Query["TargetGroup"] == "1" ? "ac" : "")">
+                    <span>Nữ</span>
+                </a>
+
                 <div class="Nu_Product Product">
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
-                                <span>Áo phông</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
-                            <div class="items">
-                                <img loading="lazy" src="" alt="" />
-                                <span>Áo sơ mi</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
-                    </div>
+                    @foreach (var group in Nu)
+                    {
+                        <div class="Product_column">
+                            @foreach (var id in group.Value)
+                            {
+                                <a asp-controller="Home" asp-action="Product"
+                                   asp-route-TargetGroup="1" asp-route-CategoryId="@id">
+                                    <span>@CategoryName[id]</span>
+                                </a>
+                            }
+                        </div>
+                    }
                 </div>
             </div>
+
+
+            <!-- TRẺ EM -->
             <div class="TreEm">
-                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="2" class="treEm_click_product @(Context.Request.Query["TargetGroup"] == "3" ? "ac" : "")"><span>Trẻ em</span></a>
-                
+                <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="2"
+                   class="treEm_click_product @(Context.Request.Query["TargetGroup"] == "2" ? "ac" : "")">
+                    <span>Trẻ em</span>
+                </a>
+
                 <div class="TreEm_Product Product">
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="1">
-                            <div class="items">
-                                <img loading="lazy" src="/images/Products/Nam/Ao_Phong.png" alt="" />
-                                <span>Áo phông</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="2">
-                            <div class="items">
-                                <img loading="lazy" src="" alt="" />
-                                <span>Áo sơ mi</span>
-                            </div>
-                        </a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="3"><span>Áo hoodie</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="4"><span>Áo khoác</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="5"><span>Áo phao</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="7"><span>Quần jean</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="8"><span>Quần short</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="9"><span>Quần dài</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="12"><span>Giày Nike</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="13"><span>Giày Adidas</span></a>
-                    </div>
-                    <div class="Product_column">
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="16"><span>Dép tông</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="17"><span>Dép sục</span></a>
-                        <a asp-controller="Home" asp-action="Product" asp-route-TargetGroup="0" asp-route-CategoryId="18"><span>Dép tổ ong</span></a>
-                    </div>
+
+                    @foreach (var gender in TreEm)
+                    {
+                        <div class="Product_column">
+                            <strong>@gender.Key</strong>
+
+                            @foreach (var group in gender.Value)
+                            {
+                                foreach (var id in group.Value)
+                                {
+                                    <a asp-controller="Home" asp-action="Product"
+                                       asp-route-TargetGroup="2" asp-route-CategoryId="@id">
+                                        <span>@CategoryName[id]</span>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    }
+
                 </div>
             </div>
+
         </nav>
         <div class="user">
             <div>
@@ -215,14 +179,14 @@
                         </div>
                         <hr />
                         <div class="cloumn">
-                            <a asp-controller="User" asp-action="Profile">
+                            <a asp-controller="User" asp-action="Help">
                                 <i class="fa-solid fa-question"></i>
                                 <span>Hỗ trợ và trợ giúp</span>
                                 <i class="fa-solid fa-angle-right"></i>
                             </a>
                         </div>
                         <div class="cloumn">
-                            <a asp-controller="User" asp-action="Profile">
+                            <a asp-action="Settings" asp-controller="User">
                                 <i class="fa-solid fa-gear"></i>
                                 <span>Settings</span>
                                 <i class="fa-solid fa-angle-right"></i>
@@ -282,28 +246,30 @@
     </div>
 </header>
 
-<div class="btn_use" style="@(CurrentController=="Login" ? "display:none;" : "")">
+<div class="btn_use" style="@(CurrentController == "Login" ? "display:none;" : "")">
     <div class="search" id="search">
-        <div class="search_container">
-            
+        <div class="search_container" id="search_results" style="display: none;">
         </div>
 
-        <form action="/" method="post">
-            <div>
-                <input type="" value="" />
-            </div>
-            <button>
+        <div class="search_form_wrapper" style="position: relative; width: 100%; max-width: 600px; display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            <input type="text" id="search_input" placeholder="Nhập tên sản phẩm..." autocomplete="off"
+                   style="width: 100%; border: none; background: transparent; font-size: 24px; font-weight: bold; color: #000; outline: none;" />
+
+            <button type="button" id="btn_close_search_box" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">
                 <i class="fa-solid fa-x"></i>
             </button>
-        </form>
+        </div>
     </div>
+
     <div class="btn_use_container">
         <div>
-            <i class="fa-solid fa-house icon"></i>
+            <a asp-controller="Home" asp-action="Index">
+                <i class="fa-solid fa-house icon"></i>
+            </a>
         </div>
         <div>
-            <a>
-                <i id="btn_search" class="fa-solid fa-magnifying-glass icon"></i>
+            <a href="javascript:void(0);" id="btn_open_search">
+                <i id="btn_search_icon" class="fa-solid fa-magnifying-glass icon"></i>
             </a>
         </div>
         <div>

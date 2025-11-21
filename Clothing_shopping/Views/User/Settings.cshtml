@@ -1,0 +1,93 @@
+﻿@model Clothing_shopping.Models.User
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Chỉnh sửa thông tin cá nhân</h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-action="Settings" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Họ và tên</label>
+                            <input asp-for="FullName" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số điện thoại</label>
+                            <input asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại..." />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Địa chỉ</label>
+                            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Nhập địa chỉ giao hàng mặc định..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Email (Không thể thay đổi)</label>
+                            <input asp-for="Email" class="form-control bg-light" readonly />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="chkChangePassword">
+                            <label class="form-check-label fw-bold" for="chkChangePassword">Đổi mật khẩu</label>
+                        </div>
+
+                        <div id="passwordSection" style="display:none;" class="bg-light p-3 rounded border mb-3">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Mật khẩu hiện tại</label>
+                                <input type="password" name="currentPassword" class="form-control" placeholder="Nhập mật khẩu cũ để xác nhận" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Mật khẩu mới</label>
+                                <input type="password" name="newPassword" class="form-control" placeholder="Nhập mật khẩu mới" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Xác nhận mật khẩu mới</label>
+                                <input type="password" name="confirmPassword" class="form-control" placeholder="Nhập lại mật khẩu mới" />
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success py-2 fw-bold">
+                                <i class="fas fa-save me-2"></i> Lưu thay đổi
+                            </button>
+                            <a asp-action="Profile" class="btn btn-outline-secondary py-2">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại hồ sơ
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Script để ẩn hiện khung đổi mật khẩu
+        document.getElementById('chkChangePassword').addEventListener('change', function() {
+            var passwordSection = document.getElementById('passwordSection');
+            if(this.checked) {
+                passwordSection.style.display = 'block';
+            } else {
+                passwordSection.style.display = 'none';
+                // Clear inputs khi ẩn đi (để tránh gửi dữ liệu không mong muốn)
+                passwordSection.querySelectorAll('input').forEach(input => input.value = '');
+            }
+        });
+    </script>
+}

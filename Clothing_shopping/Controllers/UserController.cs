@@ -122,7 +122,112 @@ namespace Clothing_shopping.Controllers
 
         /* --- THÔNG TIN NGƯỜI DÙNG --- */
         [HttpGet]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return RedirectToAction("Login");
+            }
+            Guid userId = Guid.Parse(userIdString);
+
+            // Lấy thông tin User kèm theo Orders -> OrderItems -> ProductVariant -> Product
+            // Sắp xếp đơn mới nhất lên đầu
+            var user = await db.Users.Include(u => u.Orders.OrderByDescending(o => o.CreatedAt))
+                    .ThenInclude(o => o.OrderItems)
+                    .ThenInclude(oi => oi.ProductVariant)
+                    .ThenInclude(pv => pv.Product)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user == null) return NotFound();
+
+            return View(user);
+        }
+
+        /* --- CHỈNH SỬA THÔNG TIN (SETTINGS) --- */
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login");
+
+            Guid userId = Guid.Parse(userIdString);
+            var user = await db.Users.FindAsync(userId);
+
+            if (user == null) return NotFound();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Settings(User updatedUser, string? currentPassword, string? newPassword, string? confirmPassword)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login");
+
+            Guid userId = Guid.Parse(userIdString);
+
+            // Lấy user gốc từ DB
+            var user = await db.Users.FindAsync(userId);
+            if (user == null) return NotFound();
+
+            // 1. Cập nhật thông tin cơ bản trước (để dù đổi pass lỗi thì thông tin này vẫn giữ trên form)
+            user.FullName = updatedUser.FullName;
+            user.Phone = updatedUser.Phone;
+            user.Address = updatedUser.Address;
+
+            // 2. Xử lý Đổi Mật Khẩu (Chỉ chạy khi người dùng nhập Mật khẩu mới)
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                // Kiểm tra mật khẩu cũ có nhập không
+                if (string.IsNullOrEmpty(currentPassword))
+                {
+                    ViewBag.Error = "Vui lòng nhập mật khẩu hiện tại để xác nhận thay đổi.";
+                    return View(user);
+                }
+
+                // Kiểm tra mật khẩu cũ có đúng không
+                bool isCorrectPassword = BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash);
+                if (!isCorrectPassword)
+                {
+                    ViewBag.Error = "Mật khẩu hiện tại không chính xác.";
+                    return View(user);
+                }
+
+                // Kiểm tra xác nhận mật khẩu
+                if (newPassword != confirmPassword)
+                {
+                    ViewBag.Error = "Mật khẩu mới và xác nhận mật khẩu không khớp.";
+                    return View(user);
+                }
+
+                // Kiểm tra độ dài (tuỳ chọn)
+                if (newPassword.Length < 6)
+                {
+                    ViewBag.Error = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+                    return View(user);
+                }
+
+                // Hash mật khẩu mới và cập nhật
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                TempData["Success"] = "Cập nhật thông tin và đổi mật khẩu thành công!";
+            }
+            else
+            {
+                TempData["Success"] = "Cập nhật thông tin thành công!";
+            }
+
+            // 3. Lưu xuống DB
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+
+            // Cập nhật lại Session
+            HttpContext.Session.SetString("FullName", user.FullName);
+
+            return RedirectToAction("Profile");
+        }
+
+        public IActionResult Help()
         {
             return View();
         }

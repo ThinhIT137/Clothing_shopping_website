@@ -127,8 +127,20 @@
         </a>
 
         <div class="Shoe_buy">
-            <a>Mua</a>
-            <a>Thêm vào giỏ</a>
+            <a href="javascript:void(0);"
+               class="btn-open-buy-modal"
+               data-name="@Model.Name"
+               data-img="@imgUrl"
+               data-variants='@JsonConvert.SerializeObject(Model.ProductVariants.Select(v => new { v.ProductVariantId, v.Color, v.Size, v.Price, v.SalePrice, v.Stock }))'>
+                Mua
+            </a>            
+            <a class="add-to-cartlist-btn"
+               asp-action="add_cart_product"
+               asp-controller="Order"
+               data-product-variant-id="@(firstVariant?.ProductVariantId ?? 0)"
+               data-quantity="1">
+                Thêm vào giỏ
+            </a>
         </div>
     </div>
 </div>

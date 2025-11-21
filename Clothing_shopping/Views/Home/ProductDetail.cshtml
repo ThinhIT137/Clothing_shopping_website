@@ -163,16 +163,27 @@
                         <input type="hidden" name="Price" type="" value="@SalePrice" />
                     } *@
                     <div class="from_price">
-                        @if (SalePrice == 0)
-                        {
-                            <span data-money="@Price" id="display_price" class="shoe_price" style="color: black;">@Price.ToString("C0", cultureVN)</span>
-                            <span id="display_salePrice" class="shoe_salePrice" style="display: none">@SalePrice.ToString("C0", cultureVN)</span>
-                        }
-                        else
-                        {
-                            <span id="display_price" class="shoe_price" style="text-decoration: line-through; font-size: 18px; color: red;">@Price.ToString("C0", cultureVN)</span>
-                            <span data-money="@SalePrice" id="display_salePrice" class="shoe_salePrice" style="color: black;">@SalePrice.ToString("C0", cultureVN)</span>
-                        }
+                        <div class="from_price">
+                            @if (SalePrice == 0)
+                            {
+                                <span data-money="@Price" class="shoe_price">
+                                    @Price.ToString("C0", cultureVN)
+                                </span>
+                            }
+                            else
+                            {
+                                <!-- Giá sale: màu đỏ -->
+                                <span data-money="@SalePrice" class="shoe_price">
+                                    @SalePrice.ToString("C0", cultureVN)
+                                </span>
+
+                                <!-- Giá gốc: màu xám + gạch -->
+                                <span class="shoe_salePrice">
+                                    @Price.ToString("C0", cultureVN)
+                                </span>
+                            }
+                        </div>
+
                     </div>
                     <h3>Màu</h3>
                     <input type="hidden" id="selectedColorInput" name="SelectedColor" value="@firsSelectedColor" />
@@ -199,7 +210,9 @@
                 </div>
                 <div class="ProductDetail_Form_btn">
                     <button type="submit">Mua</button>
-                    <a>Thêm vào giỏ hàng</a>
+                    <a href="javascript:void(0);" class="add-to-cartlist-btn">
+                        Thêm vào giỏ hàng
+                    </a>
                 </div>
             </form>
             <div>
@@ -295,6 +308,86 @@
         </div>
     </div>
 </div>
+
+<div class="ProductReviews container mt-5">
+    <h3 class="mb-4 border-bottom pb-2">Đánh giá & Nhận xét (@ViewBag.TotalReviews)</h3>
+    
+    <div class="d-flex align-items-center mb-4">
+        <div class="display-4 fw-bold me-3">@(ViewBag.AverageRating > 0 ? ViewBag.AverageRating.ToString("0.0") : "0.0")</div>
+        <div>
+            <div class="text-warning fs-5">
+                @for(int i=1; i<=5; i++) {
+                    if(i <= ViewBag.AverageRating) { <i class="fas fa-star"></i> }
+                    else if(i - 0.5 <= ViewBag.AverageRating) { <i class="fas fa-star-half-alt"></i> }
+                    else { <i class="far fa-star"></i> }
+                }
+            </div>
+            <div class="text-muted small">Dựa trên @ViewBag.TotalReviews nhận xét</div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body">
+            <h5 class="card-title fw-bold">Viết nhận xét của bạn</h5>
+            <form id="reviewForm">
+                <input type="hidden" name="productId" value="@Model.ProductId" />
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Đánh giá sao:</label>
+                    <div class="rating-input text-warning fs-4" style="cursor: pointer;">
+                        <i class="far fa-star" data-value="1"></i>
+                        <i class="far fa-star" data-value="2"></i>
+                        <i class="far fa-star" data-value="3"></i>
+                        <i class="far fa-star" data-value="4"></i>
+                        <i class="far fa-star" data-value="5"></i>
+                        <input type="hidden" name="rating" id="ratingValue" value="5" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tiêu đề:</label>
+                    <input type="text" name="title" class="form-control" placeholder="Tóm tắt nhận xét của bạn (ví dụ: Rất hài lòng)" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nội dung:</label>
+                    <textarea name="content" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..." required></textarea>
+                </div>
+
+                <button type="button" id="btnSubmitReview" class="btn btn-dark">Gửi đánh giá</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="review-list">
+        @if (ViewBag.Reviews != null)
+        {
+            foreach (var review in ViewBag.Reviews as List<Clothing_shopping.Models.Review>)
+            {
+                <div class="d-flex mb-4 border-bottom pb-3">
+                    <div class="me-3">
+                        <img src="https://ui-avatars.com/api/?name=@review.User.FullName&background=random" class="rounded-circle" width="50" height="50">
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="fw-bold mb-0">@review.User.FullName</h6>
+                            <small class="text-muted">@review.CreatedAt.ToString("dd/MM/yyyy")</small>
+                        </div>
+                        <div class="text-warning mb-2 small">
+                            @for(int i=0; i<review.Rating; i++){ <i class="fas fa-star"></i> }
+                            @for(int i=review.Rating; i<5; i++){ <i class="far fa-star"></i> }
+                        </div>
+                        <h6 class="fw-bold text-dark">@review.Title</h6>
+                        <p class="text-muted mb-0">@review.Content</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<form id="directCheckoutForm" method="post" action="@Url.Action("Checkout", "Order")" style="display:none;">
+</form>
 
 @section Scripts {
     <script>
@@ -447,5 +540,177 @@
                 $newThumb.addClass("ac");
             });
         }
+
+        $("button[type='submit']").on("click", function(e) {
+                e.preventDefault(); // Chặn submit form mặc định (vì form kia đang trống action)
+
+                // 1. Lấy màu và size đang chọn
+                const selectedColorBtn = document.querySelector(".btn_SelectedColor.ac");
+                const selectedSizeBtn = document.querySelector(".btn_SelectedSize.ac");
+
+                if (!selectedColorBtn || !selectedSizeBtn) {
+                    alert("Vui lòng chọn đầy đủ Màu sắc và Kích thước!");
+                    return;
+                }
+
+                const color = selectedColorBtn.dataset.color;
+                const size = selectedSizeBtn.dataset.size;
+
+                // 2. Tìm Variant ID từ dữ liệu JSON 'Product' đã có sẵn
+                const variant = Product.ProductVariants.find(v => v.Color === color && v.Size === size);
+
+                if (!variant) {
+                    alert("Sản phẩm với phân loại này tạm hết hàng hoặc không tồn tại!");
+                    return;
+                }
+
+                if (variant.Stock <= 0) {
+                    alert("Sản phẩm này đã hết hàng!");
+                    return;
+                }
+
+                // 3. Tạo Form ẩn và Submit sang Checkout
+                const form = $('#directCheckoutForm');
+                form.empty();
+                
+                // Thêm VariantId
+                form.append(`<input type="hidden" name="productVariantId" value="${variant.ProductVariantId}" />`);
+                
+                // Thêm số lượng (Mặc định là 1 vì trang detail chưa có input số lượng, nếu có thì lấy giá trị input đó)
+                // Ví dụ nếu bạn thêm input số lượng id="quantityInput", thay số 1 bằng $('#quantityInput').val()
+                form.append(`<input type="hidden" name="quantity" value="1" />`); 
+                
+                // Submit
+                form.submit();
+            });
+
+            $(".add-to-cartlist-btn").on("click", function(e) {
+                e.preventDefault();
+
+                // 1. Kiểm tra chọn Màu và Size
+                const selectedColorBtn = document.querySelector(".btn_SelectedColor.ac");
+                const selectedSizeBtn = document.querySelector(".btn_SelectedSize.ac");
+
+                if (!selectedColorBtn || !selectedSizeBtn) {
+                    alert("Vui lòng chọn đầy đủ Màu sắc và Kích thước!");
+                    return;
+                }
+
+                const color = selectedColorBtn.dataset.color;
+                const size = selectedSizeBtn.dataset.size;
+
+                // 2. Tìm Variant ID
+                const variant = Product.ProductVariants.find(v => v.Color === color && v.Size === size);
+
+                if (!variant) {
+                    alert("Sản phẩm với phân loại này tạm hết hàng hoặc không tồn tại!");
+                    return;
+                }
+
+                if (variant.Stock <= 0) {
+                    alert("Sản phẩm này đã hết hàng!");
+                    return;
+                }
+
+                // 3. Gọi AJAX thêm vào giỏ hàng
+                $.ajax({
+                    url: '@Url.Action("add_cart_product", "Order")',
+                    type: 'POST',
+                    data: { 
+                        ProductVariantId: variant.ProductVariantId, 
+                        Quantity: 1 // Mặc định là 1
+                    },
+                    success: function(res) {
+                        if (res.success) {
+                            // --- THÀNH CÔNG: CHUYỂN HƯỚNG SANG GIỎ HÀNG ---
+                            window.location.href = '@Url.Action("Cart", "Order")';
+                        } else {
+                            alert(res.message); // Ví dụ: Chưa đăng nhập
+                            if(res.message.includes("đăng nhập")) {
+                                window.location.href = '/User/Login';
+                            }
+                        }
+                    },
+                    error: function() {
+                    alert("Lỗi kết nối server!");
+                }
+            });
+        });
+
+        // --- XỬ LÝ ĐÁNH GIÁ SAO ---
+        const stars = document.querySelectorAll('.rating-input i');
+        const ratingInput = document.getElementById('ratingValue');
+
+        // Hàm tô màu sao
+        function fillStars(value) {
+            stars.forEach(star => {
+                const starVal = parseInt(star.dataset.value);
+                if (starVal <= value) {
+                    star.classList.remove('far'); // Xóa sao rỗng
+                    star.classList.add('fas');    // Thêm sao đặc
+                } else {
+                    star.classList.remove('fas'); // Xóa sao đặc
+                    star.classList.add('far');    // Thêm sao rỗng
+                }
+            });
+        }
+
+        // Mặc định 5 sao
+        fillStars(5);
+
+        // Hover hiệu ứng
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                fillStars(this.dataset.value);
+            });
+            star.addEventListener('mouseout', function() {
+                fillStars(ratingInput.value); // Trả về giá trị đã chọn
+            });
+            star.addEventListener('click', function() {
+                ratingInput.value = this.dataset.value;
+                fillStars(this.dataset.value);
+            });
+        });
+
+        // --- GỬI ĐÁNH GIÁ AJAX (FIXED VERSION) ---
+        $('#btnSubmitReview').on('click', function() {
+            // Lấy form
+            var form = $('#reviewForm');
+            
+            // Validate cơ bản (nếu cần)
+            if (!form[0].checkValidity()) {
+                form[0].reportValidity();
+                return;
+            }
+
+            // Lấy dữ liệu
+            var formData = form.serialize();
+
+            // Gửi Ajax
+            $.ajax({
+                url: '@Url.Action("PostReview", "Home")', // Đảm bảo đường dẫn đúng
+                type: 'POST',
+                data: formData,
+                success: function(res) {
+                    if(res.success) {
+                        alert(res.message);
+                        location.reload(); // Load lại trang để hiện review mới
+                    } else {
+                        // Xử lý lỗi (ví dụ chưa đăng nhập)
+                        if(res.message && res.message.toLowerCase().includes("đăng nhập")) {
+                            if(confirm(res.message + " Bạn có muốn đăng nhập ngay không?")){
+                                window.location.href = '/User/Login';
+                            }
+                        } else {
+                            alert(res.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Lỗi kết nối server! Vui lòng thử lại.");
+                }
+            });
+        });
     </script>
 }

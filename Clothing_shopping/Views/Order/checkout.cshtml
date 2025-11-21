@@ -1,0 +1,219 @@
+﻿@model Clothing_shopping.Models.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    decimal initialTotalMoney = 0; // Biến dùng để tính tổng tiền gốc ban đầu
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-center text-uppercase fw-bold">Thanh Toán Đơn Hàng</h2>
+
+    <form asp-action="PlaceOrder" asp-controller="Order" method="post">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Thông tin giao hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Họ tên người nhận <span class="text-danger">*</span></label>
+                            <input asp-for="ReceiverName" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" />
+                            <span asp-validation-for="ReceiverName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input asp-for="Phone" class="form-control" placeholder="098xxx..." />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Email (Tùy chọn)</label>
+                                <input asp-for="Email" class="form-control" placeholder="email@example.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Địa chỉ nhận hàng <span class="text-danger">*</span></label>
+                            <textarea asp-for="ShippingAddress" class="form-control" rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện..."></textarea>
+                            <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ghi chú đơn hàng</label>
+                            <textarea asp-for="Note" class="form-control" rows="2" placeholder="Ví dụ: Giao hàng giờ hành chính..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0 text-dark"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng của bạn</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover mb-0">
+                                <tbody>
+                                    @if (Model.CartItemsDisplay != null && Model.CartItemsDisplay.Any())
+                                    {
+                                        var groupedItems = Model.CartItemsDisplay
+                                        .GroupBy(c => c.ProductVariantId)
+                                        .Select(g => new
+                                        {
+                                            Variant = g.First().ProductVariant,
+                                            Product = g.First().ProductVariant.Product,
+                                            TotalQuantity = g.Sum(c => c.Quantity),
+                                            UnitPrice = (g.First().ProductVariant.SalePrice > 0 ? g.First().ProductVariant.SalePrice : null) ?? g.First().ProductVariant.Price ?? 0
+                                        });
+
+                                        foreach (var item in groupedItems)
+                                        {
+                                            var itemTotal = item.UnitPrice * item.TotalQuantity;
+                                            initialTotalMoney += itemTotal; // Cộng dồn tiền gốc
+
+                                            string imgUrl = "";
+                                            try
+                                            {
+                                                var images = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(item.Product.Images);
+                                                if (images != null && images.Count > 0) imgUrl = images[0];
+                                            }
+                                            catch { }
+
+                                            <tr class="align-middle">
+                                                <td style="width: 60px;">
+                                                    @if (!string.IsNullOrEmpty(imgUrl))
+                                                    {
+                                                        <img src="@imgUrl" alt="@item.Product.Name" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div class="fw-bold text-truncate" style="max-width: 150px;">@item.Product.Name</div>
+                                                    <small class="text-muted">Size: @item.Variant.Size | Màu: @item.Variant.Color</small>
+                                                </td>
+                                                <td class="text-center">x @item.TotalQuantity</td>
+                                                <td class="text-end fw-bold text-primary">@itemTotal.ToString("N0") đ</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr><td colspan="4" class="text-center">Không có sản phẩm nào.</td></tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white p-3">
+                        <div class="mb-3 bg-light p-2 rounded border">
+                            <label class="form-label fw-bold text-success"><i class="fas fa-ticket-alt me-2"></i>Mã giảm giá</label>
+                            <select asp-for="SelectedVoucherId" class="form-select" id="voucherSelect">
+                                <option value="" data-type="none" data-value="0">-- Chọn Voucher (nếu có) --</option>
+                                @if (Model.AvailableVouchers != null)
+                                {
+                                    foreach (var v in Model.AvailableVouchers)
+                                    {
+                                        // Lưu thông tin loại giảm giá vào data-attribute để JS dùng
+                                        <option value="@v.VoucherId"
+                                                data-type="@v.VoucherType"
+                                                data-value="@v.DiscountValue">
+                                            @v.Name (@(v.VoucherType == "Percent" ? $"-{v.DiscountValue}%" : $"-{v.DiscountValue:N0}đ"))
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Tạm tính:</span>
+                            <span class="fw-bold">@initialTotalMoney.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2 text-success">
+                            <span><i class="fas fa-minus-circle me-1"></i>Giảm giá:</span>
+                            <span class="fw-bold" id="discountDisplay">- 0 đ</span>
+                        </div>
+
+                        <hr class="my-2">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0 text-muted">Tổng thanh toán:</span>
+                            <span class="h4 mb-0 text-danger fw-bold" id="finalTotalDisplay">@initialTotalMoney.ToString("N0") đ</span>
+                        </div>
+
+                        @if (Model.DirectProductVariantId.HasValue)
+                        {
+                            <input type="hidden" asp-for="DirectProductVariantId" />
+                            <input type="hidden" asp-for="DirectQuantity" />
+                        }
+                        else if (Model.SelectedCartItemIds != null)
+                        {
+                            foreach (var id in Model.SelectedCartItemIds)
+                            {
+                                <input type="hidden" name="SelectedCartItemIds" value="@id" />
+                            }
+                        }
+
+                        <button type="submit" class="btn btn-success w-100 py-3 fw-bold text-uppercase fs-6 shadow-sm hover-shadow" onclick="return confirm('Xác nhận đặt hàng?');">
+                            <i class="fas fa-check-circle me-2"></i> Xác nhận đặt hàng
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Cart" asp-controller="Order" class="text-decoration-none text-muted small">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại giỏ hàng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Lấy giá trị tổng tiền gốc từ C# đổ vào biến JS
+            var subTotal = @initialTotalMoney;
+
+            // Bắt sự kiện khi thay đổi Voucher
+            $('#voucherSelect').change(function() {
+                // Lấy option đang được chọn
+                var selectedOption = $(this).find('option:selected');
+
+                // Lấy dữ liệu từ data-type và data-value
+                var type = selectedOption.data('type');
+                var value = parseFloat(selectedOption.data('value'));
+
+                var discountAmount = 0;
+
+                // Tính toán giảm giá
+                if (type === 'Percent') {
+                    // Nếu là phần trăm
+                    discountAmount = subTotal * (value / 100);
+                } else if (value > 0) {
+                    // Nếu là tiền mặt (Fixed/Amount)
+                    discountAmount = value;
+                }
+
+                // Đảm bảo tiền giảm không vượt quá tổng tiền (không được âm tiền)
+                if (discountAmount > subTotal) {
+                    discountAmount = subTotal;
+                }
+
+                var finalTotal = subTotal - discountAmount;
+
+                // Cập nhật giao diện (Format tiền Việt Nam)
+                $('#discountDisplay').text('- ' + discountAmount.toLocaleString('vi-VN') + ' đ');
+                $('#finalTotalDisplay').text(finalTotal.toLocaleString('vi-VN') + ' đ');
+            });
+        });
+    </script>
+}

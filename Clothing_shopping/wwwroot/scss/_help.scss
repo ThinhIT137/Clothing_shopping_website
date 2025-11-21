@@ -1,0 +1,83 @@
+﻿.help-page {
+    .accordion-button {
+        background-color: #fff;
+        color: #333;
+        box-shadow: none;
+
+        &:not(.collapsed) {
+            color: #000;
+            background-color: #f8f9fa;
+        }
+
+        &:focus {
+            box-shadow: none;
+            border-color: rgba(0,0,0,.125);
+        }
+    }
+
+    .accordion-item {
+        border: none;
+        border-bottom: 1px solid #eee;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+/* Lớp phủ mờ toàn màn hình */
+.map-modal {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    z-index: 9999; /* Luôn nổi lên trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Màu đen mờ */
+    animation: fadeIn 0.3s; /* Hiệu ứng hiện ra nhẹ nhàng */
+}
+
+/* Hộp nội dung bản đồ ở giữa */
+.map-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* Cách trên 10%, căn giữa ngang */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Độ rộng hộp */
+    max-width: 600px; /* Không quá to trên màn hình lớn */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+/* Nút tắt (x) ở góc */
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Hiệu ứng fade in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

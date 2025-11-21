@@ -1,281 +1,675 @@
 ﻿@use "root.scss" as *;
 
+/* --- STYLE CHO BREADCRUMB --- */
+.ProductDetail {
+    // Container chứa Breadcrumb và nội dung
+    > div:nth-child(1) {
+        padding: 20px 0; // Padding trên dưới
+
+        nav {
+            // Thanh Breadcrumb chính
+            .breadcrumb {
+                --bs-breadcrumb-divider: ' / '; /* Đổi dấu chia mặc định */
+                margin-bottom: 0;
+                padding-left: 0;
+
+                .breadcrumb-item {
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    a {
+                        color: #888; // Màu chữ xám nhạt
+                        text-decoration: none;
+                        transition: color 0.2s ease;
+
+                        &:hover {
+                            color: #333; // Đổi màu đậm hơn khi hover
+                        }
+                    }
+                    // Item đang active (tên sản phẩm)
+                    &.active {
+                        color: #000;
+                        font-weight: 600; // In đậm để nổi bật
+                        max-width: 350px;
+                        overflow: hidden;
+                        text-overflow: ellipsis; // Thêm 3 chấm nếu tên quá dài
+                        white-space: nowrap;
+                    }
+                }
+                // Chỉnh font cho phần text giữa các link (@(" và "))
+                .breadcrumb-item:nth-child(2) {
+                    font-weight: 500;
+                    color: #555;
+                }
+            }
+        }
+    }
+}
+
+// Mobile Responsive (Tùy chọn)
+@media (max-width: 575.98px) {
+    .ProductDetail nav {
+        padding: 10px 15px; // Giảm padding trên mobile
+
+        .breadcrumb {
+            .breadcrumb-item {
+                font-size: 12px; // Giảm kích thước chữ
+                // Giới hạn chiều rộng item active để tránh tràn màn hình
+                &.active {
+                    max-width: 150px;
+                }
+            }
+        }
+    }
+}
+
 .ProductDetail {
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden; // Tránh thanh cuộn ngang
+    padding: 20px 0;
 
     .ProductDetail_container {
         @include flex_center_1;
+        align-items: flex-start; // Căn hàng đầu
+        gap: 30px; // Khoảng cách giữa cột ảnh và cột thông tin
 
+        // --- CỘT ẢNH ---
         .ProductDetail_imgDetail {
             display: flex;
+            gap: 15px;
 
+            // List ảnh nhỏ
             #ImgList {
                 display: flex;
                 flex-direction: column;
+                gap: 10px;
+                height: 500px; // Giới hạn chiều cao
+                overflow-y: auto; // Cuộn nếu nhiều ảnh
+                
+                // Ẩn thanh cuộn cho đẹp
+                &::-webkit-scrollbar { display: none; }
 
                 img {
-                    width: 60px;
-                    height: fit-content;
-                    padding: 4px;
-                    padding-top: 0;
-                    padding-bottom: 8px;
+                    width: 70px;
+                    height: 70px;
+                    object-fit: cover;
+                    cursor: pointer;
+                    border-radius: 4px;
+                    opacity: 0.6;
+                    transition: all 0.3s ease;
+                    border: 2px solid transparent;
                 }
 
+                // Trạng thái đang chọn
                 img.ac {
-                    border: 1px solid black;
+                    opacity: 1;
+                    border-color: #000; // Viền đen
                 }
             }
 
+            // Ảnh chính
             #RenderImg {
                 position: relative;
-                padding: 0 10px;
-                height: fit-content;
-
+                width: 500px;
+                height: auto;
+                
                 img {
-                    width: 500px;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
                 }
 
                 .RenderImg_btn {
                     position: absolute;
-                    left: 0;
-                    //top: 0;
-                    bottom: 50%;
+                    top: 50%;
+                    width: 100%;
+                    transform: translateY(-50%);
                     display: flex;
                     justify-content: space-between;
-                    width: 100%;
-                    //background: red;
+                    padding: 0 10px;
+                    opacity: 0; // Mặc định ẩn
+                    transition: opacity 0.3s ease;
+                    pointer-events: none; // Để chuột xuyên qua khi ẩn
 
                     .RenderImg_btn_left, .RenderImg_btn_right {
-                        font-size: 30px;
-                        color: black;
+                        pointer-events: auto;
+                        font-size: 24px;
+                        color: #333;
+                        background: rgba(255,255,255,0.8);
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                        
+                        &:hover {
+                            background: #fff;
+                            color: #000;
+                        }
                     }
+                }
+
+                // Hiện nút khi hover vào ảnh
+                &:hover .RenderImg_btn {
+                    opacity: 1;
                 }
             }
         }
 
+        // --- CỘT THÔNG TIN ---
         .ProductDetail_form_content {
-            width: 400px;
-
+            width: 450px;
+            
             .Form_Order {
-                //background: blue;
-                padding: 20px;
+                padding: 10px;
 
-                a {
-                    cursor: pointer;
+                // Tên sản phẩm
+                h3 {
+                    font-size: 26px;
+                    font-weight: 700;
+                    margin-bottom: 15px;
+                    text-transform: uppercase;
+                    line-height: 1.2;
                 }
 
-                .Color {
-                    div {
-                        @include flex_center_2;
-                        flex-wrap: wrap;
-                        padding-left: 5px;
-
-                        .btn_SelectedColor {
-                            div {
-                                width: 35px;
-                                height: 35px;
-                                border-radius: 50%;
-                                margin: 2px 2px;
-                            }
-                        }
-
-                        .btn_SelectedColor.ac {
-                            border: 5px solid black;
-                            border-radius: 50%;
-                            padding: 2px;
-                        }
+                // Giá tiền
+                .from_price {
+                    margin-bottom: 25px;
+                    
+                    .shoe_price {
+                        font-size: 24px !important;
+                        font-weight: 600;
+                        color: #d0021b !important; // Màu đỏ giá tiền
+                    }
+                    
+                    .shoe_salePrice {
+                        font-size: 16px;
+                        color: #999 !important;
+                        text-decoration: line-through;
+                        margin-left: 10px;
                     }
                 }
 
-                .Size {
+                // Phần chọn Màu
+                .Color {
+                    margin-bottom: 20px;
+                    
+                    h3 { font-size: 16px; margin-bottom: 10px; text-transform: capitalize; }
+                    
                     div {
-                        @include flex_center_2;
-                        padding-left: 5px;
                         display: flex;
                         flex-wrap: wrap;
+                        gap: 10px; // Khoảng cách các nút
 
-                        .btn_SelectedSize {
+                        .btn_SelectedColor {
+                            cursor: pointer;
+                            padding: 3px; // Khoảng cách giữa viền và màu
+                            border: 1px solid #e5e5e5;
+                            border-radius: 50%;
+                            transition: all 0.2s ease;
+
                             div {
-                                @include flex_center_center;
-                                padding: 2px 6px;
-                                background: #dadada;
-                                color: black;
-                                border-radius: 5px;
-                                margin: 2px 2px;
-                                font-size: 20px;
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                                border: 1px solid rgba(0,0,0,0.1); // Viền nhẹ cho màu trắng
                             }
+                            
+                            &:hover { border-color: #999; }
                         }
 
+                        // Trạng thái chọn màu (.ac)
+                        .btn_SelectedColor.ac {
+                            border: 2px solid #000; // Viền đen đậm bao ngoài
+                        }
+                    }
+                }
+
+                // Phần chọn Size
+                .Size {
+                    margin-bottom: 30px;
+                    
+                    h3 { font-size: 16px; margin-bottom: 10px; text-transform: capitalize; }
+
+                    div {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+
+                        .btn_SelectedSize {
+                            cursor: pointer;
+                            
+                            div {
+                                min-width: 50px;
+                                height: 40px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: #fff;
+                                border: 1px solid #e5e5e5;
+                                color: #333;
+                                border-radius: 4px;
+                                font-weight: 500;
+                                transition: all 0.2s ease;
+                            }
+                            
+                            &:hover div { border-color: #000; }
+                        }
+
+                        // Trạng thái chọn size (.ac)
                         .btn_SelectedSize.ac {
                             div {
-                                background: #333;
-                                color: white;
-                                border: 2px solid white;
+                                background: #000;
+                                color: #fff;
+                                border-color: #000;
                             }
                         }
                     }
                 }
 
+                // Nút Mua & Thêm giỏ
                 .ProductDetail_Form_btn {
-                    button {
-                        /* Reset cơ bản */
-                        background: red;
-                        border: none;
-                        padding: 0;
-                        margin: 0;
-                        /* Reset font (phải đủ bộ) */
-                        font-family: inherit;
-                        font-size: inherit;
-                        font-weight: inherit; /* Thêm cái này cho chắc */
-                        line-height: inherit;
-                        color: inherit;
-                        /* Reset căn lề */
-                        text-align: inherit;
-                        vertical-align: baseline;
-                        /* Reset trình duyệt */
-                        -webkit-appearance: none;
-                        -moz-appearance: none;
-                        appearance: none;
-                        ::-moz-focus-inner {
-                            border: 0;
-                            padding: 0;
-                        }
-                        display: inline;
-                        -webkit-font-smoothing: inherit;
-                        -moz-osx-font-smoothing: inherit;
+                    display: flex;
+                    gap: 15px;
+                    margin-top: 20px;
+
+                    button, a {
+                        flex: 1;
+                        height: 50px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 16px;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        border-radius: 4px;
                         cursor: pointer;
-                        height: fit-content;
-                        width: auto;
+                        transition: all 0.3s ease;
+                        text-decoration: none;
+                        border: none;
                     }
 
-                    button::-moz-focus-inner {
-                        border: 0;
-                        padding: 0;
+                    // Nút Mua ngay
+                    button {
+                        background: #000;
+                        color: #fff;
+                        &:hover { background: #333; transform: translateY(-2px); }
                     }
 
-                    button:focus {
-                    }
-
+                    // Nút Thêm giỏ
                     a {
-                        background: red;
+                        background: #fff;
+                        color: #000;
+                        border: 1px solid #000;
+                        &:hover { background: #f5f5f5; }
                     }
                 }
             }
 
+            // Phần mô tả ngắn & Chính sách
             .ProductDetail_ChiTietSanPham {
+                margin-top: 20px;
+                font-weight: 600;
                 cursor: pointer;
                 text-decoration: underline;
-                font-size: 20px;
-                font-weight: 500;
+                &:hover { color: #d0021b; }
             }
 
             .ProductDetail_GiaoHangFree {
-                margin-top: 10px;
-                font-size: 20px;
-                @include flex_space-between_center;
-                font-weight: 500;
+                margin-top: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
                 cursor: pointer;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: 600;
+                
+                i { transition: transform 0.3s; }
             }
+
+            // Xoay mũi tên khi mở chính sách (nếu bạn có class .active cho cha)
+            // .ProductDetail_GiaoHangFree.active i { transform: rotate(180deg); }
 
             .ProductDetail_GiaoHangFree_Content {
                 opacity: 0;
                 visibility: hidden;
                 max-height: 0;
-                transition: 0.5s;
+                overflow: hidden;
+                transition: all 0.4s ease;
+                padding: 0 15px;
+                background: #f8f9fa;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+                margin-top: -5px; // Dính liền với header trên
+
+                ul { margin: 10px 0; padding-left: 20px; }
+                span { display: block; margin-bottom: 5px; font-size: 14px; color: #555; }
             }
 
+            // Class .ac để hiện nội dung (GIỮ NGUYÊN LOGIC CỦA BẠN)
             .ProductDetail_GiaoHangFree_Content.ac {
                 opacity: 1;
                 visibility: visible;
-                max-height: 200px;
+                max-height: 300px; // Đủ lớn để hiện hết
+                padding-bottom: 15px;
             }
         }
     }
 
+    // --- POPUP CHI TIẾT ---
     .ProductDetail_ChiTiet {
         position: fixed;
         width: 100vw;
         height: 100vh;
         top: 0;
         left: 0;
-        transition: 0.5s;
+        background: rgba(0, 0, 0, 0.6); // Nền đen mờ
+        backdrop-filter: blur(4px); // Làm mờ nền sau
+        z-index: 9999;
         opacity: 0;
         visibility: hidden;
+        transition: all 0.4s ease;
 
         .ProductDetail_ChiTiet_Content {
             position: absolute;
-            top: 1000px;
-            width: 726px;
-            //left: 50%;
-            left: 0;
-            right: 0;
-            margin: auto;
-            //transform: translateX(-50%);
-            background: #FFFFFF;
-            padding: 48px;
-            border-radius: 24px;
-            transition: 0.5s;
-            max-height: 612px;
-
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9); // Hiệu ứng zoom nhẹ
+            width: 700px;
+            max-width: 90%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+            
             .ProductDetail_ChiTiet_btn {
                 position: absolute;
-                border-radius: 50%;
-                background: #CACACB;
-                width: 30px;
-                height: 30px;
-                @include flex_center_center;
-                right: 20px;
                 top: 15px;
+                right: 15px;
+                width: 35px;
+                height: 35px;
+                background: #f1f1f1;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 cursor: pointer;
+                transition: all 0.3s;
+                
+                &:hover {
+                    background: #ddd;
+                    transform: rotate(90deg);
+                }
             }
 
             .ProductDetail_ChiTiet_Content_ScrollArea {
+                max-height: 60vh;
                 overflow-y: auto;
-                max-height: 520px;
+                padding-right: 10px;
+
+                // Style thanh cuộn
+                &::-webkit-scrollbar { width: 6px; }
+                &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
                 .ProductDetail_ChiTiet_Content_title {
-                    font-size: 16px;
-                    line-height: 24px;
+                    font-size: 20px;
+                    font-weight: 700;
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #eee;
                     padding-bottom: 10px;
                 }
-
+                
                 .ProductDetail_ChiTiet_Content_key {
-                    font-size: 20px;
-                    font-weight: 400;
-                    line-height: 24px;
-
-                    ul {
-                        li {
-                            font-size: 16px;
-                        }
-                    }
+                    font-weight: 600;
+                    margin-top: 15px;
+                    color: #333;
                 }
-            }
 
-            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar-thumb {
-                background: #888;
-                border-radius: 10px;
-            }
-
-            .ProductDetail_ChiTiet_Content_ScrollArea::-webkit-scrollbar-thumb:hover {
-                background: #555;
+                ul li {
+                    margin-bottom: 5px;
+                    color: #555;
+                    line-height: 1.6;
+                }
             }
         }
     }
 
+    // Class .ac cho Popup (GIỮ NGUYÊN LOGIC CỦA BẠN)
     .ProductDetail_ChiTiet.ac {
         opacity: 1 !important;
         visibility: visible !important;
-        background: $bgr_night;
-
+        
         .ProductDetail_ChiTiet_Content {
-            bottom: 10px;
-            top: 20px;
+            transform: translate(-50%, -50%) scale(1); // Zoom về bình thường
+            // Bỏ top/bottom cũ của bạn để dùng center css
+        }
+    }
+}
+
+/* --- PRODUCT REVIEWS SECTION --- */
+.ProductReviews {
+    background-color: #fff;
+    padding: 40px 20px;
+    border-radius: 12px;
+    margin-top: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    // Tiêu đề
+    h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 15px;
+    }
+    // Khối điểm số trung bình
+    .d-flex.align-items-center.mb-4 {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+
+        .display-4 {
+            font-size: 3.5rem;
+            color: #333;
+            font-weight: 800;
+        }
+
+        .text-warning {
+            color: #ffc107 !important;
+
+            i {
+                margin-right: 2px;
+            }
+        }
+    }
+    // Form viết đánh giá
+    .card {
+        border: 1px solid #eee !important;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: box-shadow 0.3s;
+
+        &:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card-body {
+            padding: 30px;
+
+            h5.card-title {
+                margin-bottom: 20px;
+                font-size: 18px;
+            }
+            // Sao chọn đánh giá
+            .rating-input {
+                i {
+                    font-size: 24px;
+                    margin-right: 5px;
+                    transition: transform 0.2s;
+
+                    &:hover {
+                        transform: scale(1.2);
+                    }
+                }
+            }
+            // Input & Textarea
+            .form-control {
+                background-color: #f9f9f9;
+                border: 1px solid #e1e1e1;
+                border-radius: 6px;
+                padding: 12px;
+                font-size: 14px;
+
+                &:focus {
+                    background-color: #fff;
+                    border-color: #333;
+                    box-shadow: none;
+                }
+            }
+            // Nút gửi
+            button#btnSubmitReview {
+                background-color: #000;
+                color: #fff;
+                border: none;
+                padding: 10px 30px;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 14px;
+                border-radius: 4px;
+                margin-top: 15px;
+                transition: all 0.3s;
+
+                &:hover {
+                    background-color: #333;
+                    transform: translateY(-2px);
+                }
+            }
+        }
+    }
+    // Danh sách bình luận
+    .review-list {
+        margin-top: 40px;
+
+        .d-flex {
+            padding: 20px 0;
+            border-bottom: 1px solid #f1f1f1;
+
+            &:last-child {
+                border-bottom: none;
+            }
+            // Avatar
+            img.rounded-circle {
+                width: 60px;
+                height: 60px;
+                border: 2px solid #fff;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                object-fit: cover;
+            }
+            // Nội dung
+            .flex-grow-1 {
+                h6.fw-bold {
+                    font-size: 16px;
+                    color: #000;
+                }
+
+                small.text-muted {
+                    font-size: 12px;
+                }
+
+                .text-warning {
+                    color: #ffc107;
+                    font-size: 12px;
+                    margin: 5px 0;
+                }
+
+                h6.text-dark {
+                    font-size: 15px;
+                    margin-bottom: 5px;
+                }
+
+                p.text-muted {
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: #555 !important;
+                }
+            }
+        }
+    }
+    // Responsive Mobile
+    @media (max-width: 768px) {
+        padding: 20px 15px;
+
+        .d-flex.align-items-center.mb-4 {
+            flex-direction: column;
+            align-items: flex-start !important;
+
+            .display-4 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+        }
+
+        .review-list .d-flex {
+            flex-direction: column;
+
+            .me-3 {
+                margin-bottom: 15px;
+            }
+        }
+    }
+}
+
+
+@media (max-width: 991.98px) {
+    .ProductDetail {
+        .ProductDetail_container {
+            flex-direction: column;
+            align-items: center;
+
+            .ProductDetail_imgDetail {
+                flex-direction: column-reverse; // Đảo thumb xuống dưới
+                width: 100%;
+                align-items: center;
+
+                #RenderImg {
+                    width: 100%;
+                    max-width: 600px;
+                    height: auto;
+                    aspect-ratio: 3/4; // Giữ tỷ lệ khung hình đẹp
+                }
+
+                #ImgList {
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+            }
+
+            .ProductDetail_form_content {
+                width: 100%;
+                max-width: 600px;
+                padding: 0 20px;
+            }
+        }
+        // Popup Full màn hình trên mobile
+        .ProductDetail_ChiTiet .ProductDetail_ChiTiet_Content {
+            width: 90%;
+            top: 50%;
+            transform: translate(-50%, -50%); // Căn giữa
+            left: 50%;
         }
     }
 }
