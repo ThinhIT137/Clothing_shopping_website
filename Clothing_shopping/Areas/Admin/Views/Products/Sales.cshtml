@@ -43,7 +43,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Ảnh</th>
+                        @* <th>Ảnh</th> *@
                         <th>Sản phẩm</th>
                         <th>Đã bán</th>
                     </tr>
@@ -52,7 +52,7 @@
                     @foreach (var item in ViewBag.BestSellers)
                     {
                         <tr>
-                            <td><img src="@item.Product.Image" width="60" /></td>
+                            @* <td><img src="@item.Product.Image" width="60" /></td> *@
                             <td>@item.Product.Name</td>
                             <td><strong>@item.TotalSold</strong></td>
                         </tr>
