@@ -1,157 +1,215 @@
 ﻿@model IEnumerable<Clothing_shopping.Models.CartItem>
 @{
-    string url = "";
+    ViewData["Title"] = "Giỏ hàng của bạn";
 }
 
-<div class="cart">
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Chọn</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Màu</th>
-                    <th>Kích cỡ</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Ảnh</th>
-                    <th>Tổng tiền</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cart in Model)
-                {
-                    var product = cart.ProductVariant.Product;
-                    var variant = cart.ProductVariant;
-                    decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
-                    decimal total = price * cart.Quantity;
-                    var img = JsonConvert.DeserializeObject<List<string>>(product.Images)[1];
+<div class="container py-4 cart-page">
+    <h2 class="mb-4 fw-bold text-uppercase text-center">Giỏ hàng <span class="text-muted fs-5">(@Model.Count() sản phẩm)</span></h2>
 
-                    <tr class="cart_item">
-                        <td> 
-                            @* mai fix *@
-                            <input id="@cart.CartItemId" data-pvid="@variant.ProductVariantId" type="checkbox" name="name" value="" />
-                        </td>
-                        <td>@product.Name</td>
-                        <td>@variant.Color</td>
-                        <td>@variant.Size</td>
-                        <td>@price.ToString("N0") đ</td>
-                        <td>
-                            <input type="number" value="@cart.Quantity" min="1" />
-                        </td>
-                        <td>
-                            <img src="@img" alt="" />
-                        </td>
-                        <td>@total.ToString("N0") đ</td>
-                        <td>
-                            <a asp-action="delete_cart_product" asp-controller="Order" asp-route-id="@cart.CartItemId">xóa sản phẩm</a>
-                        </td>
-                    </tr>   
-                }
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <form>
-            <h3>Đơn hàng</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <td>Sản phẩm</td>
-                        <td>Kích thước</td>
-                        <td>Số lượng</td>
-                    </tr>
-                </thead>
-                <tbody class="cart_item_order">
-                </tbody>
-            </table>
-            <span class="cart_item_money_order">Tổng tiền: </span>
-            <div class="btn_order">
-                <button class="cart_order_accept">Thanh toán</button>
-                <button class="cart_order_cancle">Hủy</button>
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0 cart-table">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th scope="col" width="50" class="text-center">#</th>
+                                    <th scope="col">Sản phẩm</th>
+                                    <th scope="col" width="120">Đơn giá</th>
+                                    <th scope="col" width="100">Số lượng</th>
+                                    <th scope="col" width="120">Thành tiền</th>
+                                    <th scope="col" width="50"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cart in Model)
+                                {
+                                    var product = cart.ProductVariant.Product;
+                                    var variant = cart.ProductVariant;
+                                    decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
+                                    decimal total = price * cart.Quantity;
+
+                                    string imgUrl = "";
+                                    try
+                                    {
+                                        var images = JsonConvert.DeserializeObject<List<string>>(product.Images);
+                                        if (images?.Count > 0) imgUrl = images[0];
+                                    }
+                                    catch { }
+
+                                    <tr class="cart_item" data-id="@cart.CartItemId">
+                                        <td class="text-center">
+                                            <input class="form-check-input cart-checkbox"
+                                                   type="checkbox"
+                                                   id="@cart.CartItemId"
+                                                   data-pvid="@variant.ProductVariantId"
+                                                   style="cursor: pointer; width: 20px; height: 20px;">
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@imgUrl" class="rounded border me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                <div>
+                                                    <div class="fw-bold text-truncate" style="max-width: 200px;">@product.Name</div>
+                                                    <div class="small text-muted">Size: @variant.Size | Màu: @variant.Color</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="price-unit" data-price="@price">
+                                            @price.ToString("N0") đ
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm text-center qty-input"
+                                                   value="@cart.Quantity" min="1"
+                                                   style="width: 60px;">
+                                        </td>
+                                        <td class="fw-bold text-primary price-total">
+                                            @total.ToString("N0") đ
+                                        </td>
+                                        <td class="text-center">
+                                            <a asp-action="delete_cart_product" asp-controller="Order" asp-route-id="@cart.CartItemId"
+                                               class="text-danger" onclick="return confirm('Xóa sản phẩm này?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-lg-top" style="top: 20px; z-index: 10;">
+                    <div class="card-header bg-white fw-bold text-uppercase py-3">
+                        Tóm tắt đơn hàng
+                    </div>
+                    <div class="card-body">
+                        <div class="cart-summary-items mb-3" style="max-height: 200px; overflow-y: auto;">
+                            <p class="text-muted small fst-italic text-center py-3 empty-msg">Chưa chọn sản phẩm nào</p>
+                            <table class="table table-sm table-borderless mb-0 d-none summary-table">
+                                <tbody class="cart_item_order">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="h5 mb-0 text-muted">Tổng tiền:</span>
+                            <span class="h4 mb-0 text-danger fw-bold cart_item_money_order">0 đ</span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" id="btnCheckout" class="btn btn-dark py-2 fw-bold text-uppercase">
+                                Thanh toán ngay
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary cart_order_cancle">
+                                Bỏ chọn tất cả
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 bg-light rounded shadow-sm">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3 opacity-25"></i>
+            <h4 class="fw-bold text-muted">Giỏ hàng của bạn đang trống</h4>
+            <p class="mb-4">Hãy chọn thêm sản phẩm để mua sắm nhé.</p>
+            <a href="/" class="btn btn-primary px-4 py-2">Tiếp tục mua sắm</a>
+        </div>
+    }
 </div>
+
+<form id="hiddenCheckoutForm" method="post" action="@Url.Action("Checkout", "Order")" style="display:none;"></form>
+
+<div id="toast-box"></div>
 
 @section Scripts {
     <script>
         $(document).ready(() => {
-            var cart = $(".cart_item");
-            cart.each(function(){
-                var checkbox = $(this).find('input[type="checkbox"]');
+            // 1. Xử lý khi check lại các item đã chọn trước đó (nếu reload trang)
+            $(".cart_item").each(function(){
+                var checkbox = $(this).find('.cart-checkbox');
                 var id = checkbox.attr("id");
-
                 if (itemCart[id]){
                     checkbox.prop("checked", true);
                 }
-            })
-        })
+            });
+        });
 
+        // 2. Nút Hủy chọn
         $(".cart_order_cancle").on("click", (e) => {
             e.preventDefault();
-            $('.cart_item input[type="checkbox"]').prop("checked", false);
+            $('.cart-checkbox').prop("checked", false);
             itemCart = {};
-            cart_item_order();
-        })
+            renderCartSummary();
+        });
 
-        // nút cập nhật lại số lượng
-        $('.cart_item input[type="number"]').on("click", function(){ 
+        // 3. Cập nhật số lượng
+        $('.qty-input').on("change", function(){
             let input = $(this);
             let quantity = parseInt(input.val());
+            if(quantity < 1) { input.val(1); quantity = 1; }
 
-            let row = input.closest(".cart_item"); // lấy hàng
-            let checkbox = row.find('input[type="checkbox"]'); // lấy nút checkbox 
-            let id = checkbox.attr("id"); // checkbox -> id 
-            let tds = row.find("td"); // hàng -> td
+            let row = input.closest(".cart_item");
+            let checkbox = row.find('.cart-checkbox');
+            let id = checkbox.attr("id");
+            let priceUnit = parseFloat(row.find('.price-unit').data('price'));
 
-            let moneyText = $(tds[4]).text().trim().replace(/[^\d]/g, "");
-            let money = parseInt(moneyText) * quantity;
-            $(tds[7]).text(money.toLocaleString("vi-VN") + " đ");
+            // Tính lại thành tiền của dòng đó
+            let totalRow = priceUnit * quantity;
+            row.find('.price-total').text(totalRow.toLocaleString("vi-VN") + " đ");
 
-            console.log(quantity + " " + id);
-
-            $.ajax ({
+            // Gọi Ajax cập nhật DB
+            $.ajax({
                 url: '@Url.Action("edit_quatity_cartItem", "Order")',
                 type: "POST",
-                data: {quatity: quantity, CartItemId: id},
-                success: function(res) {
-                    console.log(res.message);
-                 }
+                data: { quatity: quantity, CartItemId: id },
+                success: function(res) { console.log(res.message); }
             });
 
+            // Nếu đang check thì cập nhật cả bảng tổng tiền
             if (checkbox.prop("checked")){
                 itemCart[id].quantity = quantity;
-                itemCart[id].money = money;
-                cart_item_order(); // cập nhật lại đơn hàng
+                itemCart[id].money = totalRow;
+                renderCartSummary();
             }
         });
 
-        $(".cart_item ").on("click", function(e){
-            if($(e.target).is('a') || $(e.target).closest('a').length) {
+        // 4. Click chọn sản phẩm (Click vào checkbox hoặc cả dòng)
+        $(".cart_item").on("click", function(e){
+            // Tránh conflict khi click vào input số lượng hoặc nút xóa
+            if($(e.target).is('a') || $(e.target).closest('a').length || $(e.target).is('input[type="number"]')) {
                 return;
             }
 
-            if($(e.target).is('input[type="number"]')){ // chặn e.preventDefault();
-                return;
+            let checkbox = $(this).find('.cart-checkbox');
+
+            // Nếu click ra ngoài checkbox thì tự toggle checkbox
+            if (e.target.type !== "checkbox") {
+                checkbox.prop("checked", !checkbox.prop("checked"));
             }
 
-            e.preventDefault();
+            let id = checkbox.attr("id");
+            let pvID = checkbox.data("pvid");
 
-            let checkbox = $(this).find('input[type="checkbox"]');
-            let tds = $(this).find("td");
+            // Lấy thông tin từ DOM
+            let name = $(this).find('td:nth-child(2) .fw-bold').text().trim();
+            let sizeInfo = $(this).find('td:nth-child(2) .small').text();
+            // Tách size từ chuỗi "Size: M | Màu: Đen" (Tùy chỉnh lại nếu cần)
+            let size = sizeInfo.split('|')[0].replace('Size:', '').trim();
 
-            if (e.target.type === "checkbox") return;
-            checkbox.prop("checked", !checkbox.prop("checked"));
-            
-            let id = checkbox.attr("id"); // lấy id của cart
-            let pvID = checkbox.data("pvid"); // lấy id của ProductVariant
-            let name = $(tds[1]).text().trim();
-            let size= $(tds[3]).text().trim();
-            let quantityInput = $(tds[5]).find("input").val();
-            quantity = parseInt(quantityInput.trim());
-            let moneyText = $(tds[7]).text().trim().replace(/[^\d]/g, "");
-            let money = parseInt(moneyText);
+            let quantity = parseInt($(this).find('.qty-input').val());
+
+            // Lấy giá từ data attribute để chuẩn xác
+            let priceUnit = parseFloat($(this).find('.price-unit').data('price'));
+            let money = priceUnit * quantity;
 
             if (checkbox.prop("checked")){
                 itemCart[id] = {
@@ -161,49 +219,67 @@
                     quantity: quantity,
                     money: money
                 };
-                cart_item_order(); // cập nhật lại đơn hàng
-            }
-            else {
+            } else {
                 delete itemCart[id];
-                cart_item_order(); // cập nhật lại đơn hàng
             }
+            renderCartSummary();
+        });
 
-            console.log(itemCart);
-        })
-
-        // --- HÀM CHO BẢNG ĐƠN HÀNG ---
-        const cart_item_order = () => {
-            let money = 0;
+        // 5. Hàm render bảng tóm tắt đơn hàng
+        const renderCartSummary = () => {
+            let totalMoney = 0;
             let html = "";
-            itemOrder = {};
-            Object.values(itemCart).forEach( item => {
+            let itemOrder = {};
+
+            // Gộp các item giống nhau (nếu có logic đó, ở đây ID cartItem là duy nhất nên thực ra ko cần gộp, nhưng giữ logic cũ của bạn)
+            Object.values(itemCart).forEach(item => {
+                // Ở đây itemCart key là CartItemId (duy nhất), nên itemOrder key theo pvID để gộp nếu muốn
+                // Tuy nhiên logic hiển thị đơn giản nhất là cứ liệt kê ra
                 if (itemOrder[item.id]){
                     itemOrder[item.id].quantity += item.quantity;
                     itemOrder[item.id].money += item.money;
-                }
-                else {
-                    itemOrder[item.id] = {
-                        name: item.name,
-                        size: item.size,
-                        quantity: item.quantity,
-                        money: item.money
-                    };
+                } else {
+                    itemOrder[item.id] = { ...item };
                 }
             });
-            Object.values(itemOrder).forEach(item => {
-                html += `
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>${item.size}</td>
-                        <td>${item.quantity}</td>
-                    </tr>
-                `;
-                money += item.money;
-            })
-            console.log(itemOrder);
+
+            // Render HTML
+            if (Object.keys(itemOrder).length > 0) {
+                $('.empty-msg').addClass('d-none');
+                $('.summary-table').removeClass('d-none');
+
+                Object.values(itemOrder).forEach(item => {
+                    html += `
+                        <tr>
+                            <td>${item.name} <span class="text-muted small">(${item.size})</span></td>
+                            <td class="text-end">x${item.quantity}</td>
+                        </tr>
+                    `;
+                    totalMoney += item.money;
+                });
+            } else {
+                $('.empty-msg').removeClass('d-none');
+                $('.summary-table').addClass('d-none');
+            }
 
             $(".cart_item_order").html(html);
-            $(".cart_item_money_order").text("Tổng tiền: " + money.toLocaleString("vi-VN") + " đ");
+            $(".cart_item_money_order").text(totalMoney.toLocaleString("vi-VN") + " đ");
         };
+
+        // 6. Submit Thanh toán
+        $("#btnCheckout").on("click", function(e) {
+            e.preventDefault();
+            if (!itemCart || Object.keys(itemCart).length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
+                return;
+            }
+
+            var form = $("#hiddenCheckoutForm");
+            form.empty();
+            Object.keys(itemCart).forEach(function(cartItemId) {
+                form.append(`<input type="hidden" name="selectedIds" value="${cartItemId}" />`);
+            });
+            form.submit();
+        });
     </script>
 }

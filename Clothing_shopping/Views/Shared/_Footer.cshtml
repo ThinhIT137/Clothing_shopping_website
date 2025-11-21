@@ -1,12 +1,93 @@
 ﻿@{
-    var CurrentController = ViewContext.RouteData.Values["controller"].ToString();
+    var CurrentController = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
-
-<footer class="border-top footer text-muted" style="@(CurrentController == "Login" ? "display: none;" : "")" >
-    <div>
-
-    </div>
-    <hr />
-    div>div
-</footer >
+@if (CurrentController != "Login")
+{
+    <footer class="footer-section">
+        <div class="container">
+            <div class="footer-cta pt-5 pb-5">
+                <div class="row">
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="cta-text">
+                                <h4>Địa chỉ</h4>
+                                <span>Thị Trấn Cồn, Hải Hậu, Nam Định</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            <i class="fas fa-phone"></i>
+                            <div class="cta-text">
+                                <h4>Hotline</h4>
+                                <span>1900 888 999</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 mb-30">
+                        <div class="single-cta">
+                            <i class="far fa-envelope-open"></i>
+                            <div class="cta-text">
+                                <h4>Email</h4>
+                                <span>tranthinh130720052@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-content pt-5 pb-5">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 mb-50">
+                        <div class="footer-widget">
+                            <div class="footer-logo">
+                                <a href="/"><h2 class="text-white fw-bold">ALVÉA</h2></a>
+                            </div>
+                            <div class="footer-text">
+                                <p>ALVÉA - Thương hiệu thời trang hàng đầu dành cho giới trẻ. Chúng tôi mang đến phong cách, sự tự tin và chất lượng trong từng sản phẩm.</p>
+                            </div>
+                            <div class="footer-social-icon">
+                                <span>Theo dõi chúng tôi</span>
+                                <a href="#"><i class="fab fa-facebook-f facebook-bg"></i></a>
+                                <a href="#"><i class="fab fa-twitter twitter-bg"></i></a>
+                                <a href="#"><i class="fab fa-instagram google-bg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+                        <div class="footer-widget">
+                            <div class="footer-widget-heading">
+                                <h3>Liên kết hữu ích</h3>
+                            </div>
+                            <ul>
+                                <li><a href="/">Trang chủ</a></li>
+                                <li><a href="#">Về chúng tôi</a></li>
+                                <li><a href="#">Bộ sưu tập</a></li>
+                                <li><a asp-controller="Home" asp-action="Help">Hỗ trợ & FAQ</a></li>
+                                <li><a href="#">Tuyển dụng</a></li>
+                                <li><a href="#">Blog thời trang</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 mb-50">
+                        <div class="footer-widget">
+                            <div class="footer-widget-heading">
+                                <h3>Đăng ký nhận tin</h3>
+                            </div>
+                            <div class="footer-text mb-25">
+                                <p>Đừng bỏ lỡ những ưu đãi và sản phẩm mới nhất từ ALVÉA.</p>
+                            </div>
+                            <div class="subscribe-form">
+                                <form action="#">
+                                    <input type="text" placeholder="Email của bạn">
+                                    <button><i class="fab fa-telegram-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+}

@@ -1,1 +1,132 @@
-﻿
+﻿@model Clothing_shopping.Models.User
+@{
+    ViewData["Title"] = "Hồ sơ của tôi";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 text-center p-4">
+                <div class="mb-3">
+                    <img src="https://ui-avatars.com/api/?name=@Model.FullName&background=random" class="rounded-circle shadow" width="100" height="100" />
+                </div>
+                <h4 class="fw-bold">@Model.FullName</h4>
+                <p class="text-muted">@Model.Email</p>
+                <hr />
+                <div class="text-start">
+                    <p><i class="fas fa-phone me-2"></i> @(Model.Phone ?? "Chưa cập nhật")</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> @(Model.Address ?? "Chưa cập nhật")</p>
+                </div>
+                <a asp-action="Settings" asp-controller="User" class="btn btn-outline-primary w-100 mt-2">Chỉnh sửa thông tin</a>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h3 class="mb-4 border-bottom pb-2">Lịch sử đơn hàng</h3>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (Model.Orders != null && Model.Orders.Any())
+            {
+                <div class="accordion" id="orderAccordion">
+                    @foreach (var order in Model.Orders)
+                    {
+                        // Xử lý màu sắc trạng thái
+                        string badgeClass = "bg-secondary";
+                        string statusText = order.OrderStatus;
+                        switch (order.OrderStatus)
+                        {
+                            case "Pending": badgeClass = "bg-warning text-dark"; statusText = "Chờ xử lý"; break;
+                            case "Processing": badgeClass = "bg-info text-dark"; statusText = "Đang xử lý"; break;
+                            case "Shipping": badgeClass = "bg-primary"; statusText = "Đang giao"; break;
+                            case "Completed": badgeClass = "bg-success"; statusText = "Hoàn thành"; break;
+                            case "Cancelled": badgeClass = "bg-danger"; statusText = "Đã hủy"; break;
+                        }
+
+                        <div class="accordion-item mb-3 border shadow-sm rounded overflow-hidden">
+                            <h2 class="accordion-header" id="heading-@order.OrderId">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@order.OrderId">
+                                    <div class="d-flex w-100 justify-content-between align-items-center me-3">
+                                        <div>
+                                            <span class="fw-bold">Đơn hàng #@order.OrderId</span>
+                                            <br />
+                                            <small class="text-muted">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge @badgeClass rounded-pill mb-1">@statusText</span>
+                                            <div class="fw-bold text-danger">@order.TotalAmount.ToString("N0") đ</div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse-@order.OrderId" class="accordion-collapse collapse" data-bs-parent="#orderAccordion">
+                                <div class="accordion-body bg-light">
+                                    <div class="mb-3 small border-bottom pb-2">
+                                        <strong>Người nhận:</strong> @order.ShippingAddress <br />
+                                        <strong>SĐT:</strong> @order.Phone
+                                    </div>
+
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                var variant = item.ProductVariant;
+                                                var product = variant?.Product;
+                                                string imgUrl = "";
+                                                if (product != null && !string.IsNullOrEmpty(product.Images))
+                                                {
+                                                    try
+                                                    {
+                                                        var images = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(product.Images);
+                                                        if (images != null && images.Count > 0) imgUrl = images[0];
+                                                    }
+                                                    catch { }
+                                                }
+
+                                                <tr class="align-middle border-bottom">
+                                                    <td style="width: 60px;">
+                                                        @if (!string.IsNullOrEmpty(imgUrl))
+                                                        {
+                                                            <img src="@imgUrl" class="rounded" width="50" height="50" style="object-fit:cover;">
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <div class="fw-bold">@(product?.Name ?? "Sản phẩm đã bị xóa")</div>
+                                                        <small class="text-muted">Size: @variant?.Size | Màu: @variant?.Color</small>
+                                                    </td>
+                                                    <td class="text-center">x @item.Quantity</td>
+                                                    <td class="text-end">@((item.UnitPrice * item.Quantity).ToString("N0")) đ</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                    @if (order.OrderStatus == "Pending")
+                                    {
+                                        <div class="text-end mt-2">
+                                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn hủy đơn này?');">Hủy đơn hàng</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
+                    <a href="/" class="btn btn-primary">Mua sắm ngay</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

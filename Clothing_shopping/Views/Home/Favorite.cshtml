@@ -1,54 +1,175 @@
-﻿@model IEnumerable<FavoriteItem>;
+﻿@model IEnumerable<FavoriteItem>
+@{
+    ViewData["Title"] = "Sản phẩm yêu thích";
+}
 
+<div class="container py-5 favorite-page">
+    <h3 class="text-center mb-4 fw-bold text-uppercase">Danh sách yêu thích <i class="fas fa-heart text-danger"></i></h3>
 
-<div class="favorite">
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Tên sản phẩm</th>
-                    <th>Màu sắc</th>
-                    <th>Kích cỡ</th>
-                    <th>Giá</th>
-                    <th>Ảnh</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach(var favorite in Model)
-                {
-                    var product = favorite.ProductVariant.Product;
-                    var variant = favorite.ProductVariant;
-                    decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
-                    var img = JsonConvert.DeserializeObject<List<string>>(product.Images)[1];
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white d-none d-md-block py-3">
+                        <div class="row fw-bold text-muted text-uppercase small">
+                            <div class="col-md-5">Sản phẩm</div>
+                            <div class="col-md-2 text-center">Giá</div>
+                            <div class="col-md-2 text-center">Tùy chọn</div>
+                            <div class="col-md-3 text-center">Thao tác</div>
+                        </div>
+                    </div>
 
-                    <tr>
-                        <td>@product.Name</td>
-                        <td>@variant.Color</td>
-                        <td>@variant.Size</td>
-                        <td>
-                            @price.ToString("N0") đ
-                        </td>
-                        <td><img src="@img" alt="" /></td>
-                        <td>
-                            <a class="btn_delete_favorite" asp-controller="Home" asp-action="delete_favorite" asp-route-id="@favorite.FavoriteItemsId">Xóa</a>
-                            <a class="add-to-cartlist-btn"
-                               asp-action="add_cart_product"
-                               asp-controller="Order"
-                               data-product-variant-id="@variant.ProductVariantId"
-                               data-quantity="1">
-                                Thêm vào giỏ hàng
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                    <div class="card-body p-0">
+                        @foreach (var favorite in Model)
+                        {
+                            var product = favorite.ProductVariant.Product;
+                            var variant = favorite.ProductVariant;
+                            decimal price = (variant.SalePrice > 0 ? variant.SalePrice : null) ?? variant.Price ?? 0;
+
+                            string imgUrl = "";
+                            try
+                            {
+                                var images = JsonConvert.DeserializeObject<List<string>>(product.Images);
+                                if (images?.Count > 0) imgUrl = images[0];
+                            }
+                            catch { }
+
+                            <div class="favorite-item border-bottom p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-md-5 mb-3 mb-md-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-shrink-0">
+                                                <img src="@imgUrl" class="rounded shadow-sm" alt="@product.Name">
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <h6 class="fw-bold mb-1 text-truncate-2">@product.Name</h6>
+                                                <small class="text-muted d-block d-md-none">
+                                                    Size: @variant.Size | Màu: @variant.Color
+                                                </small>
+                                                <div class="fw-bold text-danger d-block d-md-none mt-1">@price.ToString("N0") đ</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 text-center d-none d-md-block">
+                                        <span class="fw-bold text-danger">@price.ToString("N0") đ</span>
+                                    </div>
+
+                                    <div class="col-md-2 text-center d-none d-md-block">
+                                        <span class="badge bg-light text-dark border me-1">@variant.Size</span>
+                                        <span class="badge bg-light text-dark border">@variant.Color</span>
+                                    </div>
+
+                                    <div class="col-12 col-md-3 text-center">
+                                        <div class="d-grid gap-2 d-md-block">
+                                            <a href="javascript:void(0);"
+                                               class="btn btn-dark btn-sm add-to-cartlist-btn"
+                                               data-product-variant-id="@variant.ProductVariantId"
+                                               data-quantity="1">
+                                                <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                                            </a>
+
+                                            <a asp-controller="Home" asp-action="delete_favorite" asp-route-id="@favorite.FavoriteItemsId"
+                                               class="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('Xóa khỏi yêu thích?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="far fa-heart fa-4x text-muted opacity-25"></i>
+            </div>
+            <h4 class="text-muted">Danh sách yêu thích trống</h4>
+            <p class="mb-4">Bạn chưa lưu sản phẩm nào.</p>
+            <a href="/" class="btn btn-dark px-4 py-2 rounded-pill">Khám phá ngay</a>
+        </div>
+    }
 </div>
+
+<div id="toast-box"></div>
 
 @section Scripts {
     <script>
-      
+        // Hàm hiển thị thông báo
+          function showToast(message) {
+              const toastBox = document.getElementById('toast-box');
+              const toast = document.createElement('div');
+              toast.classList.add('toast-item');
+              toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${message}`;
+
+              toastBox.appendChild(toast);
+
+              // Hiệu ứng hiện ra (sau 100ms để CSS transition hoạt động)
+              setTimeout(() => {
+                  toast.classList.add('show');
+              }, 100);
+
+              // Tự động ẩn sau 1 giây (1000ms)
+              setTimeout(() => {
+                  toast.classList.remove('show');
+                  // Xóa khỏi DOM sau khi ẩn xong (thêm 300ms cho transition)
+                  setTimeout(() => {
+                      toast.remove();
+                  }, 300);
+              }, 1000);
+          }
+
+          // Code xử lý Click nút Thêm vào giỏ
+          $(document).on('click', '.add-to-cartlist-btn', function(e) {
+              e.preventDefault(); // Chặn chuyển trang
+
+              var btn = $(this);
+              var variantId = btn.data('product-variant-id');
+              var quantity = btn.data('quantity') || 1;
+
+              // Kiểm tra ID hợp lệ
+              if(!variantId || variantId === 0) {
+                  alert("Vui lòng chọn size hoặc màu sắc trước!");
+                  return;
+              }
+
+              $.ajax({
+                  url: '@Url.Action("add_cart_product", "Order")',
+                  type: 'POST',
+                  data: {
+                      ProductVariantId: variantId,
+                      Quantity: quantity
+                  },
+                  success: function(response) {
+                      if (response.success) {
+                          // Gọi hàm hiển thị thông báo
+                          showToast(response.message);
+
+                          // (Tùy chọn) Cập nhật số lượng trên icon giỏ hàng header nếu có
+                          // updateCartCount();
+                      } else {
+                          // Nếu chưa đăng nhập (Unauthorized trả về 401 nhưng jQuery ajax xử lý ở error hoặc logic riêng)
+                          // Tùy controller bạn trả về json success:false hay mã lỗi
+                          alert(response.message || "Có lỗi xảy ra");
+                      }
+                  },
+                  error: function(xhr) {
+                      if (xhr.status === 401) {
+                          // Chuyển hướng trang login nếu chưa đăng nhập
+                          window.location.href = '/User/Login';
+                      } else {
+                          console.error(xhr.responseText);
+                          alert("Lỗi kết nối server");
+                      }
+                  }
+              });
+          });
     </script>
 }

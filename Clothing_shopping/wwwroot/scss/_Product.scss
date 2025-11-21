@@ -1,4 +1,4 @@
-@use "root.scss" as *;
+﻿@use "root.scss" as *;
 
 .Product_container {
     position: relative;
@@ -48,6 +48,7 @@
         .btn_filter {
             cursor: pointer;
             @include flex_center_center;
+
             span {
                 padding-right: 5px;
             }
@@ -253,7 +254,7 @@
     .container-fluid {
         padding: 2px;
     }
-    
+
     .product_item {
         padding: 0;
     }
@@ -285,8 +286,38 @@
     color: red;
     font-size: 25px;
     pointer-events: none;
-    transition: top 1s ease-in-out, 
-        left 1s ease-in-out, 
-        transform 1s ease-in-out, 
-        opacity 2s ease-in-out;
+    transition: top 1s ease-in-out, left 1s ease-in-out, transform 1s ease-in-out, opacity 2s ease-in-out;
+}
+
+#toast-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999999;
+}
+
+.toast-item {
+    background-color: #28a745;
+    color: #fff;
+    padding: 15px 25px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+}
+
+.toast-item.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-item i {
+    margin-right: 10px;
+    font-size: 20px;
 }

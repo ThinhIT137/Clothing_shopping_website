@@ -294,7 +294,116 @@ namespace Clothing_shopping.Controllers
             ViewBag.AllGroup = AllGroup;
             ViewBag.AllCategories = context.Categories.ToDictionary(c => c.CategoryId, c => c.Name);
 
+            var reviews = await context.Reviews
+                .Include(r => r.User) // Để lấy tên người đánh giá
+                .Include(r => r.ProductVariant)
+                .Where(r => r.ProductVariant.ProductId == ProductId && r.IsApproved)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            ViewBag.Reviews = reviews;
+
+            // Tính điểm trung bình
+            if (reviews.Any())
+            {
+                ViewBag.AverageRating = reviews.Average(r => r.Rating);
+                ViewBag.TotalReviews = reviews.Count;
+            }
+            else
+            {
+                ViewBag.AverageRating = 0;
+                ViewBag.TotalReviews = 0;
+            }
             return View(product);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostReview(int productId, byte rating, string content, string title)
+        {
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập để đánh giá!" });
+            }
+            Guid userId = Guid.Parse(userIdString);
+
+            // Tìm ProductVariant đầu tiên của Product này để gắn Review (Vì bảng Review của bạn link với ProductVariant)
+            // Hoặc bạn có thể cho user chọn size/màu rồi mới đánh giá variant đó.
+            // Ở đây mình lấy variant mặc định để đơn giản hóa.
+            var variant = await context.ProductVariants
+                .FirstOrDefaultAsync(pv => pv.ProductId == productId);
+
+            if (variant == null)
+            {
+                return Json(new { success = false, message = "Sản phẩm không tồn tại!" });
+            }
+
+            // [Optional] Kiểm tra xem User đã mua hàng chưa (nếu muốn chặn spam)
+            // bool hasPurchased = ...
+
+            var review = new Review
+            {
+                ProductVariantId = variant.ProductVariantId,
+                UserId = userId,
+                Rating = rating,
+                Title = title,
+                Content = content,
+                CreatedAt = DateTime.Now,
+                IsApproved = true // Hoặc false nếu cần duyệt
+            };
+
+            context.Reviews.Add(review);
+            await context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Đánh giá thành công!" });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchProducts(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return Json(new { success = false, data = new List<object>() });
+            }
+
+            var products = await context.Products
+                .Include(p => p.ProductVariants)
+                .Where(p => p.Name.ToLower().Contains(keyword.ToLower()))
+                .Take(5) // Chỉ lấy 5 sản phẩm đầu tiên
+                .Select(p => new {
+                    p.ProductId,
+                    p.Name,
+                    p.TargetGroup,
+                    p.CategoryId,
+                    // Lấy ảnh đầu tiên
+                    Image = p.Images,
+                    // Lấy giá thấp nhất
+                    Price = p.ProductVariants.Any() ? p.ProductVariants.Min(v => v.Price) : 0
+                })
+                .ToListAsync();
+
+            // Xử lý ảnh (Parse JSON)
+            var result = products.Select(p => {
+                string imgUrl = "/images/default.png";
+                try
+                {
+                    var listImg = JsonConvert.DeserializeObject<List<string>>(p.Image);
+                    if (listImg != null && listImg.Any()) imgUrl = listImg[0];
+                }
+                catch { }
+
+                return new
+                {
+                    p.ProductId,
+                    p.Name,
+                    p.TargetGroup,
+                    p.CategoryId,
+                    Image = imgUrl,
+                    Price = p.Price
+                };
+            });
+
+            return Json(new { success = true, data = result });
         }
     }
 }
