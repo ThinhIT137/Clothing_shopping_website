@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Thống kê sản phẩm";
+}
+
+<div class="container-fluid px-4">
+
+    <h1 class="mt-4">📊 Thống kê tồn kho & sản phẩm bán chạy</h1>
+    <hr />
+
+    <!-- 1. TỒN KHO -->
+    <h3 class="mt-4">📦 Thống kê tồn kho</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        @* <th>Ảnh</th> *@
+                        <th>Sản phẩm</th>
+                        <th>Tồn kho</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.Inventory)
+                    {
+                        <tr>
+                            @* <td><img src="@item.Product.Image" width="60" /></td> *@
+                            <td>@item.Product.Name</td>
+                            <td><strong>@item.TotalStock</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- 2. BÁN CHẠY -->
+    <h3 class="mt-4">🔥 Top 10 sản phẩm bán chạy</h3>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Ảnh</th>
+                        <th>Sản phẩm</th>
+                        <th>Đã bán</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.BestSellers)
+                    {
+                        <tr>
+                            <td><img src="@item.Product.Image" width="60" /></td>
+                            <td>@item.Product.Name</td>
+                            <td><strong>@item.TotalSold</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
