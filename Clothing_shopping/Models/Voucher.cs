@@ -23,5 +23,7 @@ public partial class Voucher
 
     public DateTime? UpdatedAt { get; set; }
 
+    public decimal DiscountValue { get; set; }
+
     public virtual ICollection<Voucheruser> Voucherusers { get; set; } = new List<Voucheruser>();
 }

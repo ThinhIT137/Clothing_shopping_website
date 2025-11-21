@@ -184,6 +184,7 @@ namespace Clothing_shopping.Areas.Admin.Controllers
         public async Task<IActionResult> Cancelled()
         {
             var cancelledOrders = await db.Orders
+                .Include(o => o.User) // Join bảng User để biết ai hủy
                 .Include(o => o.OrderItems) // (Tùy chọn) Load thêm chi tiết để hiện số lượng món
                 .Where(o => o.OrderStatus == OrderStatus.Cancelled)
                 .OrderByDescending(o => o.CreatedAt) // Đơn mới hủy hiện lên đầu

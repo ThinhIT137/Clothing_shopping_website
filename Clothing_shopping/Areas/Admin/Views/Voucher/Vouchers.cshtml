@@ -1,0 +1,195 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Voucher>
+@{
+    ViewData["Title"] = "Quản lý Voucher";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Quản lý Voucher</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span><i class="fas fa-ticket-alt me-1"></i> Danh sách chương trình</span>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createModal">
+                    <i class="fas fa-plus"></i> Thêm mới
+                </button>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <input type="text" id="filterName" class="form-control" placeholder="Tìm theo mã voucher..." />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="filterValue" class="form-control" placeholder="Tìm theo giá trị giảm..." />
+                </div>
+                <div class="col-md-2">
+                    <input type="date" id="filterStart" class="form-control" placeholder="Từ ngày" />
+                </div>
+                <div class="col-md-2">
+                    <input type="date" id="filterEnd" class="form-control" placeholder="Đến ngày" />
+                </div>
+                <div class="col-md-3 d-flex gap-1">
+                    <button onclick="filterData()" class="btn btn-primary w-100"><i class="fas fa-search"></i> Tìm</button>
+                    <button onclick="resetFilter()" class="btn btn-secondary"><i class="fas fa-undo"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id="tableContainer">
+                @await Html.PartialAsync("~/Areas/Admin/Views/Shared/_VouchersList.cshtml", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Create" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tạo Voucher mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Mã Voucher</label>
+                        <div class="input-group">
+                            <input id="voucherName" name="Name" class="form-control" required placeholder="VD: SALE50" style="text-transform: uppercase; font-weight: bold;" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="randomCode()">Random</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Loại Voucher</label>
+                            <select id="voucherType" name="VoucherType" class="form-select" onchange="toggleValueInput()">
+                                <option value="Percent">Giảm theo %</option>
+                                <option value="Fixed">Giảm tiền mặt</option>
+                                <option value="FreeShip">Freeship</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3" id="valueGroup">
+                            <label class="form-label" id="valueLabel">Giá trị (%)</label>
+                            <input type="number" name="DiscountValue" class="form-control" required min="0" placeholder="Nhập số..." />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả</label>
+                        <textarea name="Description" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Bắt đầu</label>
+                            <input name="StartDate" type="datetime-local" class="form-control" required
+                                   value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Kết thúc</label>
+                            <input name="EndDate" type="datetime-local" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="IsActive" value="true" checked>
+                        <label class="form-check-label">Kích hoạt ngay</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hàm đổi nhãn hiển thị khi chọn loại voucher
+    function toggleValueInput() {
+        var type = document.getElementById('voucherType').value;
+        var label = document.getElementById('valueLabel');
+        var group = document.getElementById('valueGroup');
+        var input = group.querySelector('input');
+
+        if (type === 'Percent') {
+            group.style.display = 'block';
+            label.innerText = 'Giá trị giảm (%)';
+            input.placeholder = 'VD: 10, 20';
+        } else if (type === 'Fixed') {
+            group.style.display = 'block';
+            label.innerText = 'Số tiền giảm (VNĐ)';
+            input.placeholder = 'VD: 50000';
+        } else {
+            // Nếu là Freeship thì ẩn ô nhập giá trị đi (hoặc set = 0)
+            group.style.display = 'none';
+            input.value = 0;
+        }
+    }
+
+    // Hàm random mã code
+    function randomCode() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+        for ( let i = 0; i < 8; i++ ) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById('voucherName').value = result;
+    }
+
+    // Hàm gọi AJAX
+        function filterData() {
+            var name = $('#filterName').val();
+            var value = $('#filterValue').val();
+            var start = $('#filterStart').val();
+            var end = $('#filterEnd').val();
+
+            // Hiệu ứng loading nhẹ (tùy chọn)
+            $('#tableContainer').css('opacity', '0.5');
+
+            $.ajax({
+                url: '@Url.Action("Vouchers", "Voucher", new { Area = "Admin" })',
+                type: 'GET',
+                data: {
+                    name: name,
+                    DiscountValue: value,
+                    dateStart: start,
+                    dateEnd: end
+                },
+                success: function (response) {
+                    $('#tableContainer').html(response);
+                    $('#tableContainer').css('opacity', '1');
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi tải dữ liệu!');
+                    $('#tableContainer').css('opacity', '1');
+                }
+            });
+        }
+
+        // Reset bộ lọc
+        function resetFilter() {
+            $('#filterName').val('');
+            $('#filterValue').val('');
+            $('#filterStart').val('');
+            $('#filterEnd').val('');
+            filterData(); // Load lại bảng gốc
+        }
+
+        // Tìm kiếm khi nhấn Enter ở ô tên
+        $('#filterName').keypress(function(e) {
+            if(e.which == 13) filterData();
+        });
+</script>

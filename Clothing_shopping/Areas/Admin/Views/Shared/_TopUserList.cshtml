@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Clothing_shopping.Models.User>
+@{
+    // Lấy lại ngày lọc từ Controller truyền sang
+    DateTime filterDate = ViewBag.FilterDate != null ? (DateTime)ViewBag.FilterDate : DateTime.MinValue;
+}
+
+<h5 class="text-success">Top Khách hàng tiêu biểu</h5>
+<table class="table table-striped">
+    <thead class="bg-success text-white">
+        <tr>
+            <th>Hạng</th>
+            <th>Tên khách hàng</th>
+            <th>SĐT</th>
+            <th>Tổng chi tiêu (Trong kỳ)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int rank = 1;
+        }
+        @foreach (var item in Model)
+        {
+            // Tính tổng tiền của các đơn thỏa mãn ngày lọc
+            var totalSpent = item.Orders
+            .Where(o => o.CreatedAt >= filterDate)
+            .Sum(o => o.TotalAmount);
+
+            <tr>
+                <td>#@rank</td>
+                <td class="fw-bold">@item.FullName</td>
+                <td>@item.Phone</td>
+                <td class="text-danger fw-bold">@totalSpent.ToString("#,##0") đ</td>
+            </tr>
+            rank++;
+        }
+    </tbody>
+</table>

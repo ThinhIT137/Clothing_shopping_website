@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Clothing_shopping.Models.OrderItem>
+
+<h5 class="text-info">Sản phẩm bán chạy (Top 10)</h5>
+<table class="table table-bordered">
+    <thead class="bg-info text-white">
+        <tr>
+            <th>Mã Variant</th>
+            <th>Sản phẩm (Variant ID)</th>
+            <th>Đơn giá gần nhất</th>
+            <th>Ghi chú</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductVariantId</td>
+                <td>Variant #@item.ProductVariantId</td>
+                <td>@item.UnitPrice.ToString("#,##0") đ</td>
+                <td>Sản phẩm bán chạy</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<small class="text-muted">*Danh sách sắp xếp theo tổng số lượng bán ra.</small>

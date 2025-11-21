@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Clothing_shopping.Models.User>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ và tên</th>
+            <th>Email</th>
+            <th>SĐT</th>
+            <th>Giới tính</th>
+            <th>Chức vụ</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserId</td>
+                <td>
+                    <span class="fw-bold">@item.FullName</span>
+                </td>
+                <td>@item.Email</td>
+                <td>@item.Phone</td>
+                <td>
+                    @* Hiển thị giới tính *@
+                    <span>@item.Gender</span>
+                </td>
+                <td>
+                    @* Hiển thị vai trò *@
+                    @if (item.Role == "Admin")
+                    {
+                        <span class="badge bg-primary">Quản trị viên</span>
+                    }
+                    else if (item.Role == "Shiper")
+                    {
+                        <span class="badge bg-info text-dark">Nhân viên giao hàng</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Khách hàng</span>
+                    }
+                </td>
+                <td>
+                    @* Check cột IsLocked trong DB *@
+                    @if (item.IsLocked == true)
+                    {
+                        <span class="badge bg-danger">Đã khóa</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Hoạt động</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i> Sửa
+                    </a>
+                    @if (item.IsLocked == true)
+                    {
+                        <a asp-action="ToggleLock" asp-route-id="@item.UserId"
+                           class="btn btn-sm btn-success"
+                           onclick="return confirm('Bạn có chắc muốn MỞ KHÓA tài khoản này?');">
+                            <i class="fas fa-unlock"></i> Mở
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="ToggleLock" asp-route-id="@item.UserId"
+                           class="btn btn-sm btn-warning"
+                           onclick="return confirm('Bạn có chắc muốn KHÓA tài khoản này?');">
+                            <i class="fas fa-lock"></i> Khóa
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

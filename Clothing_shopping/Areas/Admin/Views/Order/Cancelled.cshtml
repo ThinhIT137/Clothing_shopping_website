@@ -19,6 +19,7 @@
                 <thead>
                     <tr>
                         <th>Mã đơn (#ID)</th>
+                        <th>Khách hàng</th>
                         <th>Ngày đặt</th>
                         <th>Tổng tiền</th>
                         <th>Lý do/Trạng thái</th>
@@ -30,6 +31,13 @@
                     {
                         <tr>
                             <td>#@item.OrderId</td>
+                            <td>
+                                <span class="fw-bold">@item.User?.FullName</span>
+                                <br />
+                                <small class="text-muted">
+                                    <i class="fas fa-phone-alt"></i> @(item.User?.Phone ?? "Không có SĐT")
+                                </small>
+                            </td>
                             <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
                             <td>@item.TotalAmount.ToString("#,##0") đ</td>
                             <td>

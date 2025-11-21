@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Clothing_shopping.Models.Voucher>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Tên/Mã Voucher</th>
+            <th>Loại</th>
+            <th>Giá trị</th>
+            <th>Mô tả</th>
+            <th>Thời gian</th>
+            <th>Số lượng còn</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            bool isExpired = item.EndDate.HasValue && item.EndDate < DateTime.Now;
+
+            <tr>
+                <td class="fw-bold text-primary">@item.Name</td>
+                <td>
+                    <span class="badge bg-info text-dark">@item.VoucherType</span>
+                </td>
+                <td>
+                    @if (item.VoucherType == "Percent")
+                    {
+                        <span class="fw-bold text-danger">Giảm @item.DiscountValue.ToString("0")%</span>
+                    }
+                    else if (item.VoucherType == "Fixed")
+                    {
+                        <span class="fw-bold text-success">Giảm @item.DiscountValue.ToString("#,##0") đ</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted small">Miễn phí ship</span>
+                    }
+                </td>
+                <td>@item.Description</td>
+                <td>
+                    <small>
+                        @item.StartDate.ToString("dd/MM/yy")
+                        @if (item.EndDate.HasValue)
+                        {
+                            <span> - @item.EndDate.Value.ToString("dd/MM/yy")</span>
+                        }
+                        else
+                        {
+                            <span> - Vô thời hạn</span>
+                        }
+                    </small>
+                </td>
+                <td class="text-center">
+                    @* Đếm số lượng user đã đang còn trong bảng Voucheruser *@
+                    <span class="badge bg-secondary">@item.Voucherusers.Count</span>
+                </td>
+                <td>
+                    @if (item.IsActive && !isExpired)
+                    {
+                        <span class="badge bg-success">Hoạt động</span>
+                    }
+                    else if (isExpired)
+                    {
+                        <span class="badge bg-danger">Hết hạn</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Đã tắt</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.VoucherId" class="btn btn-sm btn-info text-white">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@item.VoucherId" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.VoucherId"
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Xóa voucher này?');">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
