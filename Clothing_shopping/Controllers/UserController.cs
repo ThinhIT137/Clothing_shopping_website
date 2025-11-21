@@ -37,6 +37,12 @@ namespace Clothing_shopping.Controllers
         {
             var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email);
 
+            if (user is null)
+            {
+                ViewBag.Error = "Sai email hoặc mật khẩu!";
+                return View();
+            }
+
             if (user.IsLocked)
             {
                 ViewBag.Error = "Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.";
